@@ -6,7 +6,7 @@ A curated collection of production-grade, highly compressed, Power-of-10-inspire
 
 ---
 
-## 🌟 The Crown Jewel: The `self-help` Skill
+## 🌟 Self-Help Yourself - The `self-help` Skill
 
 When an AI agent hits a persistent, systemic knowledge gap, it enters **therapy mode** via the **`self-help`** skill (located in `skills/self-help/`):
 1. **Gap Analysis**: Proves the gap is structural (*"Remember: reading a self-help book doesn't fix a broken chair"*).
