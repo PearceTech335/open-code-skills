@@ -43,11 +43,47 @@ When an AI agent hits a persistent, systemic knowledge gap, it enters **therapy 
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start & File Placement
 
-1. Clone or drop this repository into your OpenCode config directory (`~/.config/opencode/` or project `.opencode/`).
-2. Ensure your `opencode.json` wires up instructions and agents.
-3. Let your agent practice a little **`self-help`** the next time it encounters a stubborn architectural blind spot!
+Drop these files directly into your OpenCode global configuration directory (`~/.config/opencode/` on Linux/macOS/Windows) or a project-level `.opencode/` folder. 
+
+Your directory structure should look like this:
+
+```text
+~/.config/opencode/
+├── agents/
+│   ├── network-engineer.md
+│   └── reviewer.md
+├── commands/
+│   ├── improve.md
+│   ├── investigate.md
+│   ├── overnight.md
+│   ├── research.md
+│   └── review.md
+├── skills/
+│   ├── agent-core/SKILL.md
+│   ├── ansible-code/SKILL.md
+│   ├── auto-memory/SKILL.md
+│   ├── bash-skill/SKILL.md
+│   ├── designer/SKILL.md
+│   ├── go-code/SKILL.md
+│   ├── long-running-task-research/SKILL.md
+│   ├── networking/SKILL.md
+│   ├── ot-networking/SKILL.md
+│   ├── packet-analysis/SKILL.md
+│   ├── penetration-tester/SKILL.md
+│   ├── powershell-skill/SKILL.md
+│   ├── python-code/SKILL.md
+│   ├── quality-gate/SKILL.md
+│   ├── readable-code/SKILL.md
+│   ├── repo-discovery/SKILL.md
+│   ├── research-method/SKILL.md
+│   ├── security/SKILL.md
+│   ├── self-help/SKILL.md
+│   ├── template-library/SKILL.md
+│   └── typescript-code/SKILL.md
+└── README.md
+```
 
 ---
 
