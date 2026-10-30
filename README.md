@@ -2,21 +2,17 @@
 
 > *Because even AI coding agents need a little emotional and technical growth.*
 
-Welcome to **Open-Code-Skills** — a curated collection of production-grade, highly compressed, Power-of-10-inspired agent skills and commands designed to turn your local AI coding assistant (like OpenCode, Continue, or Roo) into a disciplined, maintainable-code-producing machine.
+A curated collection of production-grade, highly compressed, Power-of-10-inspired agent skills and commands designed to keep your local AI coding assistant disciplined and maintainable.
 
 ---
 
 ## 🌟 The Crown Jewel: The `self-help` Skill
 
-Let's face it: AI agents love hallucinating, rewriting your entire repository when you ask for a typo fix, and downloading sketchy remote scripts from the internet. 
-
-That is why we built **`self-help`** (located in `skills/self-help/`). 
-
-When OpenCode hits a persistent, systemic knowledge gap, it doesn't just panic or hallucinate a non-existent API. It enters **therapy mode**:
-1. **Gap Analysis**: Proves the gap is structural, not just a one-off bug (*"Remember: reading a self-help book doesn't fix a broken chair"*).
-2. **Sourced Research**: Gathers verified local patterns or official documentation (strictly local — no sketchy URL-based skill injections allowed; we protect you against remote supply chain rug-pulls!).
-3. **Drafts a Structured SKILL.md**: Writes a compact, Power-of-10 compliant skill directly into your skills directory.
-4. **Mandatory Human Review Gate**: Pauses, presents its emotional and technical growth to you, and waits for approval before touching production.
+When an AI agent hits a persistent, systemic knowledge gap, it enters **therapy mode** via the **`self-help`** skill (located in `skills/self-help/`):
+1. **Gap Analysis**: Proves the gap is structural (*"Remember: reading a self-help book doesn't fix a broken chair"*).
+2. **Sourced Research**: Gathers verified local patterns or official documentation (strictly local — remote URL-based skill injections are disallowed).
+3. **Drafts a Structured SKILL.md**: Writes a compact, Power-of-10 compliant skill directly into the skills directory.
+4. **Mandatory Human Review**: Pauses, presents its growth to you, and waits for approval before touching production.
 
 ---
 
@@ -49,14 +45,14 @@ When OpenCode hits a persistent, systemic knowledge gap, it doesn't just panic o
 
 ## 🚀 Quick Start
 
-1. Clone or drop this repository into your local OpenCode config directory (`~/.config/opencode/` or your project `.opencode/`).
+1. Clone or drop this repository into your OpenCode config directory (`~/.config/opencode/` or project `.opencode/`).
 2. Ensure your `opencode.json` wires up instructions and agents.
 3. Let your agent practice a little **`self-help`** the next time it encounters a stubborn architectural blind spot!
 
 ---
 
 ## 🛡️ Security & Supply Chain Safety
-- **No Remote Skill Injections**: `self-help` explicitly forbids downloading or importing remote `.md` or script files from URLs. All skills must be authored locally from verified static sources.
-- **WebFetch Guardrails**: WebFetch is restricted by policy to verified documentation only—never for remote agent/config files.
+- **Local Authorship**: All skills must be authored locally from verified static sources to prevent remote supply chain tampering.
+- **WebFetch Guardrails**: WebFetch is restricted by policy to verified documentation only—never for remote agent or config files.
 
-*Contribute, fork, and teach your AI how to behave!* 🤖✨
+*Fork, adapt, and help your AI learn some manners.* 🤖✨
