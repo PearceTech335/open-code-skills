@@ -8,11 +8,13 @@ A curated collection of production-grade, highly compressed, Power-of-10-inspire
 
 ## 🌟 Self-Help Yourself - The `self-help` Skill
 
-When an AI agent hits a persistent, systemic knowledge gap, it enters **therapy mode** via the **`self-help`** skill (located in `skills/self-help/`):
-1. **Gap Analysis**: Proves the gap is structural (*"Remember: reading a self-help book doesn't fix a broken chair"*).
-2. **Sourced Research**: Gathers verified local patterns or official documentation (strictly local — remote URL-based skill injections are disallowed).
-3. **Drafts a Structured SKILL.md**: Writes a compact, Power-of-10 compliant skill directly into the skills directory.
-4. **Mandatory Human Review**: Pauses, presents its growth to you, and waits for approval before touching production.
+When an AI agent hits a persistent, systemic knowledge gap during task execution (such as encountering an unhandled domain framework or complex protocol), it triggers **therapy mode** via the **`self-help`** skill (located in `skills/self-help/`):
+
+1. **Functional Friction & Discovery**: Instead of sniffing out flaws continuously, the agent discovers a gap when hitting repeated roadblocks where existing Power-of-10 skills (`python-code`, `designer`, etc.) fall short, or when invoked directly via `/improve`.
+2. **Strict Gap Analysis**: It proves the gap is structural and recurring (*"Remember: reading a self-help book doesn't fix a broken chair"* — one-off difficult bugs do not qualify).
+3. **Sourced Research**: It gathers verified local patterns or official documentation (strictly local & verified sources only — remote URL-based skill injections are forbidden to prevent supply chain rug-pulls).
+4. **Drafts & Places SKILL.md**: It writes a compact, Power-of-10 compliant skill directly into `skills/<skill-name>/SKILL.md` and registers it in `AGENTS.md`.
+5. **Mandatory Human Review Gate**: It pauses execution, presents its newly drafted skill to you, and waits for explicit approval before activation.
 
 ---
 
