@@ -1,7 +1,6 @@
 ---
 description: Network and OT troubleshooting with evidence-first investigation across L1-L7, wireless, and packet analysis.
 mode: subagent
-model: lmstudio/qwen/qwen3.5-9b
 permission:
   edit: deny
 ---

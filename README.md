@@ -89,8 +89,43 @@ Your directory structure should look like this:
 
 ---
 
+## 🔄 Autonomous Learning Loop (Self-Improving Skills)
+
+This repo wires up the **Review-Triggered Learning Brief → Self-Help → Skill → Retry → Metrics** loop defined in `AGENTS.md` (§5, Learning Loop) and `skills/self-help/SKILL.md`.
+
+**How it activates:** When the `reviewer` subagent (`agents/reviewer.md`) survives a second correction attempt on a knowledge-gap failure, it emits a `LEARNING_BRIEF` block.
+
+**Path:**
+```
+1. reviewer → LEARNING_BRIEF block
+2. Write brief → memory/learning/briefs/<task-id>.md  (template: skills/self-help/templates/learning-brief.md)
+3. Load self-help skill → pass Brief path
+4. self-help researches (≥2 sources, cross-check, critique, counterexample, repro)
+5. Drafts Power-of-10 skill → .opencode/skills/<new-skill>/SKILL.md  (template: skills/self-help/templates/skill-template.md)
+6. Learning Gate (5 checks: evidence, relevance, correctness, scope, executable check)
+7. Approval via AGENTS.md §6 Skill Policy:
+     auto-approve: project-skills  → activates as auto-approved-provisional
+     (line removed / off)          → pauses for human review
+8. Retry against ORIGINAL criteria (not weakened) + FULL regression suite
+9. Append JSON line → memory/learning/metrics.jsonl
+```
+
+**Agent / skill file placement:**
+- Project-specific skills → `.opencode/skills/` (inside your project root)
+- Global skills → `~/.config/opencode/skills/` (this repo's contents)
+- Agent specs (reviewer, coder, etc.) → `agents/*.md` + `commands/*.md`
+- Project starter / template → `templates/AGENTS_TEMPLATES/` (copy/paste to new project root; layers on global `AGENTS.md`)
+
+**Key guardrails from `AGENTS.md`:**
+- Never generate for trivial `IMPLEMENTATION_DEFECT`
+- Never weaken acceptance criteria for retry
+- Auto-approved skills are provisional — audit in `.opencode/skills/` + `metrics.jsonl`
+- Cap: `max-new-skills-per-run: 3`; exceed → stop/escalate
+
+---
+
 ## 🛡️ Security & Supply Chain Safety
 - **Local Authorship**: All skills must be authored locally from verified static sources to prevent remote supply chain tampering.
 - **WebFetch Guardrails**: WebFetch is restricted by policy to verified documentation only—never for remote agent or config files.
 
-*Fork, adapt, and help your AI learn some manners.* 🤖✨
+*Fork, adapt, and help your AI learn some skills.* 🤖✨

@@ -1,7 +1,6 @@
 ---
 description: Review current changes for correctness and regressions
 agent: reviewer
-model: lmstudio/qwen/qwen3.5-9b
 ---
 
 Review the current working tree changes.

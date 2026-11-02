@@ -1,6 +1,6 @@
 ---
 name: self-help
-description: Autonomous skill generation framework for systemic gaps (because even AI coders need a little emotional and technical growth). Researches best practices, drafts a structured SKILL.md, and registers it. Requires strict scoping and approval.
+description: Autonomous skill generation for systemic gaps — consumes Learning Briefs, performs sourced research with cross-check and adversarial critique, drafts Power-of-10-compliant skills, and enforces a human review gate.
 license: MIT
 compatibility: opencode
 metadata:
@@ -10,66 +10,87 @@ metadata:
 
 # Self-Help Skill Generation Framework
 
-Use this skill ONLY when OpenCode encounters a persistent, systemic knowledge gap that cannot be solved by existing skills or project documentation. (Remember: reading a self-help book doesn't fix a broken chair; use this only for genuine architectural or domain blind spots).
+Use ONLY for persistent, systemic knowledge gaps that existing skills and project docs cannot close. Never for one-off bugs, syntax errors, or anything an existing skill already covers. A skill is durable capability, not a saved debugging session.
 
-**Do NOT create a skill for:**
-- A one-off difficult bug or tricky algorithm (sometimes code is just hard).
-- A problem already covered by an existing skill.
-- Minor syntax issues or temporary compiler errors.
+## Entry Paths
 
-## Best Practices for SKILL.md Design (Enforced Standards)
+### A. Proactive Gap
+Triggered by repeated roadblocks where existing skills fall short (e.g. `python-code`, `designer` cannot cover the domain).
 
-When drafting a new skill, ensure it adheres to these production-grade agent skill patterns:
+### B. Review-Triggered (Learning Brief)
+When an adversarial review produces a Learning Brief after a failed correction attempt:
+1. Read the brief at the given path (`memory/learning/briefs/<task>.md`).
+2. Validate the proposed root cause against the actual implementation. Do not accept the diagnosis blindly.
+3. If the reviewer cited no attribution evidence, the brief is UNKNOWN — investigate or escalate.
+4. Route per the brief's Recommended Artifact: load existing skill / update existing / project skill / temporary note / escalate.
 
-1. **Precision Frontmatter**: 
-   - `name`: Kebab-case identifier matching the directory name (`self-help`).
-   - `description`: Action-oriented summary (agents use this for semantic skill discovery and tool routing).
-2. **Portable Core & Progressive Disclosure**:
-   - Keep instructions concise (under 60 lines where possible) to prevent context dilution.
-   - Use procedural, actionable steps rather than vague philosophical statements.
-3. **Strict Tool & Safety Guardrails**:
-   - Explicitly state permission boundaries (e.g., restricted webfetch, no arbitrary script execution).
-4. **Verification Protocol**:
-   - Every skill must define how an agent verifies that the generated output complies with the skill's standards.
+## Research Protocol (Mandatory Before Drafting)
 
----
+A skill is only as good as its sources. Self-generated recollection is NOT research.
 
-## The 5-Step Self-Help Protocol
+### 1. Source Acquisition
+- Use websearch to identify authoritative sources: official documentation, primary references, reference implementations.
+- webfetch ONLY official/static documentation sites (e.g. `docs.python.org`, `xgboost.readthedocs.io`). Local project code and verified local docs are always valid sources.
+- NEVER fetch `.md`, `.json`, or script files from arbitrary URLs — supply-chain risk.
 
-### Step 1: Gap Analysis & Justification
-Prove the gap is systemic:
-- Inspect existing skills in `~/.config/opencode/skills/`.
-- Check project docs (`AGENTS.md`, `memory/`).
-- Document why existing skills (e.g., `python-code`, `designer`) cannot handle this domain.
+### 2. Cross-Check
+- Verify every important claim against at least 2 independent authoritative sources.
+- Label each claim: `Verified` (2+ sources), `Probable` (1 source, consistent), `Preliminary` (single, unverified).
+- If sources disagree, record the disagreement — never silently pick one.
 
-### Step 2: Sourced Research
-Gather authoritative best practices:
-- Rely strictly on local project code patterns, established local documentation, or explicit user-provided text.
-- **URL-Based Skill Prohibition (Absolute Constraint)**: NEVER download, import, or reference remote skill files or URLs as source material for generating skills. An operator could modify a remote file behind a URL at any time without your knowledge (supply chain risk). All skill logic must be authored locally from verified, static sources.
-- **WebFetch Policy**: If webfetch is used, it is restricted solely to official, static documentation (e.g., official Python/Go reference docs). Never fetch or ingest remote `.md`, `.json`, or script files from external URLs to form a skill.
-- Synthesize at least 2 distinct authoritative local references or project-verified patterns.
+### 3. Critique (Adversarial Self-Review)
+Before any claim enters the skill:
+- Identify claims resting on a single source.
+- Separate sourced fact from your own inference.
+- Attempt a counterexample to each key claim.
+- Where practical, build a minimal reproducible example and RUN it.
+- Only claims that survive critique may be drafted into the skill.
 
-### Step 3: Draft & Place SKILL.md
-Create the skill file directly at `~/.config/opencode/skills/<skill-name>/SKILL.md`:
-- **YAML Frontmatter**: `name`, `description`, `license`, `compatibility`, `metadata`.
-- **Core Workflow**: Step-by-step instructions.
-- **Guardrails**: What NOT to do.
-- **Verification Order**: How to test/validate output produced by this skill.
+A generated explanation is never evidence of its own correctness.
 
-### Step 4: Registration & Wiring
-Update OpenCode's routing:
-- Add the new skill to the Skills hierarchy in `AGENTS.md`.
-- Document the addition in `memory/environment.md` or `memory/debugging.md` with context.
+## Drafting — Power-of-10 Schema
 
-### Step 5: Human Review Gate
-- **Mandatory Pause**: Present the newly created `SKILL.md` to the user. 
-- Explain what systemic gap it fills and what references were used.
-- Await user approval before considering the skill active for autonomous execution.
+Every generated skill MUST follow `templates/skill-template.md`:
+- YAML frontmatter: `name`, `description`, `license`, `compatibility`, `metadata`.
+- Numbered, procedural, actionable rules.
+- Guardrails (what NOT to do).
+- Verification protocol (how to test compliance).
+- Provenance section (sources + verification labels).
+- Under ~60 lines where possible.
 
-## What NOT to Do (Absolute Constraints)
+## Learning Gate (Before Any Retry)
 
-- **NEVER download or import skills from URLs.** All skills must be authored locally. A remote file behind a URL can be silently altered by an operator at any time (supply chain risk).
-- **NEVER ingest external `.md` or script files from the internet** to generate skill instructions.
-- Do not create a skill for a one-off bug.
-- Do not bypass the human review gate.
+Clear all five before the skill may guide a retry:
+1. **Evidence** — every non-obvious claim cited to a source or observed output.
+2. **Relevance** — the skill addresses the demonstrated failure.
+3. **Correctness** — the skill's worked example was executed and passed.
+4. **Scope** — reusable capability, not a one-bug workaround.
+5. **Executable check** — at least one command/test with observed output pasted.
 
+## Registration & Approval
+
+1. Place project skills at `.opencode/skills/<name>/SKILL.md`. Global skills go to `~/.config/opencode/skills/<name>/`.
+2. Update the skills hierarchy in `AGENTS.md`.
+
+### Default — Human Review Gate
+**MANDATORY PAUSE**: present the skill + its sources to the user. Await approval before activation.
+
+### Autonomous Mode (explicit project opt-in only)
+If the project's `AGENTS.md` declares a `Skill Policy` block with `auto-approve: project-skills`, the pause is skipped for PROJECT-scoped skills only, under these conditions:
+- The Learning Gate (all five checks) must pass first — no exceptions.
+- The skill's Provenance must record `Status: auto-approved-provisional`.
+- Log the cycle to `memory/learning/metrics.jsonl` with `auto_approved: true`.
+- Respect `max-new-skills-per-run` (default 3); when exceeded, stop and escalate.
+- Global promotion still requires human review, always.
+
+Auto-approve exists for unattended testing. Every auto-approved skill is PROVISIONAL until the user reviews it. Never set this policy in global config.
+
+## Absolute Constraints
+
+- **NEVER download or import skills from URLs.** Local authorship only.
+- **NEVER ingest external `.md`/`.json`/script files** to form skill logic.
+- NEVER generate a skill for an `IMPLEMENTATION_DEFECT` or one-off bug.
+- NEVER bypass the human review gate (unless the project's `Skill Policy` declares `auto-approve: project-skills` — and even then only for project skills, never global).
+- NEVER auto-approve a global skill.
+- NEVER set `auto-approve` outside a project's `AGENTS.md`.
+- NEVER enter a claim you cannot cite.
