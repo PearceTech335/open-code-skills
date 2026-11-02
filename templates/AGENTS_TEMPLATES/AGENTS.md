@@ -41,11 +41,70 @@ For non-trivial tasks:
 2. Establish expected behaviour and acceptance criteria.
 3. Identify affected modules and tests.
 4. Load the language/domain skill (e.g., `python-code`, `go-code`) and plan the smallest coherent change.
+5. If task is difficult/complex, load esearcher\ subagent to fill knowledge gap
+6. Load \coder\ subagent (or implement directly using the loaded skill) — write the change.
+7. Use GIT at step 6 (commit after plan/change).
+8. Run targeted tests.
+9. Run relevant regression tests.
+10. Load eviewer\ subagent to inspect diff / review correctness, security, architecture.
+11. Record actual results and unresolved issues in \memory/CURRENT_STATE.md\.
+# <PROJECT_NAME> — Agent Instructions
+
+> This file layers **project-specific** rules on top of the GLOBAL agent config
+> (`~/.config/opencode/AGENTS.md` + global skills). Global rules still apply and
+> are NOT replaced here: Engineering Standards, the skill hierarchy
+> (`agent-core` → `readable-code` + `repo-discovery` → language/domain →
+> `quality-gate`), security/WebFetch policy, and the global Learning Loop
+> pointer. This file adds the project's workflow, knowledge layout, and the
+> self-improving Skill Policy.
+
+## 1. Mission
+
+<One or two sentences: what this project is, and its priorities in order.
+Example: "Build and maintain X. Priorities: 1) correctness, 2) data integrity,
+3) testability, 4) performance. A passing test suite does not by itself
+establish correctness.">
+
+## 2. Mandatory Task Startup
+
+At the start of every new task:
+
+1. Read `memory/PROJECT_INDEX.md`.
+2. Read `memory/CURRENT_STATE.md`.
+3. Read `TASKS.md` to identify the active task and dependencies.
+4. Identify the relevant project area and inspect its current implementation.
+5. Load the most relevant available skill using the native skill tool.
+6. Load additional skills only when their guidance is needed.
+
+For an unfamiliar subsystem, load `repo-discovery` before modifying code.
+
+Do not read the entire repository by default. Follow the project index to the
+relevant files.
+
+If an index entry is missing or stale, verify the repository and correct it.
+
+## 3. Task Execution
+
+For non-trivial tasks:
+
+1. Load `repo-discovery` (unfamiliar subsystem) or inspect implementation.
+2. Establish expected behaviour and acceptance criteria.
+3. Identify affected modules and tests.
+4. Load the language/domain skill (e.g., `python-code`, `go-code`) and plan the smallest coherent change.
+<<<<<<< HEAD
 5. Load `coder` subagent (or implement directly using the loaded skill) — write the change.
 6. Run targeted tests.
 7. Run relevant regression tests.
 8. Load `reviewer` subagent to inspect diff / review correctness, security, architecture.
 9. Record actual results and unresolved issues in `memory/CURRENT_STATE.md`.
+=======
+5. If task is difficult/complex, load `researcher` subagent to fill knowledge gap
+6. Load `coder` subagent (or implement directly using the loaded skill) — write the change.
+7. Run targeted tests.
+8. Run relevant regression tests.
+9. Load `reviewer` subagent to inspect diff / review correctness, security, architecture.
+10. Record actual results and unresolved issues in `memory/CURRENT_STATE.md`.
+>>>>>>> 69f9db2 (Update AGENTS.md template: subagent delegation in Section 3)
 
 Use GIT at steps 5 (commit) and 8 (review diff).
 
