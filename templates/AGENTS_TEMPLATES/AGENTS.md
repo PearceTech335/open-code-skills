@@ -23,7 +23,7 @@ establish correctness.">
 
 At the start of every new task:
 
-1. Read `memory/PROJECT_INDEX.md`.
+1. Check `memory/PROJECT_INDEX.md`. If missing or stale: load `repo-discovery`, inspect repository structure, and create/update `memory/PROJECT_INDEX.md` before any task work.
 2. Read `memory/CURRENT_STATE.md`.
 3. Read `TASKS.md` to identify the active task and dependencies.
 4. Identify the relevant project area and inspect its current implementation.
@@ -73,7 +73,7 @@ establish correctness.">
 
 At the start of every new task:
 
-1. Read `memory/PROJECT_INDEX.md`.
+1. Check `memory/PROJECT_INDEX.md`. If missing or stale: load `repo-discovery`, inspect repository structure, and create/update `memory/PROJECT_INDEX.md` before any task work.
 2. Read `memory/CURRENT_STATE.md`.
 3. Read `TASKS.md` to identify the active task and dependencies.
 4. Identify the relevant project area and inspect its current implementation.
