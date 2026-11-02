@@ -99,7 +99,7 @@
           "limit": { "context": 262144, "input": 262144, "output": 8192 }
         },
         "google/gemma-4-e4b": {
-          "name": "Google Gemma 4 4B (LM Studio, 96K cap)",
+          "name": "Google Gemma 4 4B (LM Studio, 64K cap)",
           "tool_call": true,
           "temperature": true,
           "attachment": true,
@@ -108,7 +108,7 @@
             "output": ["text"]
           },
           "cost": { "input": 0, "output": 0 },
-          "limit": { "context": 32768, "input": 32768, "output": 8192 }
+          "limit": { "context": 65536, "input": 65536, "output": 8192 }
         },
         "google/gemma-4-e2b": {
           "name": "Google Gemma 4 2B (LM Studio, 96K cap)",
