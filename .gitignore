@@ -3,4 +3,6 @@
 !/agents/**
 !/commands/**
 !/README.md
+!/templates/
 !/templates/**
+!.gitignore
