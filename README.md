@@ -49,13 +49,16 @@ When an AI agent hits a persistent, systemic knowledge gap during task execution
 
 Drop these files directly into your OpenCode global configuration directory (`~/.config/opencode/` on Linux/macOS/Windows) or a project-level `.opencode/` folder. 
 
-Your directory structure should look like this:
+Your directory structure should include:
 
 ```text
 ~/.config/opencode/
 ├── agents/
-│   ├── network-engineer.md
-│   └── reviewer.md
+│   ├── autopilot.md        # overnight autonomous worker
+│   ├── coder.md            # code generation subagent
+│   ├── network-engineer.md # OT/network troubleshooting
+│   ├── research.md         # discovery/parser subagent
+│   └── reviewer.md         # adversarial review + LEARNING_BRIEF emitter
 ├── commands/
 │   ├── improve.md
 │   ├── investigate.md
@@ -64,28 +67,20 @@ Your directory structure should look like this:
 │   └── review.md
 ├── skills/
 │   ├── agent-core/SKILL.md
-│   ├── ansible-code/SKILL.md
-│   ├── auto-memory/SKILL.md
-│   ├── bash-skill/SKILL.md
-│   ├── designer/SKILL.md
-│   ├── go-code/SKILL.md
-│   ├── long-running-task-research/SKILL.md
-│   ├── networking/SKILL.md
-│   ├── ot-networking/SKILL.md
-│   ├── packet-analysis/SKILL.md
-│   ├── penetration-tester/SKILL.md
-│   ├── powershell-skill/SKILL.md
-│   ├── python-code/SKILL.md
-│   ├── quality-gate/SKILL.md
+│   ├── self-help/SKILL.md         # autonomous skill generation + brief templates
+│   ├── agent-core/SKILL.md
 │   ├── readable-code/SKILL.md
-│   ├── repo-discovery/SKILL.md
-│   ├── research-method/SKILL.md
-│   ├── security/SKILL.md
-│   ├── self-help/SKILL.md
-│   ├── template-library/SKILL.md
-│   └── typescript-code/SKILL.md
+│   └── ... (full skill library)
+├── skills/self-help/templates/
+│   ├── learning-brief.md
+│   └── skill-template.md
+├── templates/AGENTS_TEMPLATES/    # copy/paste starter (AGENTS.md + TASKS.md + memory/ + .opencode/skills/)
+├── opencode.json                  # endpoint config (3 providers); agent block removed; model/small_model inheritance
+├── .gitignore                     # excludes everything except skills/, agents/, commands/, README.md, templates/
 └── README.md
 ```
+
+Project-level starter (`templates/AGENTS_TEMPLATES/`) layers on top of this global structure and contains its own `memory/`, `.opencode/skills/`, and `AGENTS.md` (with Learning Loop section 5 + Skill Policy section 6).
 
 ---
 

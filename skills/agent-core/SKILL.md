@@ -8,6 +8,21 @@ metadata:
   priority: base
 ---
 
+## Skills Inventory Protocol (before any coding task)
+
+Before writing code, verify which skills apply:
+
+1. Load `agent-core` (this file) — mandatory on any task.
+2. Inspect available skills: list `skills/` (global) + `.opencode/skills/` (project). Read relevant `SKILL.md` files only when their domain matches the current file/module/task.
+3. Load the language/domain skill matching the file (`python-code`, `go-code`, `typescript-code`, etc.). If no language skill matches the codebase, load `repo-discovery` first.
+4. Load meta/quality skills when their guidance is needed (`readable-code`, `designer`, `quality-gate`).
+5. Load `long-running-task-research` for large-file edits or multi-module refactors.
+6. Load `self-help` **only** when a failure survives a second correction attempt on a knowledge gap (`AGENTS.md` §5). Never invent a missing skill; never load `self-help` for a trivial `IMPLEMENTATION_DEFECT`.
+7. Load subagent specs (`reviewer.md`, `research.md`, `coder.md`) only when the planner explicitly invokes them (`--agent` / agent invocation); they inherit `model` and work independently.
+8. Report which skills were loaded in your response or `RESEARCH.md`. If none matched and you needed a new capability, document the gap; do not invent APIs or skills.
+
+Do not load unrelated skills (e.g., `bash-skill` for a Python module, `security` for a simple UI edit) — unnecessary context bloat degrades reasoning.
+
 ## Tool Call Discipline
 
 Call tools directly in `<tool_use>` blocks. Never describe them as text. Keep user-facing explanations proportional to the task — enough detail to explain important design choices, verification results, and limitations.
