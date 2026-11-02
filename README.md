@@ -112,6 +112,9 @@ Auto-approved skills are provisional — audit `.opencode/skills/` and `metrics.
 ### Skill Policy & Lightweight Design
 `AGENTS.md` §6 declares `auto-approve: project-skills` and the cap above; set policy to `off` for full human gate. Skills live in `skills/` (global) and `.opencode/skills/` (project); agent specs live in `agents/*.md` + `commands/*.md`. `templates/AGENTS_TEMPLATES/` is the copy/paste starter (includes `AGENTS.md`, `TASKS.md`, `memory/`, `.opencode/skills/`). No JSON `agent` block — managing agents is add/remove one `.md` file.
 
+### Failure Budget (3-Strike Gate)
+Every sub-subtask (`TASKS.md` ID `mN-tN-stN-ssN`) gets 3 tries tracked in `memory/learning/retry-counters.jsonl`. After attempt 2, load `reviewer` for RCA; after attempt 3, stop repeating the same action and invoke `autopilot.md` / split the sub-subtask further. This prevents loops like the evaluation.py edit retries (oldString mismatch) — instead of 3 identical failed edits, attempt 2 reads exact bytes; attempt 3 triggers root-cause diagnosis and workaround.
+
 ### Endpoint & Model Configuration
 `opencode.json` declares endpoint providers generically (`ollama`, `lmstudio-local`, `lmstudio`) and a single `model`; `small_model` removed so all subagents inherit one path — no cross-endpoint routing divergence. The framework is endpoint-agnostic: the same `.md` specs and skills work regardless of which server is active, as long as the declared `model` supports tool calls.
 

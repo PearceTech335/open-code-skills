@@ -11,6 +11,9 @@
 ## Milestone 2 — <name>
 
 - [ ] <task 2.1>
+- [ ] <sub-subtask 2.1.1>  # uses retry-counters.jsonl line
+
+Breakdown IDs: `mN-tN-stN-ssN` so each sub-subtask gets its own failure budget.
 
 ## Backlog
 

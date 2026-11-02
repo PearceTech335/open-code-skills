@@ -95,28 +95,37 @@ For non-trivial tasks:
 2. Establish expected behaviour and acceptance criteria.
 3. Identify affected modules and tests.
 4. Load the language/domain skill (e.g., `python-code`, `go-code`) and plan the smallest coherent change.
-<<<<<<< HEAD
-5. Load `coder` subagent (or implement directly using the loaded skill) — write the change.
-6. Run targeted tests.
-7. Run relevant regression tests.
-8. Load `reviewer` subagent to inspect diff / review correctness, security, architecture.
-9. Record actual results and unresolved issues in `memory/CURRENT_STATE.md`.
-=======
 5. If task is difficult/complex, load `researcher` subagent to fill knowledge gap
 6. Load `coder` subagent (or implement directly using the loaded skill) — write the change.
-7. Run targeted tests.
-8. Run relevant regression tests.
-9. Load `reviewer` subagent to inspect diff / review correctness, security, architecture.
-10. Record actual results and unresolved issues in `memory/CURRENT_STATE.md`.
->>>>>>> 69f9db2 (Update AGENTS.md template: subagent delegation in Section 3)
+7. Use GIT at step 6 (commit after plan/change).
+8. Run targeted tests.
+9. Run relevant regression tests.
+10. Load `reviewer` subagent to inspect diff / review correctness, security, architecture.
+11. Record actual results and unresolved issues in `memory/CURRENT_STATE.md`.
 
-Use GIT at steps 5 (commit) and 8 (review diff).
+Use GIT at steps 6 (commit after change) and 10 (review diff before concluding).
 
 When a failure survives a second correction attempt on a knowledge gap:
 - Load `self-help`, pass the `LEARNING_BRIEF`.
 - After skill approval (§6), retry against ORIGINAL criteria; do not weaken.
 
 Never claim a test passed unless executed and observed.
+
+## 3.5 Failure Budget & Root-Cause Gate
+
+Every subtask (projects → tasks → subtasks → sub-subtasks) has its own retry budget of **3 attempts** before a subagent must investigate. Track in `memory/learning/retry-counters.jsonl` (one JSON line per attempt):
+
+`{"timestamp":"...","task_id":"m1-t1","subtask":"st1-edit-eval","attempt":1,"status":"fail","reason":"oldString mismatch on evaluation.py"}`
+
+Rules:
+- **Attempt 1 (fail)**: retry with a different approach — inspect file bytes exactly (`read`), verify whitespace/indentation, confirm exact oldString.
+- **Attempt 2 (fail)**: load `reviewer` or `research` subagent to diagnose root cause (e.g., edit-tool exact-match requirement, missing import, wrong file). Write diagnosis to `memory/learning/briefs/<task-id>-attempt2.md`. Do NOT retry blindly.
+- **Attempt 3 (fail)**: stop retrying this subtask. Load `autopilot.md` or `reviewer.md` to propose a workaround: split sub-subtask further (`TASKS.md`), apply a different method, or escalate to `LEARNING_BRIEF`. Update `CURRENT_STATE.md` with the proposed workaround.
+- **Breakdown format**: `TASKS.md` uses IDs (`m1-t1-st1`) so each sub-subtask can have its own counter line; never share a budget across unrelated subtasks.
+
+Example (your evaluation.py failure): attempt 1 failed due to context mismatch; attempt 2 should read the exact block from the file, confirm indentation; attempt 3 triggers reviewer → RCA = "edit tool requires exact match" → workaround = construct exact string from `read` output, edit once; if that also fails, split into sub-subtask (`read` verification → `edit` application → `test`) rather than repeating the same edit attempt.
+
+Never retry the same action unchanged after a failure.
 
 ## 4. Project Knowledge
 
