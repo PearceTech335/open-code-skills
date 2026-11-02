@@ -62,25 +62,6 @@ For non-trivial tasks:
 > pointer. This file adds the project's workflow, knowledge layout, and the
 > self-improving Skill Policy.
 
-## 1. Mission
-
-<One or two sentences: what this project is, and its priorities in order.
-Example: "Build and maintain X. Priorities: 1) correctness, 2) data integrity,
-3) testability, 4) performance. A passing test suite does not by itself
-establish correctness.">
-
-## 2. Mandatory Task Startup
-
-At the start of every new task:
-
-1. Check `memory/PROJECT_INDEX.md`. If missing or stale: load `repo-discovery`, inspect repository structure, and create/update `memory/PROJECT_INDEX.md` before any task work.
-2. Read `memory/CURRENT_STATE.md`.
-3. Read `TASKS.md` to identify the active task and dependencies.
-4. Identify the relevant project area and inspect its current implementation.
-5. Load the most relevant available skill using the native skill tool.
-6. Load additional skills only when their guidance is needed.
-
-For an unfamiliar subsystem, load `repo-discovery` before modifying code.
 
 Do not read the entire repository by default. Follow the project index to the
 relevant files.

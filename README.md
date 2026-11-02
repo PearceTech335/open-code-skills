@@ -89,10 +89,10 @@ Project-level starter (`templates/AGENTS_TEMPLATES/`) layers on top of this glob
 This repo wires up the framework for sustained, multi-turn agentic work — from overnight autonomous tasks (`autopilot.md`) through adversarial review (`reviewer.md`) to autonomous skill creation (`self-help`). Each piece is designed to survive beyond a single prompt.
 
 ### Subagent Delegation
-Every agent is a `.md` spec (`agents/*.md` + `commands/*.md`), not a JSON block. Loading is explicit: load `agent-core` first (Skill Inventory Protocol), then invoke `coder` / `research` / `reviewer` / `autopilot` via the planner or `--agent` flag. All inherit the active `model`; no per-agent provider divergence (`small_model` removed from `opencode.json`).
+Every agent is a `.md` spec (`agents/*.md` + `commands/*.md`), not a JSON block. Loading is explicit: load `agent-core` first (Skill Inventory Protocol), then invoke `coder` / `research` / `reviewer` / `autopilot` via the planner or `--agent` flag. All inherit the active `model`; no per-agent provider divergence.
 
 ### Persistent Memory & Task Lifecycle
-Memory is file-first, not context-window-first. Before any multi-turn task, load `memory/PROJECT_INDEX.md`, `memory/CURRENT_STATE.md`, `memory/ARCHITECTURE.md`, and `memory/DECISIONS.md`. `TASKS.md` splits work into milestones; `RESEARCH.md` logs findings with verified/probable/preliminary labels; `PROGRESS.md` writes nightly status. This keeps any single-turn context small — the framework fills what the model sees from persistent files, not from a growing prompt.
+Memory is file-first, not context-window-first. Before any multi-turn task, load `memory/PROJECT_INDEX.md`, `memory/CURRENT_STATE.md`, `memory/ARCHITECTURE.md`, and `memory/DECISIONS.md`. `TASKS.md` splits work into milestones; `RESEARCH.md` logs findings with verified/probable/preliminary labels; `PROGRESS.md` writes status. This keeps any single-turn context small — the framework fills what the model sees from persistent files, not from a growing prompt.
 
 ### Self-Improving Loop (Autonomous Skill Generation)
 When a failure survives a second correction attempt on a **knowledge-gap** root cause (`ALGORITHM_UNDERSTANDING_GAP`, `API_OR_LIBRARY_MISUSE`, `DATA_OR_SCHEMA_CONVENTION_GAP`, etc. — never a trivial `IMPLEMENTATION_DEFECT`), `reviewer.md` emits an `LEARNING_BRIEF` block. From there:
