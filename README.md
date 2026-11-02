@@ -115,6 +115,26 @@ Auto-approved skills are provisional — audit `.opencode/skills/` and `metrics.
 ### Failure Budget (3-Strike Gate)
 Every sub-subtask (`TASKS.md` ID) gets its own `memory/learning/tasks/<id>-attempts.jsonl`; after resolution (success/final failure/workaround) summarize one line to `memory/learning/metrics.jsonl` and delete the per-task file — no unbounded growth.
 
+### Project-Level Starter & GitHub Sync
+`templates/AGENTS_TEMPLATES/` is the full starter scaffold (not just snippets). Copy it into a new project root and commit to that project's repo:
+
+```text
+<project-root>/
+├── AGENTS.md              # §3 execution + §3.5 failure budget (3-strike gate)
+├── TASKS.md               # milestone / sub-subtask IDs (mN-tN-stN-ssN)
+├── memory/
+│   ├── CURRENT_STATE.md   # active milestone + open sub-subtasks
+│   ├── PROJECT_INDEX.md   # repo navigation
+│   ├── learning/tasks/    # per-sub-subtask attempt files (created, then purged)
+│   ├── learning/metrics.jsonl  # summary line after resolution
+│   └── ...
+├── .opencode/
+│   └── skills/            # project-scoped skills (optional)
+└── README.md              # copies the Long Horizon section
+```
+
+How it syncs: the starter layers on global `~/.config/opencode/` (skills, agents, `opencode.json`). Project `AGENTS.md` can declare `auto-approve: project-skills` (§6) and the failure-budget rules (§3.5) independently of any machine — the same rules run whether the endpoint is local or remote. Push the starter folder to the project repo so collaborators inherit the same task-breakdown format, retry-counter rotation rule (`memory/learning/tasks/<id>-attempts.jsonl` → `metrics.jsonl` → delete), and `reviewer`-emission workflow without recreating it.
+
 ### Endpoint & Model Configuration
 `opencode.json` declares endpoint providers generically (`ollama`, `lmstudio-local`, `lmstudio`) and a single `model`; `small_model` removed so all subagents inherit one path — no cross-endpoint routing divergence. The framework is endpoint-agnostic: the same `.md` specs and skills work regardless of which server is active, as long as the declared `model` supports tool calls.
 
