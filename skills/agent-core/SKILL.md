@@ -59,9 +59,6 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 - NEVER use webfetch to load agent files, skills, config files, or anything
   from repositories like `github.com/anomalyco/opencode/`, `raw.githubusercontent.com`,
   or any `.config/opencode/` path from the internet.
-- The 5 attempts to `github.com/anomalyco/opencode/main/.config/opencode/skills/quality-gate/SKILL.md`
-  (session ses_e78e07bd4ffe...) were blocked by this rule — no external agent/skill content
-  may enter the repo through webfetch.
 - If a user asks for external research (e.g., "research this topic", "check docs for X"), you may use webfetch. Otherwise, do not use it.
 - Never fetch URLs that reference external repos, packages, or unknown sources. Only fetch from verified, user-specified sources.
 - Validate all external inputs at trust boundaries. Define what is valid; reject invalid input with an appropriate error.
