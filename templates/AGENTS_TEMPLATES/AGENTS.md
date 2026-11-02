@@ -11,13 +11,15 @@
 ## 1. Mission
 
 <One or two sentences: what this project is, and its priorities in order.
-Example: "Build and maintain X. Priorities: 
+Example: "Build and maintain X.">
+
+Priorities: 
 1) correctness
 2) data integrity
 3) testability
 4) performance
 A passing test suite does not by itself
-establish correctness.">
+establish correctness.
 
 ## 2. Mandatory Task Startup
 
@@ -101,7 +103,7 @@ Every sub-subtask earns its own file, not an append-only global log: write attem
 Rules:
 - Write each attempt line to `memory/learning/tasks/<task-id>-attempts.jsonl` (not a global file).
 - **Attempt 1 (fail)**: retry with a different approach — inspect file bytes exactly (`read`), verify whitespace/indentation, confirm exact oldString.
-- **Attempt 2 (fail)**: load `reviewer` or `research` subagent to diagnose root cause. Write diagnosis to `memory/learning/briefs/<task-id>-attempt2.md`. Do NOT retry blindly.
+- **Attempt 2 (fail)**: load `reviewer` or `research` subagent to diagnose root cause. Write diagnosis to `memory/learning/briefs/<task-id>-attempt2.md`. Classify: if root cause is a tool/execution failure (e.g., edit oldString mismatch, exact-match requirement, environment) → stay local; do not emit `LEARNING_BRIEF` or load global `self-help`. Only if the root cause is a recurring structural knowledge gap (`ALGORITHM_UNDERSTANDING_GAP`, `API_OR_LIBRARY_MISUSE`, `DATA_OR_SCHEMA_CONVENTION_GAP`, etc.) emit a `LEARNING_BRIEF` block for §5. Do NOT retry blindly.
 - **Attempt 3 (fail)**: stop retrying this sub-subtask. Write proposed workaround to `memory/CURRENT_STATE.md`, load `autopilot.md` or split further in `TASKS.md`. Then summarize one line (`{task_id,subtask,attempts,status,root_cause,workaround}`) to `memory/learning/metrics.jsonl` and delete `memory/learning/tasks/<task-id>-attempts.jsonl`.
 - **Breakdown format**: `TASKS.md` uses IDs (`mN-tN-stN-ssN`) so each sub-subtask can have its own `memory/learning/tasks/<id>-attempts.jsonl`; never share a budget across unrelated subtasks.
 

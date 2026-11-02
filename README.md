@@ -113,7 +113,7 @@ Auto-approved skills are provisional — audit `.opencode/skills/` and `metrics.
 `AGENTS.md` §6 declares `auto-approve: project-skills` and the cap above; set policy to `off` for full human gate. Skills live in `skills/` (global) and `.opencode/skills/` (project); agent specs live in `agents/*.md` + `commands/*.md`. `templates/AGENTS_TEMPLATES/` is the copy/paste starter (includes `AGENTS.md`, `TASKS.md`, `memory/`, `.opencode/skills/`). No JSON `agent` block — managing agents is add/remove one `.md` file.
 
 ### Failure Budget (3-Strike Gate)
-Every sub-subtask (`TASKS.md` ID) gets its own `memory/learning/tasks/<id>-attempts.jsonl`; after resolution (success/final failure/workaround) summarize one line to `memory/learning/metrics.jsonl` and delete the per-task file — no unbounded growth.
+Every sub-subtask (`TASKS.md` ID) gets its own `memory/learning/tasks/<id>-attempts.jsonl`; after resolution (success/final failure/workaround) summarize one line to `memory/learning/metrics.jsonl` and delete the per-task file — no unbounded growth. Tool/execution failures (repeated edit mismatches, exact-match errors) stay local (reviewer RCA, workaround, no global `self-help`) unless `reviewer` classifies a recurring structural gap (`ALGORITHM_UNDERSTANDING_GAP`, etc.), which then triggers §5.
 
 ### Project-Level Starter
 `templates/AGENTS_TEMPLATES/` is the full starter scaffold (not snippets). Copy it into a new project root to implement locally:
