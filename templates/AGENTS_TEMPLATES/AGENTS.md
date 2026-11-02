@@ -113,15 +113,16 @@ Never claim a test passed unless executed and observed.
 
 ## 3.5 Failure Budget & Root-Cause Gate
 
-Every subtask (projects → tasks → subtasks → sub-subtasks) has its own retry budget of **3 attempts** before a subagent must investigate. Track in `memory/learning/retry-counters.jsonl` (one JSON line per attempt):
+Every sub-subtask earns its own file, not an append-only global log: write attempts to `memory/learning/tasks/<task-id>-attempts.jsonl` (one line per try). When the sub-subtask resolves (success, final failure, or workaround adopted), append **one** summary line to `memory/learning/metrics.jsonl` — then delete `<task-id>-attempts.jsonl`. Never leave per-task tracking files after resolution; never grow `metrics.jsonl` beyond one line per sub-subtask.
 
 `{"timestamp":"...","task_id":"m1-t1","subtask":"st1-edit-eval","attempt":1,"status":"fail","reason":"oldString mismatch on evaluation.py"}`
 
 Rules:
+- Write each attempt line to `memory/learning/tasks/<task-id>-attempts.jsonl` (not a global file).
 - **Attempt 1 (fail)**: retry with a different approach — inspect file bytes exactly (`read`), verify whitespace/indentation, confirm exact oldString.
-- **Attempt 2 (fail)**: load `reviewer` or `research` subagent to diagnose root cause (e.g., edit-tool exact-match requirement, missing import, wrong file). Write diagnosis to `memory/learning/briefs/<task-id>-attempt2.md`. Do NOT retry blindly.
-- **Attempt 3 (fail)**: stop retrying this subtask. Load `autopilot.md` or `reviewer.md` to propose a workaround: split sub-subtask further (`TASKS.md`), apply a different method, or escalate to `LEARNING_BRIEF`. Update `CURRENT_STATE.md` with the proposed workaround.
-- **Breakdown format**: `TASKS.md` uses IDs (`m1-t1-st1`) so each sub-subtask can have its own counter line; never share a budget across unrelated subtasks.
+- **Attempt 2 (fail)**: load `reviewer` or `research` subagent to diagnose root cause. Write diagnosis to `memory/learning/briefs/<task-id>-attempt2.md`. Do NOT retry blindly.
+- **Attempt 3 (fail)**: stop retrying this sub-subtask. Write proposed workaround to `memory/CURRENT_STATE.md`, load `autopilot.md` or split further in `TASKS.md`. Then summarize one line (`{task_id,subtask,attempts,status,root_cause,workaround}`) to `memory/learning/metrics.jsonl` and delete `memory/learning/tasks/<task-id>-attempts.jsonl`.
+- **Breakdown format**: `TASKS.md` uses IDs (`mN-tN-stN-ssN`) so each sub-subtask can have its own `memory/learning/tasks/<id>-attempts.jsonl`; never share a budget across unrelated subtasks.
 
 Example (your evaluation.py failure): attempt 1 failed due to context mismatch; attempt 2 should read the exact block from the file, confirm indentation; attempt 3 triggers reviewer → RCA = "edit tool requires exact match" → workaround = construct exact string from `read` output, edit once; if that also fails, split into sub-subtask (`read` verification → `edit` application → `test`) rather than repeating the same edit attempt.
 
