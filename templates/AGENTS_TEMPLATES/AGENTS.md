@@ -11,8 +11,12 @@
 ## 1. Mission
 
 <One or two sentences: what this project is, and its priorities in order.
-Example: "Build and maintain X. Priorities: 1) correctness, 2) data integrity,
-3) testability, 4) performance. A passing test suite does not by itself
+Example: "Build and maintain X. Priorities: 
+1) correctness
+2) data integrity
+3) testability
+4) performance
+A passing test suite does not by itself
 establish correctness.">
 
 ## 2. Mandatory Task Startup
@@ -41,12 +45,12 @@ For non-trivial tasks:
 2. Establish expected behaviour and acceptance criteria.
 3. Identify affected modules and tests.
 4. Load the language/domain skill (e.g., `python-code`, `go-code`) and plan the smallest coherent change.
-5. If task is difficult/complex, load esearcher\ subagent to fill knowledge gap
-6. Load \coder\ subagent (or implement directly using the loaded skill) — write the change.
+5. If task is difficult/complex, load `researcher` subagent to fill knowledge gap
+6. Load `coder` subagent (or implement directly using the loaded skill) — write the change.
 7. Use GIT at step 6 (commit after plan/change).
 8. Run targeted tests.
 9. Run relevant regression tests.
-10. Load eviewer\ subagent to inspect diff / review correctness, security, architecture.
+10. Load `reviewer` subagent to inspect diff / review correctness, security, architecture.
 11. Record actual results and unresolved issues in \memory/CURRENT_STATE.md\.
 # <PROJECT_NAME> — Agent Instructions
 
