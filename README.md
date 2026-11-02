@@ -84,38 +84,36 @@ Project-level starter (`templates/AGENTS_TEMPLATES/`) layers on top of this glob
 
 ---
 
-## 🔄 Autonomous Learning Loop (Self-Improving Skills)
+## ⚡ Long Horizon Agentic Tasks
 
-This repo wires up the **Review-Triggered Learning Brief → Self-Help → Skill → Retry → Metrics** loop defined in `AGENTS.md` (§5, Learning Loop) and `skills/self-help/SKILL.md`.
+This repo wires up the framework for sustained, multi-turn agentic work — from overnight autonomous tasks (`autopilot.md`) through adversarial review (`reviewer.md`) to autonomous skill creation (`self-help`). Each piece is designed to survive beyond a single prompt.
 
-**How it activates:** When the `reviewer` subagent (`agents/reviewer.md`) survives a second correction attempt on a knowledge-gap failure, it emits a `LEARNING_BRIEF` block.
+### Subagent Delegation
+Every agent is a `.md` spec (`agents/*.md` + `commands/*.md`), not a JSON block. Loading is explicit: load `agent-core` first (Skill Inventory Protocol), then invoke `coder` / `research` / `reviewer` / `autopilot` via the planner or `--agent` flag. All inherit the active `model`; no per-agent provider divergence (`small_model` removed from `opencode.json`).
 
-**Path:**
+### Persistent Memory & Task Lifecycle
+Memory is file-first, not context-window-first. Before any multi-turn task, load `memory/PROJECT_INDEX.md`, `memory/CURRENT_STATE.md`, `memory/ARCHITECTURE.md`, and `memory/DECISIONS.md`. `TASKS.md` splits work into milestones; `RESEARCH.md` logs findings with verified/probable/preliminary labels; `PROGRESS.md` writes nightly status. This keeps any single-turn context small — the framework fills what the model sees from persistent files, not from a growing prompt.
+
+### Self-Improving Loop (Autonomous Skill Generation)
+When a failure survives a second correction attempt on a **knowledge-gap** root cause (`ALGORITHM_UNDERSTANDING_GAP`, `API_OR_LIBRARY_MISUSE`, `DATA_OR_SCHEMA_CONVENTION_GAP`, etc. — never a trivial `IMPLEMENTATION_DEFECT`), `reviewer.md` emits an `LEARNING_BRIEF` block. From there:
+
 ```
-1. reviewer → LEARNING_BRIEF block
-2. Write brief → memory/learning/briefs/<task-id>.md  (template: skills/self-help/templates/learning-brief.md)
-3. Load self-help skill → pass Brief path
-4. self-help researches (≥2 sources, cross-check, critique, counterexample, repro)
-5. Drafts Power-of-10 skill → .opencode/skills/<new-skill>/SKILL.md  (template: skills/self-help/templates/skill-template.md)
-6. Learning Gate (5 checks: evidence, relevance, correctness, scope, executable check)
-7. Approval via AGENTS.md §6 Skill Policy:
-     auto-approve: project-skills  → activates as auto-approved-provisional
-     (line removed / off)          → pauses for human review
-8. Retry against ORIGINAL criteria (not weakened) + FULL regression suite
-9. Append JSON line → memory/learning/metrics.jsonl
+1. Planner writes brief → memory/learning/briefs/<task-id>.md
+2. Load self-help skill (skills/self-help/SKILL.md) → pass Brief path
+3. Self-help researches (≥2 verified sources + adversarial counterexample + reproducible test)
+4. Drafts compact Power-of-10 skill → .opencode/skills/<new-skill>/SKILL.md
+5. Learning Gate: evidence, relevance, correctness, scope, executable check
+6. Approval: AGENTS.md §6 Skill Policy — auto-approve: project-skills activates as provisional; off pauses for human review
+7. Retry against ORIGINAL criteria (never weakened) + FULL regression suite
+8. Append JSON line → memory/learning/metrics.jsonl
 ```
+Auto-approved skills are provisional — audit `.opencode/skills/` and `metrics.jsonl`. Cap: `max-new-skills-per-run: 3`; exceed → stop/escalate.
 
-**Agent / skill file placement:**
-- Project-specific skills → `.opencode/skills/` (inside your project root)
-- Global skills → `~/.config/opencode/skills/` (this repo's contents)
-- Agent specs (reviewer, coder, etc.) → `agents/*.md` + `commands/*.md`
-- Project starter / template → `templates/AGENTS_TEMPLATES/` (copy/paste to new project root; layers on global `AGENTS.md`)
+### Skill Policy & Lightweight Design
+`AGENTS.md` §6 declares `auto-approve: project-skills` and the cap above; set policy to `off` for full human gate. Skills live in `skills/` (global) and `.opencode/skills/` (project); agent specs live in `agents/*.md` + `commands/*.md`. `templates/AGENTS_TEMPLATES/` is the copy/paste starter (includes `AGENTS.md`, `TASKS.md`, `memory/`, `.opencode/skills/`). No JSON `agent` block — managing agents is add/remove one `.md` file.
 
-**Key guardrails from `AGENTS.md`:**
-- Never generate for trivial `IMPLEMENTATION_DEFECT`
-- Never weaken acceptance criteria for retry
-- Auto-approved skills are provisional — audit in `.opencode/skills/` + `metrics.jsonl`
-- Cap: `max-new-skills-per-run: 3`; exceed → stop/escalate
+### Endpoint & Model Configuration
+`opencode.json` declares endpoint providers generically (`ollama`, `lmstudio-local`, `lmstudio`) and a single `model`; `small_model` removed so all subagents inherit one path — no cross-endpoint routing divergence. The framework is endpoint-agnostic: the same `.md` specs and skills work regardless of which server is active, as long as the declared `model` supports tool calls.
 
 ---
 
