@@ -37,19 +37,23 @@ If an index entry is missing or stale, verify the repository and correct it.
 
 For non-trivial tasks:
 
-1. Explore the existing implementation.
+1. Load `repo-discovery` (unfamiliar subsystem) or inspect implementation.
 2. Establish expected behaviour and acceptance criteria.
 3. Identify affected modules and tests.
-4. Plan the smallest coherent change.
-5. Implement the change.
+4. Load the language/domain skill (e.g., `python-code`, `go-code`) and plan the smallest coherent change.
+5. Load `coder` subagent (or implement directly using the loaded skill) — write the change.
 6. Run targeted tests.
 7. Run relevant regression tests.
-8. Inspect the resulting diff.
-9. Record actual results and unresolved issues.
+8. Load `reviewer` subagent to inspect diff / review correctness, security, architecture.
+9. Record actual results and unresolved issues in `memory/CURRENT_STATE.md`.
 
-Never claim a test passed unless it was executed and its result observed.
+Use GIT at steps 5 (commit) and 8 (review diff).
 
-Do not weaken tests or acceptance criteria to make a change pass.
+When a failure survives a second correction attempt on a knowledge gap:
+- Load `self-help`, pass the `LEARNING_BRIEF`.
+- After skill approval (§6), retry against ORIGINAL criteria; do not weaken.
+
+Never claim a test passed unless executed and observed.
 
 ## 4. Project Knowledge
 
