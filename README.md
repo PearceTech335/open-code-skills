@@ -8,7 +8,7 @@ A curated collection of production-grade, highly compressed, Power-of-10-inspire
 
 ## 🌟 Self-Help Yourself - The `self-help` Skill
 
-When an AI agent hits a persistent, systemic knowledge gap during task execution (such as encountering an unhandled domain framework or complex protocol), it triggers **therapy mode** via the **`self-help`** skill (located in `skills/self-help/`):
+When an AI agent hits a persistent, systemic knowledge gap during task execution (such as encountering an unhandled domain framework or complex protocol), you can trigger **therapy mode** via the **`self-help`** skill (located in `skills/self-help/`):
 
 1. **Functional Friction & Discovery**: Instead of sniffing out flaws continuously, the agent discovers a gap when hitting repeated roadblocks where existing Power-of-10 skills (`python-code`, `designer`, etc.) fall short, or when invoked directly via `/improve`.
 2. **Strict Gap Analysis**: It proves the gap is structural and recurring (*"Remember: reading a self-help book doesn't fix a broken chair"* — one-off difficult bugs do not qualify).
