@@ -67,6 +67,15 @@ Never claim a test passed unless executed and observed.
 
 ## 3.5 Failure Budget & Root-Cause Gate
 
+Before ticking any sub-subtask complete:
+1. Load `reviewer` subagent (`--agent reviewer`) with `templates/subagent-calls/reviewer.md`.
+2. The reviewer performs adversarial review using the structured PASS/FAIL checklist (§7.7) — 10 axes with one-line verdicts per axis.
+3. If any axis fails: do NOT tick. Document failure in `RESEARCH.md` (line refs, evidence, severity, which option was evaluated), fix or split further, retry.
+4. Only tick when all 10 axes pass AND verification commands ran with observed output.
+5. This applies to ALL sub-subtasks, not just the final milestone — overnight runs must not silently accumulate errors.
+
+The planner never approves its own work unverified — an adversarial subagent verifies each step.
+
 Every sub-subtask earns its own file, not an append-only global log: write attempts to `memory/learning/tasks/<task-id>-attempts.jsonl` (one line per try). When the sub-subtask resolves (success, final failure, or workaround adopted), append **one** summary line to `memory/learning/metrics.jsonl` — then delete `<task-id>-attempts.jsonl`. Never leave per-task tracking files after resolution; never grow `metrics.jsonl` beyond one line per sub-subtask.
 
 `{"timestamp":"...","task_id":"m1-t1","subtask":"st1-edit-eval","attempt":1,"status":"fail","reason":"oldString mismatch on evaluation.py"}`

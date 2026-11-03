@@ -28,6 +28,30 @@ When the condition is unclear or multiple options exist (e.g., different fix app
 
 This prevents the planner from giving vague prompts that produce unverified reports. Each option gets a focused, verifiable assessment.
 
+## 2.6 Adversarial Review Per Task (overnight safety)
+
+Before ticking any task complete in the loop:
+
+1. Load `reviewer` subagent (`--agent reviewer`) with `templates/subagent-calls/reviewer.md`.
+2. The reviewer performs adversarial review: find bugs (not confirm correctness), construct counterexamples, check security boundaries, verify tests.
+3. The reviewer uses the structured PASS/FAIL checklist (`AGENTS.md` §7.7) — 10 axes with one-line verdicts.
+4. If any axis fails: do NOT tick. Document failure in `RESEARCH.md` (line refs, evidence, severity), fix or split the sub-subtask, and retry.
+5. Only tick when all 10 axes pass (PASS) and verification commands ran with observed output.
+6. For ambiguous conditions (multiple valid fixes): load `templates/subagent-calls/research.md` (Multi-Path Decision Protocol) before committing to one path — evaluate each option independently against suitability, security, performance.
+
+This ensures autonomous runs don't silently degrade quality. The planner doesn't approve its own work — an adversarial subagent verifies it.
+
+## 2.7 Deep Research Before Decomposition (for complex tasks)
+
+When a sub-subtask requires >1 file or >30 min:
+1. Read `PROJECT_INDEX.md` first.
+2. Load `templates/subagent-calls/research.md` and fill in the bracketed sections.
+3. Invoke `--agent research` with the completed template.
+4. Decompose the task into sub-subtasks (`TASKS.md` IDs `mN-tN-stN-ssN`) before implementing.
+5. Each sub-subtask gets its own `memory/learning/tasks/<id>-attempts.jsonl` file.
+
+This prevents the planner from giving vague prompts that produce unverified reports.
+
 ## 3. Loop protocol (read → inspect → document → edit → verify → tick)
 
 - Read target file / index entry.
