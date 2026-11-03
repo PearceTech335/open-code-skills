@@ -43,11 +43,14 @@ Append JSON line to memory/learning/metrics.jsonl
 Audit provisional skills in .opencode/skills/ + metrics.jsonl
 ```
 
+**Two-Phase Split (§7.6):** When triggered, Phase A (research + draft) runs on the planner; Phase B (Learning Gate validation) runs on the reviewer. Quality is preserved — same research depth, same Learning Gate.
+
 **Key rules from `AGENTS.md`:**
 - Never generate a skill for a trivial `IMPLEMENTATION_DEFECT`.
 - Never weaken original acceptance criteria to make retry pass.
 - Auto-approved skills are `Status: auto-approved-provisional`; always audit.
 - `max-new-skills-per-run: 3` (cap per autonomous run; exceed → stop/escalate).
+- Tool/execution failures (repeated edit mismatches, exact-match errors) stay local (reviewer RCA, workaround, no global `self-help`) unless `reviewer` classifies a recurring structural gap, which then triggers §5.
 
 ## Where agent/skill files live
 
@@ -84,14 +87,41 @@ This directory (`C:\Users\pearc\.config\opencode\templates/AGENTS_TEMPLATES/`) h
 
 When creating a new project: copy the contents of `/templates/AGENTS_TEMPLATES/` (not the folder envelope) into the new repo root, then edit Section 1 (Mission) and `memory/PROJECT_INDEX.md` from the real repo.
 
+## Subagent Invocation Templates (`templates/subagent-calls/`)
+
+Standardized prompt templates for invoking subagents. Use the corresponding template when invoking a subagent — fill in the bracketed sections:
+
+| Template | Purpose |
+|----------|---------|
+| `researcher.md` | Investigation/discovery tasks |
+| `reviewer.md` | Code review tasks |
+| `coder.md` | Code generation tasks |
+| `autopilot.md` | Overnight/unattended runs |
+
+If no template exists for the task type, create one via the self-help process (§7.5) before invoking. Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
+
+## Failure Budget (§3.5 of AGENTS.md)
+
+Every sub-subtask (`TASKS.md` ID) gets its own `memory/learning/tasks/<id>-attempts.jsonl`; after resolution (success/final failure/workaround) summarize one line to `memory/learning/metrics.jsonl` and delete the per-task file — no unbounded growth. Tool/execution failures stay local (reviewer RCA, workaround, no global `self-help`) unless `reviewer` classifies a recurring structural gap.
+
+## Research Decomposition (§3.9 of AGENTS.md)
+
+When given a vague or broad research prompt, do not attempt to answer in one pass: (1) broad-brush scan to identify major areas and sub-questions, (2) decompose into 3-5 specific targeted sub-questions, (3) invoke researcher for each sub-question with a focused prompt, (4) synthesize findings into the final report.
+
+## Subagent Output Verification (§3.8 of AGENTS.md)
+
+When a subagent returns a report, the planner must verify key claims before using them: (1) mandatory answer to the mission question stated, (2) every factual claim has attached evidence (command/file reference), (3) no empty sections, (4) cross-check with at least two independent sources.
+
 ## Verification checklist (before reporting complete)
 
 - [ ] `AGENTS.md` Section 1 filled (Mission); §5 (Learning Loop) and §6 (Skill Policy) intact.
-- [ ] `TASKS.md` reflects actual milestone/task status.
+- [ ] §3.5 (Failure Budget), §3.6 (Subagent Templates), §3.7 (Planner vs Execution), §3.8 (Output Verification), §3.9 (Research Decomposition) intact.
+- [ ] §7.5-§7.9 intact (Template Management, Self-Help Two-Phase, Reviewer Checklist, Deep Research, Compact Learning Brief).
+- [ ] `TASKS.md` reflects actual milestone/task status with sub-subtask IDs (`mN-tN-stN-ssN`).
 - [ ] `memory/PROJECT_INDEX.md` verified against repo; paths exist, not invented.
 - [ ] `.opencode/skills/` exists with `.gitkeep`; first skill draft placed when loop triggers.
-- [ ] `memory/learning/briefs/` + `metrics.jsonl` present (zero-byte sink ready).
-- [ ] `model` / `small_model` in `opencode.json` point at the intended endpoint; no stale `lm-studio/` prefixes; subagent inheritance verified.
+- [ ] `memory/learning/briefs/` + `metrics.jsonl` + `tasks/` present (zero-byte sink ready).
+- [ ] `templates/subagent-calls/` contains invocation templates (researcher, reviewer, coder, autopilot).
 - [ ] Evidence for any skill creation: source URLs, cross-check ≥2, counterexample, reproduction, Learning Gate checks.
 
 
