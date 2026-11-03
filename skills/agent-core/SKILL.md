@@ -123,3 +123,12 @@ When the operator gives a vague or broad research prompt, do NOT attempt to answ
 3. Targeted research: invoke the researcher for each sub-question with a specific prompt using templates/subagent-calls/researcher.md. Each prompt answers ONE question.
 4. Synthesize: after all sub-researchers return, synthesize findings into the final report. The planner (not the sub-researchers) does the synthesis.
 This ensures each researcher call is focused and verifiable, rather than one massive vague prompt that produces unverified claims.
+
+## Subagent Invocation Reference
+
+- --agent research: loads agents/research.md (fast file parser, discovery)
+- --agent reviewer: loads agents/reviewer.md (adversarial review, LEARNING_BRIEF emitter)
+- --agent coder: loads agents/coder.md (code generation subagent)
+- --agent autopilot: loads agents/autopilot.md (overnight autonomous worker)
+- --agent network-engineer: loads agents/network-engineer.md (OT/network troubleshooting)
+The template file (templates/subagent-calls/) provides the structured prompt; the agent spec (agents/) provides the role definition. Both must match.

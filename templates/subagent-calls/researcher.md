@@ -1,6 +1,6 @@
 # Researcher Subagent Invocation Template
 
-Use this template when invoking the `research` subagent. Fill in the bracketed sections. Keep the structure — it forces a systematic investigation.
+Use this template when invoking the `research` subagent (`--agent research`). Fill in the bracketed sections. Keep the structure — it forces a systematic investigation.
 
 ---
 

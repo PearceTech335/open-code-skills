@@ -47,7 +47,7 @@ For non-trivial tasks:
 2. Establish expected behaviour and acceptance criteria.
 3. Identify affected modules and tests.
 4. Load the language/domain skill (e.g., `python-code`, `go-code`) and plan the smallest coherent change.
-5. If task is difficult/complex, load `researcher` subagent to fill knowledge gap
+5. If task is difficult/complex, invoke via `--agent research` to fill knowledge gap
 6. Load `coder` subagent (or implement directly using the loaded skill) — write the change.
 7. Use GIT at step 6 (commit after plan/change).
 8. Run targeted tests.
@@ -85,7 +85,7 @@ Never retry the same action unchanged after a failure.
 ## 3.6 Subagent Invocation Templates
 
 When invoking a subagent, use the corresponding template from `templates/subagent-calls/`:
-- `researcher.md` — for investigation/discovery tasks
+- `researcher.md` — for investigation/discovery tasks (invoke: `--agent research`)
 - `reviewer.md` — for code review tasks
 - `coder.md` — for code generation tasks
 - `autopilot.md` — for overnight/unattended runs

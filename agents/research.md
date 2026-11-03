@@ -1,5 +1,6 @@
 ---
 description: Fast file parser. Uses the configured model (same as planner; no independent model load). Delegated by planner for discovery tasks.
+invocation: --agent research
 mode: subagent
 temperature: 0.4
 permission:
