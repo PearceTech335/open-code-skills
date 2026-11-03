@@ -80,7 +80,7 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 - Close resources explicitly via `with`/try-finally.
 - Check return values. Handle errors at the appropriate boundary.
 
-## Small-Model Guardrails (when model_tier == small)
+## Guardrails
 
 - **Skill-count cap**: Load at most 2 skills per task. If more are needed, split the task into sub-tasks.
 - **Stop-and-ask threshold**: If you cannot verify an assumption with a single file read or command, label it PRELIMINARY and stop. Do not proceed on unverified assumptions.
@@ -104,4 +104,4 @@ When invoking a subagent, use the corresponding template from templates/subagent
 - autopilot.md -- overnight/unattended runs
 
 Fill in the bracketed sections. If no template exists, create one via self-help (section 7.5) before invoking.
-Templates ensure the small model receives a structured, complete prompt rather than an ad-hoc one.
+Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.

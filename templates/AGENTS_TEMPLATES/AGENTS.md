@@ -13,7 +13,7 @@
 <One or two sentences: what this project is, and its priorities in order.
 Example: "Build and maintain X.">
 
-Priorities: 
+Priorities:
 1) correctness
 2) data integrity
 3) testability
@@ -63,7 +63,7 @@ When a failure survives a second correction attempt on a knowledge gap:
 
 Never claim a test passed unless executed and observed.
 
-- **Stop-and-ask threshold (small models)**: If you cannot verify an assumption with a single file read or command, label it `PRELIMINARY` and stop. Do not proceed on unverified assumptions. Ask or document the blocker rather than guessing.
+- **Stop-and-ask threshold**: If you cannot verify an assumption with a single file read or command, label it `PRELIMINARY` and stop. Do not proceed on unverified assumptions. Ask or document the blocker rather than guessing.
 
 ## 3.5 Failure Budget & Root-Cause Gate
 
@@ -90,7 +90,16 @@ When invoking a subagent, use the corresponding template from `templates/subagen
 - `coder.md` — for code generation tasks
 - `autopilot.md` — for overnight/unattended runs
 
-Fill in the bracketed sections. If no template exists for the task type, create one via the self-help process (§7.5) before invoking the subagent. Templates ensure the small model receives a structured, complete prompt rather than an ad-hoc one.
+Fill in the bracketed sections. If no template exists for the task type, create one via the self-help process (§7.5) before invoking the subagent. Templates ensure a structured, complete prompt rather than an ad-hoc one.
+
+## 3.7 Planner vs Execution Model Divergence
+
+- All planning, root-cause classification, `LEARNING_BRIEF` emission, and approval decisions use the planner endpoint (declared in `opencode.json` as `model`).
+- Subagent execution (`coder`, `research`, `reviewer`, `autopilot`) must route through the local endpoint (declared in `opencode.json` as the local provider) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
+- Rationale: planner token budget is limited (daily allowance); execution token budget is unbounded (local GPU). Enforce this split at every subagent invocation to protect the planner's cap and avoid burning free tokens on code-generation loops.
+- If subagent execution needs a different model for a specific task, declare it in the subagent spec (`execution_model`) rather than overriding the planner's `model`.
+
+## 4. Project Knowledge
 
 Persistent project knowledge lives in `memory/`.
 
@@ -155,7 +164,6 @@ Global skills provide reusable engineering practices.
 Project skills live in `.opencode/skills/`.
 
 Before creating a new skill:
-
 1. Check whether an existing skill already covers the problem.
 2. Determine whether the gap is recurring and project-specific.
 3. If project-specific, draft the skill under `.opencode/skills/`.
@@ -179,24 +187,24 @@ Before producing structured output (learning brief, skill draft, task breakdown,
 
 ## 7.6 Self-Help Two-Phase Split (quality-preserving)
 
-When a knowledge-gap failure triggers `self-help` (§5), split the pipeline into two phases to reduce load on small models:
+When a knowledge-gap failure triggers `self-help` (§5), split the pipeline into two phases:
 
-**Phase A — Research + Draft (planner, cloud model):**
+**Phase A — Research + Draft (planner):**
 1. Load `self-help` and read the Learning Brief.
 2. Research: websearch → cross-check (≥2 sources) → adversarial critique → reproducible example.
 3. Draft the skill using `templates/skill-template.md`.
 4. Output: draft skill + sources + evidence labels.
 
-**Phase B — Learning Gate (reviewer, small model):**
+**Phase B — Learning Gate (reviewer):**
 1. Validate all 5 checks (evidence, relevance, correctness, scope, executable check).
 2. Approve or reject with one-line reason per check.
 3. If approved → activate as `auto-approved-provisional` (per §6). If rejected → return to Phase A with specific feedback.
 
-Quality is preserved: same research depth, same Learning Gate. The split just moves heavy reasoning to the planner and verification to the small model.
+Quality is preserved: same research depth, same Learning Gate. The split just moves heavy reasoning to the planner and verification to the reviewer.
 
-## 7.7 Reviewer Checklist Format (small-model optimized)
+## 7.7 Reviewer Checklist Format
 
-When `reviewer` runs on a small model, use a structured pass/fail checklist instead of open-ended prose. For each axis, commit to a verdict and one-line reason:
+Use a structured pass/fail checklist instead of open-ended prose. For each axis, commit to a verdict and one-line reason:
 
 ```
 1. Correctness:     PASS/FAIL — <one-line reason>
@@ -211,27 +219,23 @@ When `reviewer` runs on a small model, use a structured pass/fail checklist inst
 10. Assumptions:    PASS/FAIL — <one-line reason>
 ```
 
-This forces the small model to commit to a verdict per axis rather than writing prose that may miss issues. Cloud models may use the full prose format.
+This forces a verdict per axis rather than prose that may miss issues.
 
-## 7.8 Capability-Tiering (without cumbersomeness)
+## 7.8 Deep Research / Sub-Task Decomposition
 
-Add a `model_tier` field to agent specs (`small` / `medium` / `large`). Default = `small`.
+Research each task in depth before implementing:
 
-- If `model_tier == small`, the agent loads a **simplified prompt variant** (shorter instructions, more guardrails, stop-and-ask threshold). Large models ignore this section.
-- If `model_tier == large`, the agent loads the full prompt with all optional sections.
-- No extra config needed — just a conditional block in the agent spec:
+1. Read `PROJECT_INDEX.md` first — never start coding without the index.
+2. Break the task into sub-tasks in `TASKS.md` using IDs (`mN-tN-stN-ssN`).
+3. Each sub-task gets its own `memory/learning/tasks/<id>-attempts.jsonl`.
+4. If a sub-task is still too complex (e.g., requires >3 files or >1 hour), break it further into sub-sub-tasks.
+5. Never implement a task that hasn't been decomposed. If you can't decompose it, load `repo-discovery` first.
 
-```
-## Small-model mode (when model_tier == small)
-- Use shorter instructions
-- Break tasks into smaller sub-tasks
-- Stop and ask on unverified assumptions
-- Load at most 2 skills per task
-```
+This is already partially implemented via `TASKS.md` IDs and §3.5 failure budget. The rule above makes it explicit.
 
-## 7.9 Compact Learning Brief (small-model variant)
+## 7.9 Compact Learning Brief
 
-Keep the full 8-field template for cloud models. For small models, use a compact 4-field variant:
+Use a compact 4-field variant for the Learning Brief:
 
 ```
 LEARNING_BRIEF (compact)
@@ -241,19 +245,7 @@ evidence: <one-line>
 learning_objective: <one sentence>
 ```
 
-The small model produces this; the planner expands it to the full template if needed. This reduces output token burden while preserving the core signal.
-
-## 7.10 Deep Research / Sub-Task Decomposition (small models)
-
-Small models must research each task in depth before implementing:
-
-1. Read `PROJECT_INDEX.md` first — never start coding without the index.
-2. Break the task into sub-tasks in `TASKS.md` using IDs (`mN-tN-stN-ssN`).
-3. Each sub-task gets its own `memory/learning/tasks/<id>-attempts.jsonl`.
-4. If a sub-task is still too complex (e.g., requires >3 files or >1 hour), break it further into sub-sub-tasks.
-5. Never implement a task that hasn't been decomposed. If you can't decompose it, load `repo-discovery` first.
-
-This is already partially implemented via `TASKS.md` IDs and §3.5 failure budget. The rule above makes it explicit for small models.
+The planner expands it to the full 8-field template if needed. This reduces output token burden while preserving the core signal.
 
 ## 8. Evidence and Correctness
 
@@ -284,9 +276,3 @@ A task is complete only when:
 - Required project documentation is updated.
 - Remaining risks and limitations are recorded.
 - `TASKS.md` reflects the actual task status.
-
-### Planner vs Execution Model Divergence
-- All planning, root-cause classification, `LEARNING_BRIEF` emission, and approval decisions use this endpoint only.
-- Subagent execution (`coder`, `research`, `reviewer`, `autopilot`) must route through the local endpoint (declared in opencode.json as the local provider) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
-- Rationale: planner token budget is limited (daily allowance); execution token budget is unbounded (local GPU). Enforce this split at every subagent invocation to protect the planner's cap and avoid burning free tokens on code-generation loops.
-- If subagent execution needs a different model for a specific task, declare it in the subagent spec (`execution_model`) rather than overriding the planner's `model`.
