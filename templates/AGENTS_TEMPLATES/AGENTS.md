@@ -29,7 +29,7 @@ At the start of every new task:
 2. Read `memory/CURRENT_STATE.md`.
 3. Read `TASKS.md` to identify the active task and dependencies.
 4. Identify the relevant project area and inspect its current implementation.
-5. Load the most relevant available skill using the native skill tool.
+5. Load the most relevant available skill using the native skill tool (max 3 skills per task; if more are needed, split the task into sub-tasks). Select skills by matching the file's language, domain, and task type — never load a skill "just in case".
 6. Load additional skills only when their guidance is needed.
 
 For an unfamiliar subsystem, load `repo-discovery` before modifying code.
@@ -93,6 +93,8 @@ When a failure survives a second correction attempt on a knowledge gap:
 - After skill approval (§6), retry against ORIGINAL criteria; do not weaken.
 
 Never claim a test passed unless executed and observed.
+
+- **Stop-and-ask threshold (small models)**: If you cannot verify an assumption with a single file read or command, label it `PRELIMINARY` and stop. Do not proceed on unverified assumptions. Ask or document the blocker rather than guessing.
 
 ## 3.5 Failure Budget & Root-Cause Gate
 
@@ -188,7 +190,15 @@ Do not create skills for one-off bugs or ordinary debugging.
 
 Do not automatically promote project-specific knowledge to global skills.
 
-## 8. Evidence and Correctness
+## 7.5 Template Management
+
+Structured output templates live in `skills/self-help/templates/` (global) and `.opencode/templates/` (project).
+
+Before producing structured output (learning brief, skill draft, task breakdown, review report):
+1. Check `templates/` for an existing template matching the output type.
+2. If a template exists, use it — do not invent a new structure.
+3. If no template exists, load `self-help` to research the output format, draft a minimal template, and place it in `templates/` for future use. This is a one-time effort — subsequent tasks reuse the template.
+4. Templates are versioned with the project. Update them when the output format changes.
 
 Distinguish between:
 

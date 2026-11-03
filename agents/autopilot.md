@@ -1,7 +1,7 @@
 ---
 description: Unattended long-running worker. Works through TASKS.md without asking questions. Use for overnight runs.
 mode: primary
-temperature: 0.8
+temperature: 0.2
 permission:
   edit: allow
   bash: allow

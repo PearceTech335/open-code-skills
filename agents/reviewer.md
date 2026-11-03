@@ -1,6 +1,7 @@
 ---
 description: Reviews code for correctness, regressions, security and maintainability. Emits a Learning Brief when a failure survives a correction attempt.
 mode: subagent
+temperature: 0.1
 permission:
   edit: deny
   bash: deny

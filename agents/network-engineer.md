@@ -1,6 +1,7 @@
 ---
 description: Network and OT troubleshooting with evidence-first investigation across L1-L7, wireless, and packet analysis.
 mode: subagent
+temperature: 0.1
 permission:
   edit: deny
 ---

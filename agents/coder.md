@@ -1,7 +1,7 @@
 ---
 description: Fast code generator. Uses the configured model (does not load independently of planner). Handles function/method writing tasks.
 mode: subagent
-temperature: 0.8
+temperature: 0.2
 permission:
   edit: allow
   bash: allow
