@@ -53,37 +53,6 @@ For non-trivial tasks:
 8. Run targeted tests.
 9. Run relevant regression tests.
 10. Load `reviewer` subagent to inspect diff / review correctness, security, architecture.
-11. Record actual results and unresolved issues in \memory/CURRENT_STATE.md\.
-# <PROJECT_NAME> — Agent Instructions
-
-> This file layers **project-specific** rules on top of the GLOBAL agent config
-> (`~/.config/opencode/AGENTS.md` + global skills). Global rules still apply and
-> are NOT replaced here: Engineering Standards, the skill hierarchy
-> (`agent-core` → `readable-code` + `repo-discovery` → language/domain →
-> `quality-gate`), security/WebFetch policy, and the global Learning Loop
-> pointer. This file adds the project's workflow, knowledge layout, and the
-> self-improving Skill Policy.
-
-
-Do not read the entire repository by default. Follow the project index to the
-relevant files.
-
-If an index entry is missing or stale, verify the repository and correct it.
-
-## 3. Task Execution
-
-For non-trivial tasks:
-
-1. Load `repo-discovery` (unfamiliar subsystem) or inspect implementation.
-2. Establish expected behaviour and acceptance criteria.
-3. Identify affected modules and tests.
-4. Load the language/domain skill (e.g., `python-code`, `go-code`) and plan the smallest coherent change.
-5. If task is difficult/complex, load `researcher` subagent to fill knowledge gap
-6. Load `coder` subagent (or implement directly using the loaded skill) — write the change.
-7. Use GIT at step 6 (commit after plan/change).
-8. Run targeted tests.
-9. Run relevant regression tests.
-10. Load `reviewer` subagent to inspect diff / review correctness, security, architecture.
 11. Record actual results and unresolved issues in `memory/CURRENT_STATE.md`.
 
 Use GIT at steps 6 (commit after change) and 10 (review diff before concluding).
@@ -200,6 +169,86 @@ Before producing structured output (learning brief, skill draft, task breakdown,
 3. If no template exists, load `self-help` to research the output format, draft a minimal template, and place it in `templates/` for future use. This is a one-time effort — subsequent tasks reuse the template.
 4. Templates are versioned with the project. Update them when the output format changes.
 
+## 7.6 Self-Help Two-Phase Split (quality-preserving)
+
+When a knowledge-gap failure triggers `self-help` (§5), split the pipeline into two phases to reduce load on small models:
+
+**Phase A — Research + Draft (planner, cloud model):**
+1. Load `self-help` and read the Learning Brief.
+2. Research: websearch → cross-check (≥2 sources) → adversarial critique → reproducible example.
+3. Draft the skill using `templates/skill-template.md`.
+4. Output: draft skill + sources + evidence labels.
+
+**Phase B — Learning Gate (reviewer, small model):**
+1. Validate all 5 checks (evidence, relevance, correctness, scope, executable check).
+2. Approve or reject with one-line reason per check.
+3. If approved → activate as `auto-approved-provisional` (per §6). If rejected → return to Phase A with specific feedback.
+
+Quality is preserved: same research depth, same Learning Gate. The split just moves heavy reasoning to the planner and verification to the small model.
+
+## 7.7 Reviewer Checklist Format (small-model optimized)
+
+When `reviewer` runs on a small model, use a structured pass/fail checklist instead of open-ended prose. For each axis, commit to a verdict and one-line reason:
+
+```
+1. Correctness:     PASS/FAIL — <one-line reason>
+2. Error handling:  PASS/FAIL — <one-line reason>
+3. Edge cases:      PASS/FAIL — <one-line reason>
+4. Concurrency:     PASS/FAIL — <one-line reason>
+5. Resource cleanup: PASS/FAIL — <one-line reason>
+6. Security:        PASS/FAIL — <one-line reason>
+7. Backwards compat: PASS/FAIL — <one-line reason>
+8. Tests:           PASS/FAIL — <one-line reason>
+9. Complexity:      PASS/FAIL — <one-line reason>
+10. Assumptions:    PASS/FAIL — <one-line reason>
+```
+
+This forces the small model to commit to a verdict per axis rather than writing prose that may miss issues. Cloud models may use the full prose format.
+
+## 7.8 Capability-Tiering (without cumbersomeness)
+
+Add a `model_tier` field to agent specs (`small` / `medium` / `large`). Default = `small`.
+
+- If `model_tier == small`, the agent loads a **simplified prompt variant** (shorter instructions, more guardrails, stop-and-ask threshold). Large models ignore this section.
+- If `model_tier == large`, the agent loads the full prompt with all optional sections.
+- No extra config needed — just a conditional block in the agent spec:
+
+```
+## Small-model mode (when model_tier == small)
+- Use shorter instructions
+- Break tasks into smaller sub-tasks
+- Stop and ask on unverified assumptions
+- Load at most 2 skills per task
+```
+
+## 7.9 Compact Learning Brief (small-model variant)
+
+Keep the full 8-field template for cloud models. For small models, use a compact 4-field variant:
+
+```
+LEARNING_BRIEF (compact)
+task_id: <id>
+root_cause: <classification>
+evidence: <one-line>
+learning_objective: <one sentence>
+```
+
+The small model produces this; the planner expands it to the full template if needed. This reduces output token burden while preserving the core signal.
+
+## 7.10 Deep Research / Sub-Task Decomposition (small models)
+
+Small models must research each task in depth before implementing:
+
+1. Read `PROJECT_INDEX.md` first — never start coding without the index.
+2. Break the task into sub-tasks in `TASKS.md` using IDs (`mN-tN-stN-ssN`).
+3. Each sub-task gets its own `memory/learning/tasks/<id>-attempts.jsonl`.
+4. If a sub-task is still too complex (e.g., requires >3 files or >1 hour), break it further into sub-sub-tasks.
+5. Never implement a task that hasn't been decomposed. If you can't decompose it, load `repo-discovery` first.
+
+This is already partially implemented via `TASKS.md` IDs and §3.5 failure budget. The rule above makes it explicit for small models.
+
+## 8. Evidence and Correctness
+
 Distinguish between:
 
 - Verified facts.
@@ -227,3 +276,9 @@ A task is complete only when:
 - Required project documentation is updated.
 - Remaining risks and limitations are recorded.
 - `TASKS.md` reflects the actual task status.
+
+### Planner vs Execution Model Divergence
+- All planning, root-cause classification, `LEARNING_BRIEF` emission, and approval decisions use this endpoint only.
+- Subagent execution (`coder`, `research`, `reviewer`, `autopilot`) must route through the local endpoint (`lmstudio/google/gemma-4-e4b`) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
+- Rationale: planner token budget is limited (daily allowance); execution token budget is unbounded (local GPU). Enforce this split at every subagent invocation to protect the planner's cap and avoid burning free tokens on code-generation loops.
+- If subagent execution needs a different model for a specific task, declare it in the subagent spec (`execution_model`) rather than overriding the planner's `model`.
