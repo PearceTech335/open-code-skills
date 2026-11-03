@@ -279,6 +279,6 @@ A task is complete only when:
 
 ### Planner vs Execution Model Divergence
 - All planning, root-cause classification, `LEARNING_BRIEF` emission, and approval decisions use this endpoint only.
-- Subagent execution (`coder`, `research`, `reviewer`, `autopilot`) must route through the local endpoint (`lmstudio/google/gemma-4-e4b`) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
+- Subagent execution (`coder`, `research`, `reviewer`, `autopilot`) must route through the local endpoint (declared in opencode.json as the local provider) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
 - Rationale: planner token budget is limited (daily allowance); execution token budget is unbounded (local GPU). Enforce this split at every subagent invocation to protect the planner's cap and avoid burning free tokens on code-generation loops.
 - If subagent execution needs a different model for a specific task, declare it in the subagent spec (`execution_model`) rather than overriding the planner's `model`.
