@@ -2,11 +2,11 @@
 
 > This file layers **project-specific** rules on top of the GLOBAL agent config
 > (`~/.config/opencode/AGENTS.md` + global skills). Global rules still apply and
-> are NOT replaced here: Engineering Standards, the skill hierarchy
-> (`agent-core` → `readable-code` + `repo-discovery` → language/domain →
-> `quality-gate`), security/WebFetch policy, and the global Learning Loop
-> pointer. This file adds the project's workflow, knowledge layout, and the
-> self-improving Skill Policy.
+> are NOT replaced here: Engineering Standards (workflow, principles, verification,
+> behaviour), the skill hierarchy, security/WebFetch policy, language tool mapping,
+> and the global Learning Loop pointer. This file adds the project's workflow,
+> knowledge layout, and the self-improving Skill Policy. It does NOT repeat
+> global content — it only adds what is specific to this project.
 
 ## 1. Mission
 
@@ -159,9 +159,7 @@ Controls whether new project skills need human approval before activating.
 
 ## 7. Skill Management
 
-Global skills provide reusable engineering practices.
-
-Project skills live in `.opencode/skills/`.
+Project skills live in `.opencode/skills/`. Global skills provide reusable engineering practices (see global AGENTS.md).
 
 Before creating a new skill:
 1. Check whether an existing skill already covers the problem.
@@ -249,21 +247,12 @@ The planner expands it to the full 8-field template if needed. This reduces outp
 
 ## 8. Evidence and Correctness
 
-Distinguish between:
+Global Engineering Standards (verification, principles, behaviour) apply. This section adds project-specific evidence rules:
 
-- Verified facts.
-- Reasonable hypotheses.
-- Unverified assumptions.
-- Known limitations.
-
-Prefer repository evidence and reproducible experiments over memory.
-
-When code behaviour is unclear, inspect the implementation and construct a
-test that distinguishes competing explanations.
-
-If applicable to this project (e.g. ML/data work), investigate temporal
-leakage, data leakage, incorrect labels, invalid evaluation splits, and
-inappropriate baselines.
+- Distinguish between verified facts, reasonable hypotheses, unverified assumptions, and known limitations.
+- Prefer repository evidence and reproducible experiments over memory.
+- When code behaviour is unclear, inspect the implementation and construct a test that distinguishes competing explanations.
+- If applicable to this project (e.g. ML/data work), investigate temporal leakage, data leakage, incorrect labels, invalid evaluation splits, and inappropriate baselines.
 
 ## 9. Completion
 
