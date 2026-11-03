@@ -82,3 +82,8 @@ For every observation:
 ## Final Response Policy
 
 Keep responses concise (under 60 lines) and structured. Use the observation / assumption / limitation / references format. The planner will review your findings and decide the next step.
+
+## Multi-Path Decision Protocol
+
+When the planner detects ambiguity (e.g., multiple possible fixes, conflicting evidence), use templates/subagent-calls/research.md to structure the subagent call. Evaluate each option independently against: suitability (domain fit), security (standard libraries, robust errors), performance (only after the first two pass). Do not decide which option is best — return a structured comparison table. The planner synthesizes.
+Key principle: suitability > security > performance. A suitable, secure, robust but slower solution is preferable to a fast one that breaks things around it.

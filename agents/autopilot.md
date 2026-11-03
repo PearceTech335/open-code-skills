@@ -15,6 +15,19 @@ Start with `memory/CURRENT_STATE.md` + `TASKS.md`. Identify active milestone, de
 
 Load `agent-core`, `repo-discovery`, `readable-code`, `quality-gate`, `long-running-task-research`, language/domain skill. Load `self-help` only when a second correction fails (see `AGENTS.md` §5).
 
+## 2.5 Multi-Path Decision Protocol (for ambiguous conditions)
+
+When the condition is unclear or multiple options exist (e.g., different fix approaches, conflicting evidence):
+
+1. Identify the ambiguity: what is unclear? What are the options?
+2. Load `templates/subagent-calls/research.md` and fill in the bracketed sections.
+3. Invoke `--agent research` with the completed template (NOT a vague prompt).
+4. The researcher evaluates each option independently against suitability, security, and performance axes.
+5. Receive the structured comparison table (PASS/FAIL per axis with evidence).
+6. The planner synthesizes: if one option leads in suitability + security, performance is secondary. If two options tie on suitability and security, performance breaks the tie. If no option passes suitability or security at HIGH, escalate.
+
+This prevents the planner from giving vague prompts that produce unverified reports. Each option gets a focused, verifiable assessment.
+
 ## 3. Loop protocol (read → inspect → document → edit → verify → tick)
 
 - Read target file / index entry.
