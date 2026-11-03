@@ -82,7 +82,15 @@ Example (your evaluation.py failure): attempt 1 failed due to context mismatch; 
 
 Never retry the same action unchanged after a failure.
 
-## 4. Project Knowledge
+## 3.6 Subagent Invocation Templates
+
+When invoking a subagent, use the corresponding template from `templates/subagent-calls/`:
+- `researcher.md` — for investigation/discovery tasks
+- `reviewer.md` — for code review tasks
+- `coder.md` — for code generation tasks
+- `autopilot.md` — for overnight/unattended runs
+
+Fill in the bracketed sections. If no template exists for the task type, create one via the self-help process (§7.5) before invoking the subagent. Templates ensure the small model receives a structured, complete prompt rather than an ad-hoc one.
 
 Persistent project knowledge lives in `memory/`.
 

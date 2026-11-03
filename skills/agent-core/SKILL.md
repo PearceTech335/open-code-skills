@@ -94,3 +94,14 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 - Subagent execution (coder, research, reviewer, autopilot) must route through the local endpoint (declared in opencode.json as the local provider) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
 - Rationale: planner token budget is limited (daily allowance); execution token budget is unbounded (local GPU). Enforce this split at every subagent invocation.
 - If subagent execution needs a different model for a specific task, declare it in the subagent spec (execution_model) rather than overriding the planners model.
+
+## Subagent Invocation Templates
+
+When invoking a subagent, use the corresponding template from templates/subagent-calls/:
+- researcher.md -- investigation/discovery tasks
+- reviewer.md -- code review tasks
+- coder.md -- code generation tasks
+- autopilot.md -- overnight/unattended runs
+
+Fill in the bracketed sections. If no template exists, create one via self-help (section 7.5) before invoking.
+Templates ensure the small model receives a structured, complete prompt rather than an ad-hoc one.
