@@ -87,9 +87,9 @@ The single most important field. Get the level right:
 
 You cannot write files. The primary agent writes this block to `memory/learning/briefs/<task-id>.md`. Return it in your response.
 
-## Small-Model Mode (when model_tier == small)
+## Reviewer Checklist Format
 
-Use structured PASS/FAIL checklist instead of open-ended prose:
+Use a structured pass/fail checklist for each axis, committing to a verdict and one-line reason:
 
 `
 1. Correctness:     PASS/FAIL — <one-line reason>
@@ -104,4 +104,4 @@ Use structured PASS/FAIL checklist instead of open-ended prose:
 10. Assumptions:    PASS/FAIL — <one-line reason>
 `
 
-Use compact Learning Brief (4-field variant) when emitting LEARNING_BRIEF.
+This forces a verdict per axis rather than prose that may miss issues. Use the compact Learning Brief (4-field) when emitting LEARNING_BRIEF.

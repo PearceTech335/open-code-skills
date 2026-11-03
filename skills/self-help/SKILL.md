@@ -95,26 +95,26 @@ Auto-approve exists for unattended testing. Every auto-approved skill is PROVISI
 - NEVER set `auto-approve` outside a project's `AGENTS.md`.
 - NEVER enter a claim you cannot cite.
 
-## Small-Model Two-Phase Split
+## Two-Phase Split (quality-preserving)
 
-When triggered by a small model (model_tier == small), split the pipeline:
+When a knowledge-gap failure triggers self-help (AGENTS.md section 5), split the pipeline:
 
-**Phase A — Research + Draft (planner, cloud model):**
+**Phase A — Research + Draft (planner):**
 1. Load self-help and read the Learning Brief.
 2. Research: websearch -> cross-check (>=2 sources) -> adversarial critique -> reproducible example.
 3. Draft the skill using templates/skill-template.md.
 4. Output: draft skill + sources + evidence labels.
 
-**Phase B — Learning Gate (reviewer, small model):**
+**Phase B — Learning Gate (reviewer):**
 1. Validate all 5 checks (evidence, relevance, correctness, scope, executable check).
 2. Approve or reject with one-line reason per check.
 3. If approved -> activate as auto-approved-provisional (per AGENTS.md section 6). If rejected -> return to Phase A with specific feedback.
 
-Quality is preserved: same research depth, same Learning Gate. The split just moves heavy reasoning to the planner and verification to the small model.
+Quality is preserved: same research depth, same Learning Gate. The split moves heavy reasoning to the planner and verification to the reviewer.
 
-## Compact Learning Brief (small-model variant)
+## Compact Learning Brief (standard format)
 
-For small models, use a compact 4-field variant instead of the full 8-field template:
+Use a compact 4-field variant as the standard format:
 
 `
 LEARNING_BRIEF (compact)
@@ -124,4 +124,4 @@ evidence: <one-line>
 learning_objective: <one sentence>
 `
 
-The small model produces this; the planner expands it to the full template if needed.
+The planner expands it to the full 8-field template if needed. This reduces output token burden while preserving the core signal.
