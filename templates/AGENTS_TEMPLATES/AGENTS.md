@@ -128,6 +128,17 @@ verified project state materially changes.
 
 Do not record assumptions as facts.
 
+## 3.9 Research Decomposition (vague prompts)
+
+When the operator gives a vague or broad research prompt, do NOT attempt to answer it in one pass:
+
+1. **Broad-brush scan** (quick, shallow): Run a fast initial scan to identify major areas, files, and questions. Output a list of specific sub-questions, not a full report.
+2. **Decompose**: Break into 3-5 specific, targeted sub-questions. Each should be answerable with a focused file read or command.
+3. **Targeted research**: Invoke the researcher for each sub-question with a specific, well-defined prompt using `templates/subagent-calls/researcher.md`. Each prompt answers ONE question.
+4. **Synthesize**: After all sub-researchers return, synthesize their findings into the final report. The planner (not the sub-researchers) does the synthesis.
+
+This ensures each researcher call is focused and verifiable, rather than one massive vague prompt that produces unverified claims.
+
 ## 5. Learning Loop (self-improving)
 
 When the `reviewer` subagent returns a `LEARNING_BRIEF` block after a failure

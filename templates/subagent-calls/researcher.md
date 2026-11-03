@@ -52,7 +52,25 @@ Before concluding, confirm with at least two independent sources (file + test, d
 - [path 1]
 - [path 2]
 
-# CONSTRAINTS
+# RESEARCH DECOMPOSITION (for vague or broad prompts)
+
+When the operator gives a vague or broad research prompt (e.g., "investigate the lack of position coverage"), do NOT attempt to answer it in one pass. Instead:
+
+1. **Broad-brush scan** (quick, shallow): Run a fast initial scan to identify the major areas, files, and questions. Output a list of specific sub-questions, not a full report.
+2. **Decompose**: Break the broad prompt into 3-5 specific, targeted sub-questions. Each sub-question should be answerable with a focused file read or command.
+3. **Targeted research**: Invoke the researcher for each sub-question with a specific, well-defined prompt using this template. Each prompt answers ONE question.
+4. **Synthesize**: After all sub-researchers return, synthesize their findings into the final report. The planner (not the sub-researchers) does the synthesis.
+
+Example:
+- Vague prompt: "Why did positions stop opening?"
+- Broad-brush scan: "Check execution_log, predictions_log, tmux panes, and live_scores.json"
+- Sub-questions:
+  1. "How many positions opened since market open? Check execution_log.jsonl for open events."
+  2. "What stale-frame refusals exist? Grep tmux pane scrollbacks for 'stale' or 'refusing'."
+  3. "When was the trader process down? Check ps output and execution_log timestamps."
+  4. "What gates vetoed entries? Check trend_filter_vetos.jsonl and live_scores.json stats."
+
+This ensures each researcher call is focused and verifiable, rather than one massive vague prompt that produces unverified claims.
 - READ-ONLY: no file writes, no restarts, no git ops, no code edits, no commits.
 - Never print secrets (passwords, API keys).
 - Every command claimed must actually have been run; if a step fails, say so and adapt.

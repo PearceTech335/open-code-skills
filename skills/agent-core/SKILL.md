@@ -114,3 +114,12 @@ When a subagent returns a report, verify before using:
 3. No empty sections: every required section must contain content.
 4. Cross-check: confirm key findings with at least two independent sources.
 Do not trust subagent claims blindly — small models produce reports that look correct but may contain unverified specifics.
+
+## Research Decomposition (vague prompts)
+
+When the operator gives a vague or broad research prompt, do NOT attempt to answer it in one pass:
+1. Broad-brush scan (quick, shallow): identify major areas, files, and questions. Output a list of sub-questions, not a full report.
+2. Decompose: break into 3-5 specific, targeted sub-questions. Each answerable with a focused file read or command.
+3. Targeted research: invoke the researcher for each sub-question with a specific prompt using templates/subagent-calls/researcher.md. Each prompt answers ONE question.
+4. Synthesize: after all sub-researchers return, synthesize findings into the final report. The planner (not the sub-researchers) does the synthesis.
+This ensures each researcher call is focused and verifiable, rather than one massive vague prompt that produces unverified claims.
