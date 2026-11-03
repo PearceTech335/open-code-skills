@@ -60,3 +60,11 @@ The planner (not `research`) decides whether to trigger `WebFetch`; this subagen
 ## 10. No silent modification
 
 Edit permissions (`edit: deny`, `bash: deny`) are deliberate. If the planner asks you to modify, it should load `coder` (with `edit: allow`) instead.
+
+## 11. Small-model mode (when model_tier == small)
+
+- Use shorter instructions; break tasks into smaller sub-tasks.
+- Stop and ask on unverified assumptions (label PRELIMINARY).
+- Load at most 2 skills per task.
+- Use compact Learning Brief (4-field variant) instead of full 8-field.
+- Deep research: read PROJECT_INDEX.md first; break task into sub-tasks in TASKS.md; each sub-task gets its own attempt file.

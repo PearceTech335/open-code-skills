@@ -79,3 +79,18 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 - Validate all external inputs at trust boundaries. Define what is valid; reject invalid input with an appropriate error.
 - Close resources explicitly via `with`/try-finally.
 - Check return values. Handle errors at the appropriate boundary.
+
+## Small-Model Guardrails (when model_tier == small)
+
+- **Skill-count cap**: Load at most 2 skills per task. If more are needed, split the task into sub-tasks.
+- **Stop-and-ask threshold**: If you cannot verify an assumption with a single file read or command, label it PRELIMINARY and stop. Do not proceed on unverified assumptions.
+- **Deep research**: Read PROJECT_INDEX.md first. Break task into sub-tasks in TASKS.md using IDs (mN-tN-stN-ssN). Each sub-task gets its own attempt file.
+- **Compact output**: Use compact Learning Brief (4-field) instead of full 8-field. Use PASS/FAIL checklist for reviews.
+- **Temperature**: Set per agent role: planner 0.1-0.3, coder 0.2, research 0.4, reviewer 0.1.
+
+## Planner vs Execution Model Divergence
+
+- Planner (opencode.json model) runs on the free/cloud endpoint (e.g., MiMo-2.6). All planning, root-cause classification, LEARNING_BRIEF emission, and approval decisions use this endpoint only.
+- Subagent execution (coder, research, reviewer, autopilot) must route through the local endpoint (lmstudio/google/gemma-4-e4b) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
+- Rationale: planner token budget is limited (daily allowance); execution token budget is unbounded (local GPU). Enforce this split at every subagent invocation.
+- If subagent execution needs a different model for a specific task, declare it in the subagent spec (execution_model) rather than overriding the planners model.

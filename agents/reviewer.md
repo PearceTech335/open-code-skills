@@ -86,3 +86,22 @@ The single most important field. Get the level right:
 - Correct: `Understand how <library> computes <quantity> under <condition>, and how <technique> interacts with <objective>. Verify against authoritative docs and a minimal reproducible example.`
 
 You cannot write files. The primary agent writes this block to `memory/learning/briefs/<task-id>.md`. Return it in your response.
+
+## Small-Model Mode (when model_tier == small)
+
+Use structured PASS/FAIL checklist instead of open-ended prose:
+
+`
+1. Correctness:     PASS/FAIL — <one-line reason>
+2. Error handling:  PASS/FAIL — <one-line reason>
+3. Edge cases:      PASS/FAIL — <one-line reason>
+4. Concurrency:     PASS/FAIL — <one-line reason>
+5. Resource cleanup: PASS/FAIL — <one-line reason>
+6. Security:        PASS/FAIL — <one-line reason>
+7. Backwards compat: PASS/FAIL — <one-line reason>
+8. Tests:           PASS/FAIL — <one-line reason>
+9. Complexity:      PASS/FAIL — <one-line reason>
+10. Assumptions:    PASS/FAIL — <one-line reason>
+`
+
+Use compact Learning Brief (4-field variant) when emitting LEARNING_BRIEF.

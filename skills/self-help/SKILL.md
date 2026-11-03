@@ -94,3 +94,34 @@ Auto-approve exists for unattended testing. Every auto-approved skill is PROVISI
 - NEVER auto-approve a global skill.
 - NEVER set `auto-approve` outside a project's `AGENTS.md`.
 - NEVER enter a claim you cannot cite.
+
+## Small-Model Two-Phase Split
+
+When triggered by a small model (model_tier == small), split the pipeline:
+
+**Phase A — Research + Draft (planner, cloud model):**
+1. Load self-help and read the Learning Brief.
+2. Research: websearch -> cross-check (>=2 sources) -> adversarial critique -> reproducible example.
+3. Draft the skill using templates/skill-template.md.
+4. Output: draft skill + sources + evidence labels.
+
+**Phase B — Learning Gate (reviewer, small model):**
+1. Validate all 5 checks (evidence, relevance, correctness, scope, executable check).
+2. Approve or reject with one-line reason per check.
+3. If approved -> activate as auto-approved-provisional (per AGENTS.md section 6). If rejected -> return to Phase A with specific feedback.
+
+Quality is preserved: same research depth, same Learning Gate. The split just moves heavy reasoning to the planner and verification to the small model.
+
+## Compact Learning Brief (small-model variant)
+
+For small models, use a compact 4-field variant instead of the full 8-field template:
+
+`
+LEARNING_BRIEF (compact)
+task_id: <id>
+root_cause: <classification>
+evidence: <one-line>
+learning_objective: <one sentence>
+`
+
+The small model produces this; the planner expands it to the full template if needed.

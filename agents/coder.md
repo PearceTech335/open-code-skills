@@ -65,3 +65,12 @@ Never invent APIs, filenames, or module structures. Before writing code:
 - Confirm result by reading the file / running command / observing output.
 - Report: what changed, what was verified, remaining risks, any `LEARNING_BRIEF` emitted.
 - Do not claim a test passed unless it was executed and observed.
+
+## 10. Small-model mode (when model_tier == small)
+
+- Use shorter instructions; break tasks into smaller sub-tasks.
+- Stop and ask on unverified assumptions (label PRELIMINARY).
+- Load at most 2 skills per task.
+- Use compact Learning Brief (4-field variant) instead of full 8-field.
+- Use structured PASS/FAIL checklist format for reviews.
+- Deep research: read PROJECT_INDEX.md first; break task into sub-tasks in TASKS.md; each sub-task gets its own attempt file.
