@@ -105,3 +105,12 @@ When invoking a subagent, use the corresponding template from templates/subagent
 
 Fill in the bracketed sections. If no template exists, create one via self-help (section 7.5) before invoking.
 Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
+
+## Subagent Output Verification
+
+When a subagent returns a report, verify before using:
+1. Mandatory answer: did it state the direct answer to the mission question?
+2. Evidence: every factual claim (line numbers, counts, paths) must have an attached command/file reference.
+3. No empty sections: every required section must contain content.
+4. Cross-check: confirm key findings with at least two independent sources.
+Do not trust subagent claims blindly — small models produce reports that look correct but may contain unverified specifics.

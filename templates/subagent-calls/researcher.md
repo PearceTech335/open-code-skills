@@ -29,7 +29,26 @@ Load the `research-method` skill first (evidence-first, self-critique, cross-che
 H1. [hypothesis] (Check: [what evidence would confirm/refute])
 H2. [hypothesis] (Check: [what evidence would confirm/refute])
 
-# LOCAL FILES TO READ (small, cross-check against them)
+# RESEARCHER OUTPUT REQUIREMENTS
+
+Every claim in your report must have attached evidence. No claim without a command or file reference.
+
+## Mandatory Answer
+Before the structured sections, state the direct answer to the mission question in 1-2 sentences. Example: "Positions opened: 0. Coverage was ZERO for 14h20m (Mon 14:48 → Tue 05:08) due to stale data feed."
+
+## Evidence Per Claim
+For every factual claim, attach:
+- The exact command or file read that produced it
+- The observed output (trimmed to relevant lines)
+- Label: VERIFIED / PROBABLE / PRELIMINARY / UNVERIFIED
+
+No claim without evidence. If you cannot verify a claim, label it PRELIMINARY and state what would be needed to verify it.
+
+## No Empty Sections
+Every section in the required output structure must contain content. If a section has no data, write "No data found — [what was searched]" rather than leaving it blank.
+
+## Cross-Check Requirement
+Before concluding, confirm with at least two independent sources (file + test, docs + command output, two code paths). If sources disagree, report the conflict explicitly. Do not suppress contradictory evidence.
 - [path 1]
 - [path 2]
 

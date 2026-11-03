@@ -99,7 +99,16 @@ Fill in the bracketed sections. If no template exists for the task type, create 
 - Rationale: planner token budget is limited (daily allowance); execution token budget is unbounded (local GPU). Enforce this split at every subagent invocation to protect the planner's cap and avoid burning free tokens on code-generation loops.
 - If subagent execution needs a different model for a specific task, declare it in the subagent spec (`execution_model`) rather than overriding the planner's `model`.
 
-## 4. Project Knowledge
+## 3.8 Planner Verification of Subagent Output
+
+When a subagent returns a report, the planner MUST verify key claims before using them:
+
+1. **Mandatory answer check**: Did the subagent state the direct answer to the mission question? If not, reject and re-prompt.
+2. **Evidence check**: For every factual claim (line numbers, counts, file paths), verify with at least one independent command or file read. Do not trust the subagent's claims blindly.
+3. **No empty sections**: Every section in the required output structure must contain content. Reject reports with blank sections.
+4. **Cross-check**: Confirm key findings with at least two independent sources before using them in planning.
+
+This rule exists because small models produce reports that "have the shape of an answer" but may contain unverified or hallucinated specifics. The planner is the quality gate.
 
 Persistent project knowledge lives in `memory/`.
 

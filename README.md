@@ -135,7 +135,8 @@ Every sub-subtask (`TASKS.md` ID) gets its own `memory/learning/tasks/<id>-attem
 
 The starter implements `AGENTS.md` rules (§3, §3.5, §5, §6) at project level independently of any endpoint or remote sync — apply to the local workspace only.
 
-### Endpoint & Model Configuration
+### Subagent Output Verification
+When a subagent returns a report, the planner must verify key claims before using them: (1) mandatory answer to the mission question stated, (2) every factual claim has attached evidence (command/file reference), (3) no empty sections, (4) cross-check with at least two independent sources. Small models produce reports that "have the shape of an answer" but may contain unverified specifics — the planner is the quality gate.
 `opencode.json` declares endpoint providers generically (`ollama`, `lmstudio-local`, `lmstudio`) and a single `model`; `small_model` removed so all subagents inherit one path — no cross-endpoint routing divergence. The framework is endpoint-agnostic: the same `.md` specs and skills work regardless of which server is active, as long as the declared `model` supports tool calls.
 
 ---
