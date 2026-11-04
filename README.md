@@ -89,8 +89,8 @@ Project-level starter (`templates/AGENTS_TEMPLATES/`) layers on top of this glob
 
 This repo wires up the framework for sustained, multi-turn agentic work — from overnight autonomous tasks (`autopilot.md`) through adversarial review (`reviewer.md`) to autonomous skill creation (`self-help`). Each piece is designed to survive beyond a single prompt.
 
-### Subagent Delegation
-Every agent is a `.md` spec (`agents/*.md` + `commands/*.md`), not a JSON block. Loading is explicit: load `agent-core` first (Skill Inventory Protocol), then invoke `coder` / `research` / `reviewer` / `autopilot` via the planner or `--agent` flag. All inherit the active `model`; no per-agent provider divergence.
+### Subagent Delegation (Updated Behaviour Protocol)
+Every agent spec is a `.md` file (`agents/*.md` + `commands/*.md`), not a JSON block. When uncertain: load `agent-core` → invoke structured subagent (`research.md` for ambiguous conditions, `reviewer.md` for verification/failure modes) via completed template; never guess. All subagents inherit the active `model`; planner uses cloud endpoint for planning/classification, local endpoint for execution (protect planner token cap).
 
 ### Persistent Memory & Task Lifecycle
 Memory is file-first, not context-window-first. Before any multi-turn task, load `memory/PROJECT_INDEX.md`, `memory/CURRENT_STATE.md`, `memory/ARCHITECTURE.md`, and `memory/DECISIONS.md`. `TASKS.md` splits work into milestones; `RESEARCH.md` logs findings with verified/probable/preliminary labels; `PROGRESS.md` writes status. This keeps any single-turn context small — the framework fills what the model sees from persistent files, not from a growing prompt.

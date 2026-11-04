@@ -85,5 +85,9 @@ Keep responses concise (under 60 lines) and structured. Use the observation / as
 
 ## Multi-Path Decision Protocol
 
-When the planner detects ambiguity (e.g., multiple possible fixes, conflicting evidence), use templates/subagent-calls/research.md to structure the subagent call. Evaluate each option independently against: suitability (domain fit), security (standard libraries, robust errors), performance (only after the first two pass). Do not decide which option is best — return a structured comparison table. The planner synthesizes.
-Key principle: suitability > security > performance. A suitable, secure, robust but slower solution is preferable to a fast one that breaks things around it.
+When planner detects ambiguity (multiple fixes, conflicting evidence):
+- Load `templates/subagent-calls/research.md`, complete bracketed sections.
+- Invoke `--agent research` with completed template (NOT vague prompt).
+- Evaluate each option independently: suitability (P1) > security (P2) > performance (P3).
+- Return structured comparison table (PASS/FAIL per axis + evidence). Planner synthesizes — does NOT pick blindly.
+- Key principle: suitability > security > performance. A suitable, secure, slower solution beats a fast, fragile one.

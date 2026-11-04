@@ -21,49 +21,33 @@ Priorities:
 A passing test suite does not by itself
 establish correctness.
 
-## 2. Mandatory Task Startup
+## 2. Mandatory Task Startup (Checklist)
 
-At the start of every new task:
+Before any work: `PROJECT_INDEX.md` → `CURRENT_STATE.md` → `TASKS.md`.
+If index missing/stale: load `repo-discovery`, inspect, update index first.
 
-1. Check `memory/PROJECT_INDEX.md`. If missing or stale: load `repo-discovery`, inspect repository structure, and create/update `memory/PROJECT_INDEX.md` before any task work.
-2. Read `memory/CURRENT_STATE.md`.
-3. Read `TASKS.md` to identify the active task and dependencies.
-4. Identify the relevant project area and inspect its current implementation.
-5. Load the most relevant available skill using the native skill tool (max 3 skills per task; if more are needed, split the task into sub-tasks). Select skills by matching the file's language, domain, and task type — never load a skill "just in case".
-6. Load additional skills only when their guidance is needed.
+For non-trivial tasks (consolidated flow):
+1. Inspect implementation / load `repo-discovery`.
+2. Set acceptance criteria.
+3. Identify affected modules + tests.
+4. Load language/domain skill; plan smallest coherent change.
+5. If complex: invoke `--agent research` (structured prompt only).
+6. Implement (`coder` subagent or direct edit).
+7. GIT commit after edit.
+8. Load `reviewer` subagent (`templates/subagent-calls/reviewer.md`) — adversarial PASS/FAIL (§7.7). Only tick when all 10 axes PASS.
+9. Verify: syntax → targeted test → regression → diff review (with observed output).
+10. Record in `CURRENT_STATE.md`; tick in `TASKS.md`.
 
-For an unfamiliar subsystem, load `repo-discovery` before modifying code.
-
-Do not read the entire repository by default. Follow the project index to the
-relevant files.
-
-If an index entry is missing or stale, verify the repository and correct it.
+Never claim a test passed without observed output.
 
 ## 3. Task Execution
 
-For non-trivial tasks:
+Consolidated in §2 checklist above. Key rules only:
+- Concurrent edit guard: never edit a file another agent is writing; verify file state before edit (`read` last 5 lines before `edit`).
+- Stop-and-ask: label `PRELIMINARY` and stop on unverified assumptions.
+- Failure budget: see §3.5.
 
-1. Load `repo-discovery` (unfamiliar subsystem) or inspect implementation.
-2. Establish expected behaviour and acceptance criteria.
-3. Identify affected modules and tests.
-4. Load the language/domain skill (e.g., `python-code`, `go-code`) and plan the smallest coherent change.
-5. If task is difficult/complex, invoke via `--agent research` to fill knowledge gap
-6. Load `coder` subagent (or implement directly using the loaded skill) — write the change.
-7. Use GIT at step 6 (commit after plan/change).
-8. Run targeted tests.
-9. Run relevant regression tests.
-10. Load `reviewer` subagent to inspect diff / review correctness, security, architecture.
-11. Record actual results and unresolved issues in `memory/CURRENT_STATE.md`.
-
-Use GIT at steps 6 (commit after change) and 10 (review diff before concluding).
-
-When a failure survives a second correction attempt on a knowledge gap:
-- Load `self-help`, pass the `LEARNING_BRIEF`.
-- After skill approval (§6), retry against ORIGINAL criteria; do not weaken.
-
-Never claim a test passed unless executed and observed.
-
-- **Stop-and-ask threshold**: If you cannot verify an assumption with a single file read or command, label it `PRELIMINARY` and stop. Do not proceed on unverified assumptions. Ask or document the blocker rather than guessing.
+When a failure survives a second correction attempt on a knowledge gap: load `self-help`, pass `LEARNING_BRIEF`. After skill approval (§6), retry against ORIGINAL criteria; do not weaken.
 
 ## 3.5 Failure Budget & Root-Cause Gate
 
@@ -137,16 +121,14 @@ verified project state materially changes.
 
 Do not record assumptions as facts.
 
-## 3.9 Research Decomposition (vague prompts)
+## 3.9 Vague Prompt Handler (Two-Step Filter)
 
-When the operator gives a vague or broad research prompt, do NOT attempt to answer it in one pass:
+When the operator gives a vague or broad prompt:
 
-1. **Broad-brush scan** (quick, shallow): Run a fast initial scan to identify major areas, files, and questions. Output a list of specific sub-questions, not a full report.
-2. **Decompose**: Break into 3-5 specific, targeted sub-questions. Each should be answerable with a focused file read or command.
-3. **Targeted research**: Invoke the researcher for each sub-question with a specific, well-defined prompt using `templates/subagent-calls/researcher.md`. Each prompt answers ONE question.
-4. **Synthesize**: After all sub-researchers return, synthesize their findings into the final report. The planner (not the sub-researchers) does the synthesis.
+**Step A (Scan)**: Load `repo-discovery`, list top 5 relevant areas/files. Output sub-questions only — no full report.
+**Step B (Decompose)**: Break findings into max 3 specific, answerable questions. Each must map to one file read or command.
 
-This ensures each researcher call is focused and verifiable, rather than one massive vague prompt that produces unverified claims.
+Only proceed after Step B. For each sub-question: invoke `--agent research` with `templates/subagent-calls/researcher.md`. Planner synthesizes all results (not sub-researchers).
 
 ## 5. Learning Loop (self-improving)
 
@@ -219,7 +201,7 @@ When a knowledge-gap failure triggers `self-help` (§5), split the pipeline into
 **Phase A — Research + Draft (planner):**
 1. Load `self-help` and read the Learning Brief.
 2. Research: websearch → cross-check (≥2 sources) → adversarial critique → reproducible example.
-3. Draft the skill using `templates/skill-template.md`.
+3. Draft the skill using `.opencode/skills/self-help/templates/skill-template.md`.
 4. Output: draft skill + sources + evidence labels.
 
 **Phase B — Learning Gate (reviewer):**
@@ -260,21 +242,31 @@ Research each task in depth before implementing:
 
 This is already partially implemented via `TASKS.md` IDs and §3.5 failure budget. The rule above makes it explicit.
 
-## 7.9 Compact Learning Brief
+## 7.9 Compact Learning Brief (Mandatory Format)
 
-Use a compact 4-field variant for the Learning Brief:
+When `reviewer` returns `LEARNING_BRIEF` (failure survived 2 attempts):
 
 ```
-LEARNING_BRIEF (compact)
+LEARNING_BRIEF (compact — 4 fields)
 task_id: <id>
 root_cause: <classification>
 evidence: <one-line>
 learning_objective: <one sentence>
 ```
 
-The planner expands it to the full 8-field template if needed. This reduces output token burden while preserving the core signal.
+Rules:
+- Planner writes this file to `memory/learning/briefs/<task-id>.md`.
+- Never generate a skill for a trivial `IMPLEMENTATION_DEFECT`.
+- Never weaken original acceptance criteria for retry.
+
+Full 8-field expansion only when `self-help` requires it (§5).
 
 ## 8. Evidence and Correctness
+
+**Verification Standard** (applies to all observations and subagent claims):
+- Every claim labeled `VERIFIED` must cite an independent source (command output, file read, grep result).
+- Every claim labeled `PRELIMINARY` must state the limitation that prevents verification.
+- Never label a claim `VERIFIED` without an attached reference.
 
 Global Engineering Standards (verification, principles, behaviour) apply. This section adds project-specific evidence rules:
 

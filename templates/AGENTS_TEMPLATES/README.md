@@ -4,7 +4,7 @@ This folder is the **copy/paste starter template** for new OpenCode projects. Co
 
 ## What this folder is for
 
-- **Project-level agent instructions** (`AGENTS.md`) — mission, startup rules, execution protocol, evidence/correctness standards, and the Learning Loop (§5) + Skill Policy (§6).
+- **Project-level agent instructions** (`AGENTS.md`) — mission, startup rules (§2 checklist), execution protocol (§3), evidence/correctness standards (§8 Verification Standard: VERIFIED claims cite independent source; PRELIMINARY states limitation), and the Learning Loop (§5) + Skill Policy (§6). Behaviour (§3.5/§2.6): uncertain conditions trigger structured `research.md`/`reviewer.md` subagent calls, not open-ended prose.
 - **Self-improving skills** (`.opencode/skills/`) — where project-specific skills live; the `self-help` skill drafts them, the Learning Gate validates them, and the Skill Policy controls approval.
 - **Project knowledge scaffold** (`memory/`) — persistent index, state, architecture, decisions, known issues, milestones, and the `learning/` sink (`briefs/` + `metrics.jsonl`).
 - **Copy/paste starter** — new repo? Drop this folder's contents at root and fill in Section 1 (Mission) and `memory/PROJECT_INDEX.md`.

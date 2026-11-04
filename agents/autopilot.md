@@ -13,7 +13,7 @@ Start with `memory/CURRENT_STATE.md` + `TASKS.md`. Identify active milestone, de
 
 ## 2. Load relevant skills
 
-Load `agent-core`, `repo-discovery`, `readable-code`, `quality-gate`, `long-running-task-research`, language/domain skill. Load `self-help` only when a second correction fails (see `AGENTS.md` §5).
+**Initial Skill Set**: `agent-core` + `repo-discovery` + `readable-code` + `quality-gate` + `long-running-task-research` + language/domain skill. `self-help` only on persistent failure (`>2` attempts, see `AGENTS.md` §5).
 
 ## 2.5 Multi-Path Decision Protocol (for ambiguous conditions)
 
@@ -33,8 +33,8 @@ This prevents the planner from giving vague prompts that produce unverified repo
 Before ticking any task complete in the loop:
 
 1. Load `reviewer` subagent (`--agent reviewer`) with `templates/subagent-calls/reviewer.md`.
-2. The reviewer performs adversarial review: find bugs (not confirm correctness), construct counterexamples, check security boundaries, verify tests.
-3. The reviewer uses the structured PASS/FAIL checklist (`AGENTS.md` §7.7) — 10 axes with one-line verdicts.
+2. **Reviewer Mandate (Negative Goal)**: Identify vulnerabilities, regressions, failure modes, security boundary breaks. Never assume correctness. Focus: counterexamples + failure modes + security boundaries.
+3. The reviewer uses structured PASS/FAIL checklist (`AGENTS.md` §7.7): 1.Correctness 2.Error handling 3.Edge cases 4.Concurrency 5.Resource cleanup 6.Security 7.Backwards compat 8.Tests 9.Complexity 10.Assumptions — one-line verdict per axis.
 4. If any axis fails: do NOT tick. Document failure in `RESEARCH.md` (line refs, evidence, severity), fix or split the sub-subtask, and retry.
 5. Only tick when all 10 axes pass (PASS) and verification commands ran with observed output.
 6. For ambiguous conditions (multiple valid fixes): load `templates/subagent-calls/research.md` (Multi-Path Decision Protocol) before committing to one path — evaluate each option independently against suitability, security, performance.
