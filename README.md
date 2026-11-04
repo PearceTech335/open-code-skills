@@ -76,6 +76,7 @@ Your directory structure should include:
 │   └── skill-template.md
 ├── templates/AGENTS_TEMPLATES/    # copy/paste starter (AGENTS.md + TASKS.md + memory/ + .opencode/skills/)
 ├── templates/subagent-calls/      # invocation templates (researcher, reviewer, coder, autopilot)
+├── AGENTS.md                     # global agent config (engineering standards, skill hierarchy, verification, Behaviour protocol)
 ├── opencode.json                  # local-only (gitignored) — endpoint config; agent block removed; model/small_model inheritance
 ├── .gitignore                     # excludes opencode.json; tracks skills/, agents/, commands/, README.md, templates/
 └── README.md
