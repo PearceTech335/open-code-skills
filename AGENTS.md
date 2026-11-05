@@ -46,7 +46,7 @@ Always: inspect repository (`repo-discovery`) before changing; test safe assumpt
 Skills are organized in a hierarchy — load the ones relevant to the task:
 
 1. **`agent-core`** — how the agent investigates, plans, changes, and verifies. Load on any coding task.
-2. **`readable-code`** + **`repo-discovery`** — how to understand the project and write maintainable code. Load when writing, refactoring, or reviewing code.
+2. **`readable-code`** + **`repo-discovery`** + **`project-index`** — how to understand the project, write maintainable code, and maintain the standardised `PROJECT_INDEX.md`. Load when writing, refactoring, reviewing code, or when project structure changes.
 3. **Language and domain skills** — `python-code`, `go-code`, `typescript-code`, `powershell-skill`, `bash-skill`, `ansible-code`, `networking`, `ot-networking`, `packet-analysis`, `security`, `penetration-tester`. Load for the specific language or domain.
 4. **`quality-gate`** — final review of correctness, readability, security, verification. Load before reporting done.
 5. **`designer`** — design/review standards. Load for architecture/review tasks.

@@ -24,7 +24,7 @@ establish correctness.
 ## 2. Mandatory Task Startup (Checklist)
 
 Before any work: `PROJECT_INDEX.md` → `CURRENT_STATE.md` → `TASKS.md`.
-If index missing/stale: load `repo-discovery`, inspect, update index first.
+If index missing/stale: load `project-index` (and `repo-discovery` if needed), inspect, update/create index first.
 
 For non-trivial tasks (consolidated flow):
 1. Inspect implementation / load `repo-discovery`.
