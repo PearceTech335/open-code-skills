@@ -12,6 +12,30 @@ For non-trivial tasks:
 
 Do not invent APIs, config options, or project conventions.
 
+## Architectural Governance
+
+The `architect` sub-agent is responsible for architectural design, discovery, evaluation and change management.
+
+`agent-core` should invoke the Architect when:
+- Starting a new project or establishing missing architecture documentation.
+- Component responsibilities or dependencies are unclear.
+- Introducing major components or changing system boundaries.
+- Redesigning database schemas or making significant API changes.
+- Refactoring across multiple modules.
+
+Do not invoke the Architect for routine bug fixes, isolated function changes or minor maintenance.
+
+The Architect must:
+- Inspect existing implementation before proposing changes.
+- Distinguish verified architecture from proposed or intended design.
+- Document significant architectural decisions and their rationale.
+- Respect approved architecture and existing project constraints.
+- Evaluate the impact of proposed dependencies and design changes.
+
+The Architect does not implement routine features or modify production code without explicit delegation.
+
+Project-level `AGENTS.md` files may define additional architectural requirements and invocation criteria.
+
 ## Principles
 
 - Prefer existing project patterns over new abstractions.
@@ -49,8 +73,9 @@ Skills are organized in a hierarchy — load the ones relevant to the task:
 2. **`readable-code`** + **`repo-discovery`** + **`project-index`** — how to understand the project, write maintainable code, and maintain the standardised `PROJECT_INDEX.md`. Load when writing, refactoring, reviewing code, or when project structure changes.
 3. **Language and domain skills** — `python-code`, `go-code`, `typescript-code`, `powershell-skill`, `bash-skill`, `ansible-code`, `networking`, `ot-networking`, `packet-analysis`, `security`, `penetration-tester`. Load for the specific language or domain.
 4. **`quality-gate`** — final review of correctness, readability, security, verification. Load before reporting done.
-5. **`designer`** — design/review standards. Load for architecture/review tasks.
-6. **`long-running-task-research`** — persistent notes, resumable state, overnight-safe verification. Load for multi-stage/research/overnight work.
+5. **`designer`** — design and review standards. Load for UI/UX, component design and interface reviews.
+6. **`architect`** — architectural design, system boundaries, dependency analysis and architecture change management. Invoke through `agent-core` when architectural escalation criteria are met.
+7. **`long-running-task-research`** — persistent notes, resumable state, overnight-safe verification. Load for multi-stage/research/overnight work.
 
 Supporting skills: `template-library`, `readme-authoring`, `git-practices`, `auto-memory`, `research-method`, `self-help`. Skills load on demand via the `skill` tool. Topic memory is wired via `opencode.json: instructions[]`.
 

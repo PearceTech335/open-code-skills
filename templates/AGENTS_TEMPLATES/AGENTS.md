@@ -40,6 +40,40 @@ For non-trivial tasks (consolidated flow):
 
 Never claim a test passed without observed output.
 
+## 2.1 Architectural Escalation — Architect Sub-Agent
+
+`agent-core` invokes the `architect` sub-agent when a task introduces or exposes significant architectural complexity.
+
+**Invocation triggers:**
+- New projects or projects without architecture documentation.
+- Unclear component responsibilities or module dependencies.
+- Introduction of major components.
+- Database schema redesigns or significant API changes.
+- Refactoring across multiple modules.
+
+**Do not invoke for:**
+- Simple bug fixes or isolated function updates.
+- Small utilities.
+- Comment or formatting changes.
+
+**Responsibilities:**
+- Initial architecture design and discovery.
+- Component responsibilities and dependency mapping.
+- Architecture documentation and change management.
+- Architectural governance and integrity.
+
+**Boundaries:**
+- Do not implement routine features.
+- Do not modify production code without explicit delegation.
+- Do not invent undocumented functionality.
+- Do not override approved design decisions.
+- Evaluate dependencies before introducing them.
+- Avoid unnecessary documentation regeneration.
+
+Architecture decisions must be reflected in `ARCHITECTURE.md` and significant design decisions recorded in `DECISIONS.md`.
+
+Manual invocation is unnecessary when `agent-core` identifies a defined trigger.
+
 ## 3. Task Execution
 
 Consolidated in §2 checklist above. Key rules only:
