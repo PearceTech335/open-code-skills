@@ -60,7 +60,8 @@ Your directory structure should include:
 │   ├── architect.md        # software architecture subagent
 │   ├── network-engineer.md # OT/network troubleshooting
 │   ├── research.md         # discovery/parser subagent
-│   └── review.md           # adversarial review + LEARNING_BRIEF emitter
+│   ├── review.md           # adversarial review + LEARNING_BRIEF emitter
+│   └── test.md             # QA testing — runs test suite, PASS/FAIL with evidence
 ├── commands/
 │   ├── improve.md
 │   ├── investigate.md
@@ -77,7 +78,7 @@ Your directory structure should include:
 │   ├── learning-brief.md
 │   └── skill-template.md
 ├── templates/AGENTS_TEMPLATES/    # copy/paste starter (AGENTS.md + TASKS.md + memory/ + .opencode/skills/)
-├── templates/subagent-calls/      # invocation templates (researcher, review, coder, autopilot)
+├── templates/subagent-calls/      # invocation templates (researcher, review, test, coder, autopilot)
 ├── AGENTS.md                     # global agent config (engineering standards, skill hierarchy, verification, Behaviour protocol)
 ├── opencode.json                  # local-only (gitignored) — endpoint config; agent block removed; model/small_model inheritance
 ├── .gitignore                     # excludes opencode.json; tracks skills/, agents/, commands/, README.md, templates/
@@ -90,10 +91,10 @@ Project-level starter (`templates/AGENTS_TEMPLATES/`) layers on top of this glob
 
 ## ⚡ Long Horizon Agentic Tasks
 
-This repo wires up the framework for sustained, multi-turn agentic work — from overnight autonomous tasks (`autopilot.md`) through adversarial review (`review.md`) to autonomous skill creation (`self-help`). Each piece is designed to survive beyond a single prompt.
+This repo wires up the framework for sustained, multi-turn agentic work — from overnight autonomous tasks (`autopilot.md`) through adversarial review (`review.md`) and QA testing (`test.md`) to autonomous skill creation (`self-help`). Each piece is designed to survive beyond a single prompt.
 
 ### Subagent Delegation (Updated Behaviour Protocol)
-Every agent spec is a `.md` file (`agents/*.md` + `commands/*.md`), not a JSON block. When uncertain: load `agent-core` → invoke structured subagent (`research.md` for ambiguous conditions, `review.md` for verification/failure modes) via completed template; never guess. All subagents inherit the active `model`; planner uses cloud endpoint for planning/classification, local endpoint for execution (protect planner token cap).
+Every agent spec is a `.md` file (`agents/*.md` + `commands/*.md`), not a JSON block. When uncertain: load `agent-core` → invoke structured subagent (`research.md` for ambiguous conditions, `review.md` for verification/failure modes, `test.md` for QA testing of code changes) via completed template; never guess. All subagents inherit the active `model`; planner uses cloud endpoint for planning/classification, local endpoint for execution (protect planner token cap).
 
 Architectural escalation: when a task introduces or exposes significant architectural complexity, the `agent-core` routes to the `architect` sub-agent (`agents/architect.md`) via the Architectural Governance in the global `AGENTS.md` — routine fixes and isolated changes do not invoke it.
 
@@ -145,13 +146,13 @@ The starter implements `AGENTS.md` rules (§3, §3.5, §5, §6) at project level
 When a subagent returns a report, the planner must verify key claims before using them: (1) mandatory answer to the mission question stated, (2) every factual claim has attached evidence (command/file reference), (3) no empty sections, (4) cross-check with at least two independent sources. Small models produce reports that "have the shape of an answer" but may contain unverified specifics — the planner is the quality gate.
 
 ### Subagent Invocation Templates
-Standardized prompt templates in `templates/subagent-calls/` (`researcher.md`, `review.md`, `coder.md`, `autopilot.md`). When invoking a subagent, use the corresponding template and fill in the bracketed sections. If no template exists, create one via the self-help process before invoking. Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
+Standardized prompt templates in `templates/subagent-calls/` (`researcher.md`, `review.md`, `test.md`, `coder.md`, `autopilot.md`). When invoking a subagent, use the corresponding template and fill in the bracketed sections. If no template exists, create one via the self-help process before invoking. Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
 
 ### Research Decomposition (Vague Prompts)
 When given a vague or broad research prompt, do not attempt to answer in one pass: (1) broad-brush scan to identify major areas and sub-questions, (2) decompose into 3-5 specific targeted sub-questions, (3) invoke researcher for each sub-question with a focused prompt, (4) synthesize findings into the final report. This ensures each researcher call is focused and verifiable.
 
 ### Planner vs Execution Model Divergence
-The planner (top-level `model` in `opencode.json`) runs on the cloud endpoint for planning, root-cause classification, `LEARNING_BRIEF` emission, and approval. Subagent execution (`coder`, `research`, `review`, `autopilot`) routes through the local endpoint for all writes, reads, edits, tests. This protects the planner's token budget (daily allowance) while keeping execution unbounded (local GPU).
+The planner (top-level `model` in `opencode.json`) runs on the cloud endpoint for planning, root-cause classification, `LEARNING_BRIEF` emission, and approval. Subagent execution (`coder`, `research`, `review`, `test`, `autopilot`) routes through the local endpoint for all writes, reads, edits, tests. This protects the planner's token budget (daily allowance) while keeping execution unbounded (local GPU).
 
 ### Endpoint & Model Configuration
 `opencode.json` declares endpoint providers generically (`ollama`, `lmstudio-local`, `lmstudio`) and a single `model`; `small_model` removed so all subagents inherit one path — no cross-endpoint routing divergence. The framework is endpoint-agnostic: the same `.md` specs and skills work regardless of which server is active, as long as the declared `model` supports tool calls.

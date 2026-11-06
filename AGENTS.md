@@ -65,6 +65,15 @@ If uncertain: do NOT guess. Use structured subagent calls:
 
 Always: inspect repository (`repo-discovery`) before changing; test safe assumptions (single command/file read); protect uncommitted changes (`git status`, `git diff --check`); surface conflicts with architecture rather than inventing fixes.
 
+## Test Agent
+
+The `test` agent performs QA testing of code changes — dynamic verification by execution, complementing `research` (discovery) and `review` (static adversarial review):
+
+- **Invoke when** functional correctness needs evidence from running tests, not just code inspection: after implementation, before reporting done, or when `review` flags a failure mode that only execution can confirm or refute.
+- The agent runs the project's test suite on the current changes (targeted tests first, then the broader suite), and reports PASS/FAIL per test with file/line, test name, and error output for failures — never claiming a test passed unless it actually ran.
+- The agent is read-only with respect to source files: it does not modify code. It surfaces failures for the implementer (or `review` for root-cause classification); it does not silently swallow or fix them.
+- Order of QA: `research` prepares context → implement → `review` (static check) → `test` (execution check) → `quality-gate` (final review).
+
 ## Skills & Memory
 
 Skills are organized in a hierarchy — load the ones relevant to the task:

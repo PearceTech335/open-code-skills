@@ -95,6 +95,7 @@ Standardized prompt templates for invoking subagents. Use the corresponding temp
 |----------|---------|
 | `researcher.md` | Investigation/discovery tasks |
 | `review.md` | Code review tasks |
+| `test.md` | QA testing tasks (runs test suite, PASS/FAIL with evidence) |
 | `coder.md` | Code generation tasks |
 | `autopilot.md` | Overnight/unattended runs |
 
@@ -121,7 +122,7 @@ When a subagent returns a report, the planner must verify key claims before usin
 - [ ] `memory/PROJECT_INDEX.md` verified against repo; paths exist, not invented.
 - [ ] `.opencode/skills/` exists with `.gitkeep`; first skill draft placed when loop triggers.
 - [ ] `memory/learning/briefs/` + `metrics.jsonl` + `tasks/` present (zero-byte sink ready).
-- [ ] `templates/subagent-calls/` contains invocation templates (researcher, review, coder, autopilot).
+- [ ] `templates/subagent-calls/` contains invocation templates (researcher, review, test, coder, autopilot).
 - [ ] Evidence for any skill creation: source URLs, cross-check ≥2, counterexample, reproduction, Learning Gate checks.
 
 
