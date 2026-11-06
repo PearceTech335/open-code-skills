@@ -34,7 +34,7 @@ For non-trivial tasks (consolidated flow):
 5. If complex: invoke `--agent research` (structured prompt only).
 6. Implement (`coder` subagent or direct edit).
 7. GIT commit after edit.
-8. Load `reviewer` subagent (`templates/subagent-calls/reviewer.md`) — adversarial PASS/FAIL (§7.7). Only tick when all 10 axes PASS.
+8. Load `review` subagent (`templates/subagent-calls/review.md`) — adversarial PASS/FAIL (§7.7). Only tick when all 10 axes PASS.
 9. Verify: syntax → targeted test → regression → diff review (with observed output).
 10. Record in `CURRENT_STATE.md`; tick in `TASKS.md`.
 
@@ -86,8 +86,8 @@ When a failure survives a second correction attempt on a knowledge gap: load `se
 ## 3.5 Failure Budget & Root-Cause Gate
 
 Before ticking any sub-subtask complete:
-1. Load `reviewer` subagent (`--agent reviewer`) with `templates/subagent-calls/reviewer.md`.
-2. The reviewer performs adversarial review using the structured PASS/FAIL checklist (§7.7) — 10 axes with one-line verdicts per axis.
+1. Load `review` subagent (`--agent review`) with `templates/subagent-calls/review.md`.
+2. The `review` agent performs adversarial review using the structured PASS/FAIL checklist (§7.7) — 10 axes with one-line verdicts per axis.
 3. If any axis fails: do NOT tick. Document failure in `RESEARCH.md` (line refs, evidence, severity, which option was evaluated), fix or split further, retry.
 4. Only tick when all 10 axes pass AND verification commands ran with observed output.
 5. This applies to ALL sub-subtasks, not just the final milestone — overnight runs must not silently accumulate errors.
@@ -101,11 +101,11 @@ Every sub-subtask earns its own file, not an append-only global log: write attem
 Rules:
 - Write each attempt line to `memory/learning/tasks/<task-id>-attempts.jsonl` (not a global file).
 - **Attempt 1 (fail)**: retry with a different approach — inspect file bytes exactly (`read`), verify whitespace/indentation, confirm exact oldString.
-- **Attempt 2 (fail)**: load `reviewer` or `research` subagent to diagnose root cause. Write diagnosis to `memory/learning/briefs/<task-id>-attempt2.md`. Classify: if root cause is a tool/execution failure (e.g., edit oldString mismatch, exact-match requirement, environment) → stay local; do not emit `LEARNING_BRIEF` or load global `self-help`. Only if the root cause is a recurring structural knowledge gap (`ALGORITHM_UNDERSTANDING_GAP`, `API_OR_LIBRARY_MISUSE`, `DATA_OR_SCHEMA_CONVENTION_GAP`, etc.) emit a `LEARNING_BRIEF` block for §5. Do NOT retry blindly.
+- **Attempt 2 (fail)**: load `review` or `research` subagent to diagnose root cause. Write diagnosis to `memory/learning/briefs/<task-id>-attempt2.md`. Classify: if root cause is a tool/execution failure (e.g., edit oldString mismatch, exact-match requirement, environment) → stay local; do not emit `LEARNING_BRIEF` or load global `self-help`. Only if the root cause is a recurring structural knowledge gap (`ALGORITHM_UNDERSTANDING_GAP`, `API_OR_LIBRARY_MISUSE`, `DATA_OR_SCHEMA_CONVENTION_GAP`, etc.) emit a `LEARNING_BRIEF` block for §5. Do NOT retry blindly.
 - **Attempt 3 (fail)**: stop retrying this sub-subtask. Write proposed workaround to `memory/CURRENT_STATE.md`, load `autopilot.md` or split further in `TASKS.md`. Then summarize one line (`{task_id,subtask,attempts,status,root_cause,workaround}`) to `memory/learning/metrics.jsonl` and delete `memory/learning/tasks/<task-id>-attempts.jsonl`.
 - **Breakdown format**: `TASKS.md` uses IDs (`mN-tN-stN-ssN`) so each sub-subtask can have its own `memory/learning/tasks/<id>-attempts.jsonl`; never share a budget across unrelated subtasks.
 
-Example (your evaluation.py failure): attempt 1 failed due to context mismatch; attempt 2 should read the exact block from the file, confirm indentation; attempt 3 triggers reviewer → RCA = "edit tool requires exact match" → workaround = construct exact string from `read` output, edit once; if that also fails, split into sub-subtask (`read` verification → `edit` application → `test`) rather than repeating the same edit attempt.
+Example (your evaluation.py failure): attempt 1 failed due to context mismatch; attempt 2 should read the exact block from the file, confirm indentation; attempt 3 triggers `review` → RCA = "edit tool requires exact match" → workaround = construct exact string from `read` output, edit once; if that also fails, split into sub-subtask (`read` verification → `edit` application → `test`) rather than repeating the same edit attempt.
 
 Never retry the same action unchanged after a failure.
 
@@ -113,7 +113,7 @@ Never retry the same action unchanged after a failure.
 
 When invoking a subagent, use the corresponding template from `templates/subagent-calls/`:
 - `researcher.md` — for investigation/discovery tasks (invoke: `--agent research`)
-- `reviewer.md` — for code review tasks
+- `review.md` — for code review tasks
 - `coder.md` — for code generation tasks
 - `autopilot.md` — for overnight/unattended runs
 
@@ -122,7 +122,7 @@ Fill in the bracketed sections. If no template exists for the task type, create 
 ## 3.7 Planner vs Execution Model Divergence
 
 - All planning, root-cause classification, `LEARNING_BRIEF` emission, and approval decisions use the planner endpoint (declared in `opencode.json` as `model`).
-- Subagent execution (`coder`, `research`, `reviewer`, `autopilot`) must route through the local endpoint (declared in `opencode.json` as the local provider) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
+- Subagent execution (`coder`, `research`, `review`, `autopilot`) must route through the local endpoint (declared in `opencode.json` as the local provider) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
 - Rationale: planner token budget is limited (daily allowance); execution token budget is unbounded (local GPU). Enforce this split at every subagent invocation to protect the planner's cap and avoid burning free tokens on code-generation loops.
 - If subagent execution needs a different model for a specific task, declare it in the subagent spec (`execution_model`) rather than overriding the planner's `model`.
 
@@ -145,7 +145,7 @@ Persistent project knowledge lives in `memory/`.
 - `DECISIONS.md`: important design decisions and rationale.
 - `KNOWN_ISSUES.md`: unresolved defects, limitations, and risks.
 - `milestones/`: milestone-specific implementation and verification records.
-- `learning/briefs/`: Learning Briefs emitted by the reviewer (§5).
+- `learning/briefs/`: Learning Briefs emitted by the `review` agent (§5).
 - `learning/metrics.jsonl`: one JSON line per completed learning cycle.
 
 Read only the files relevant to the current task.
@@ -166,7 +166,7 @@ Only proceed after Step B. For each sub-question: invoke `--agent research` with
 
 ## 5. Learning Loop (self-improving)
 
-When the `reviewer` subagent returns a `LEARNING_BRIEF` block after a failure
+When the `review` subagent returns a `LEARNING_BRIEF` block after a failure
 has survived a second correction attempt on a knowledge-gap failure:
 
 1. Do NOT edit code to retry blindly.
@@ -238,12 +238,12 @@ When a knowledge-gap failure triggers `self-help` (§5), split the pipeline into
 3. Draft the skill using `.opencode/skills/self-help/templates/skill-template.md`.
 4. Output: draft skill + sources + evidence labels.
 
-**Phase B — Learning Gate (reviewer):**
+**Phase B — Learning Gate (review):**
 1. Validate all 5 checks (evidence, relevance, correctness, scope, executable check).
 2. Approve or reject with one-line reason per check.
 3. If approved → activate as `auto-approved-provisional` (per §6). If rejected → return to Phase A with specific feedback.
 
-Quality is preserved: same research depth, same Learning Gate. The split just moves heavy reasoning to the planner and verification to the reviewer.
+Quality is preserved: same research depth, same Learning Gate. The split just moves heavy reasoning to the planner and verification to the `review` agent.
 
 ## 7.7 Reviewer Checklist Format
 
@@ -278,7 +278,7 @@ This is already partially implemented via `TASKS.md` IDs and §3.5 failure budge
 
 ## 7.9 Compact Learning Brief (Mandatory Format)
 
-When `reviewer` returns `LEARNING_BRIEF` (failure survived 2 attempts):
+When `review` returns `LEARNING_BRIEF` (failure survived 2 attempts):
 
 ```
 LEARNING_BRIEF (compact — 4 fields)

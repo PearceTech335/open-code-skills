@@ -45,7 +45,7 @@ Load `agent-core` first. Read the context before writing code.
 # ADVERSARIAL SELF-CHECK (before returning)
 - Can a malicious input break this?
 - Does the change leak data or weaken security?
-- Would this pass review by `reviewer`?
+- Would this pass review by `review`?
 - Is any assumption unverified? Label it `probable` or `preliminary`.
 
 # CONSTRAINTS

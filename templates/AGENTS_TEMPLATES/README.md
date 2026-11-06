@@ -4,7 +4,7 @@ This folder is the **copy/paste starter template** for new OpenCode projects. Co
 
 ## What this folder is for
 
-- **Project-level agent instructions** (`AGENTS.md`) — mission, startup rules (§2 checklist), execution protocol (§3), evidence/correctness standards (§8 Verification Standard: VERIFIED claims cite independent source; PRELIMINARY states limitation), and the Learning Loop (§5) + Skill Policy (§6). Behaviour (§3.5/§2.6): uncertain conditions trigger structured `research.md`/`reviewer.md` subagent calls, not open-ended prose.
+- **Project-level agent instructions** (`AGENTS.md`) — mission, startup rules (§2 checklist), execution protocol (§3), evidence/correctness standards (§8 Verification Standard: VERIFIED claims cite independent source; PRELIMINARY states limitation), and the Learning Loop (§5) + Skill Policy (§6). Behaviour (§3.5/§2.6): uncertain conditions trigger structured `research.md`/`review.md` subagent calls, not open-ended prose.
 - **Self-improving skills** (`.opencode/skills/`) — where project-specific skills live; the `self-help` skill drafts them, the Learning Gate validates them, and the Skill Policy controls approval.
 - **Project knowledge scaffold** (`memory/`) — persistent index, state, architecture, decisions, known issues, milestones, and the `learning/` sink (`briefs/` + `metrics.jsonl`).
 - **Copy/paste starter** — new repo? Drop this folder's contents at root and fill in Section 1 (Mission) and `memory/PROJECT_INDEX.md`.
@@ -13,12 +13,12 @@ Global rules (`agent-core`, `readable-code`, `repo-discovery`, `quality-gate`, `
 
 ## How the autonomous Learning Loop works
 
-Wired by `AGENTS.md` §5 and the `reviewer` subagent (`agents/reviewer.md`), with `self-help` (`~/.config/opencode/skills/self-help/SKILL.md`) doing the research/drafting:
+Wired by `AGENTS.md` §5 and the `review` subagent (`agents/review.md`), with `self-help` (`~/.config/opencode/skills/self-help/SKILL.md`) doing the research/drafting:
 
 ```
 Task fails on a knowledge-gap failure (second correction attempt fails)
         ↓
-reviewer emits LEARNING_BRIEF block
+`review` emits LEARNING_BRIEF block
         ↓
 write LEARNING_BRIEF → memory/learning/briefs/<task-id>.md
         ↓
@@ -43,14 +43,14 @@ Append JSON line to memory/learning/metrics.jsonl
 Audit provisional skills in .opencode/skills/ + metrics.jsonl
 ```
 
-**Two-Phase Split (§7.6):** When triggered, Phase A (research + draft) runs on the planner; Phase B (Learning Gate validation) runs on the reviewer. Quality is preserved — same research depth, same Learning Gate.
+**Two-Phase Split (§7.6):** When triggered, Phase A (research + draft) runs on the planner; Phase B (Learning Gate validation) runs on the `review` agent. Quality is preserved — same research depth, same Learning Gate.
 
 **Key rules from `AGENTS.md`:**
 - Never generate a skill for a trivial `IMPLEMENTATION_DEFECT`.
 - Never weaken original acceptance criteria to make retry pass.
 - Auto-approved skills are `Status: auto-approved-provisional`; always audit.
 - `max-new-skills-per-run: 3` (cap per autonomous run; exceed → stop/escalate).
-- Tool/execution failures (repeated edit mismatches, exact-match errors) stay local (reviewer RCA, workaround, no global `self-help`) unless `reviewer` classifies a recurring structural gap, which then triggers §5.
+- Tool/execution failures (repeated edit mismatches, exact-match errors) stay local (RCA by `review`, workaround, no global `self-help`) unless `review` classifies a recurring structural gap, which then triggers §5.
 
 ## Where agent/skill files live
 
@@ -58,7 +58,7 @@ Audit provisional skills in .opencode/skills/ + metrics.jsonl
 |---|---|---|
 | **Global skills** (engineering practices, templates) | `~/.config/opencode/skills/` | Load on demand by agent; include `self-help`, `agent-core`, `readable-code`, `repo-discovery`, `quality-gate`, `long-running-task-research`, `git-practices`, etc. |
 | **Project skills** (project-specific patterns, new capabilities) | `.opencode/skills/` (inside this folder / project root) | Drafted by `self-help`; validated by Learning Gate; approved via §6; kept separate from global to avoid pollution |
-| **Project agents / subagent specs** | `agents/*.md`, `commands/*.md` | Define roles (`reviewer`, `coder`, etc.) with `description`, `mode`, `prompt`, optional `model:` override (omit to inherit global `model`/`small_model`) |
+| **Project agents / subagent specs** | `agents/*.md`, `commands/*.md` | Define roles (`review`, `coder`, etc.) with `description`, `mode`, `prompt`, optional `model:` override (omit to inherit global `model`/`small_model`) |
 | **Self-help templates** | `~/.config/opencode/skills/self-help/templates/` | `skill-template.md`, `learning-brief.md` — starter formats for new skills/briefs |
 
 **If you delete `small_model` from `opencode.json`,** subagents inherit `model` exactly 
@@ -94,7 +94,7 @@ Standardized prompt templates for invoking subagents. Use the corresponding temp
 | Template | Purpose |
 |----------|---------|
 | `researcher.md` | Investigation/discovery tasks |
-| `reviewer.md` | Code review tasks |
+| `review.md` | Code review tasks |
 | `coder.md` | Code generation tasks |
 | `autopilot.md` | Overnight/unattended runs |
 
@@ -102,7 +102,7 @@ If no template exists for the task type, create one via the self-help process (�
 
 ## Failure Budget (§3.5 of AGENTS.md)
 
-Every sub-subtask (`TASKS.md` ID) gets its own `memory/learning/tasks/<id>-attempts.jsonl`; after resolution (success/final failure/workaround) summarize one line to `memory/learning/metrics.jsonl` and delete the per-task file — no unbounded growth. Tool/execution failures stay local (reviewer RCA, workaround, no global `self-help`) unless `reviewer` classifies a recurring structural gap.
+Every sub-subtask (`TASKS.md` ID) gets its own `memory/learning/tasks/<id>-attempts.jsonl`; after resolution (success/final failure/workaround) summarize one line to `memory/learning/metrics.jsonl` and delete the per-task file — no unbounded growth. Tool/execution failures stay local (RCA by `review`, workaround, no global `self-help`) unless `review` classifies a recurring structural gap.
 
 ## Research Decomposition (§3.9 of AGENTS.md)
 
@@ -121,7 +121,7 @@ When a subagent returns a report, the planner must verify key claims before usin
 - [ ] `memory/PROJECT_INDEX.md` verified against repo; paths exist, not invented.
 - [ ] `.opencode/skills/` exists with `.gitkeep`; first skill draft placed when loop triggers.
 - [ ] `memory/learning/briefs/` + `metrics.jsonl` + `tasks/` present (zero-byte sink ready).
-- [ ] `templates/subagent-calls/` contains invocation templates (researcher, reviewer, coder, autopilot).
+- [ ] `templates/subagent-calls/` contains invocation templates (researcher, review, coder, autopilot).
 - [ ] Evidence for any skill creation: source URLs, cross-check ≥2, counterexample, reproduction, Learning Gate checks.
 
 

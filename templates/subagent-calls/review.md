@@ -1,6 +1,6 @@
-# Reviewer Subagent Invocation Template
+# Review Subagent Invocation Template
 
-Use this template when invoking the `reviewer` subagent. Fill in the bracketed sections.
+Use this template when invoking the `review` subagent. Fill in the bracketed sections.
 
 ---
 

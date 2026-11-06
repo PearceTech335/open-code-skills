@@ -60,7 +60,7 @@ Proportional to the change. Minimum: syntax → static analysis → targeted tes
 
 If uncertain: do NOT guess. Use structured subagent calls:
 - **Ambiguous condition / conflicting evidence** → load `templates/subagent-calls/research.md`, invoke `--agent research` with completed template. Synthesize results; do not pick blindly.
-- **Verification needed / potential failure mode** → load `templates/subagent-calls/reviewer.md`, invoke `--agent reviewer` (PASS/FAIL checklist, negative goal: find bugs, not confirm correctness).
+- **Verification needed / potential failure mode** → load `templates/subagent-calls/review.md`, invoke `--agent review` (PASS/FAIL checklist, negative goal: find bugs, not confirm correctness).
 - **Unsafe assumption** → label `PRELIMINARY`, stop. Document blocker in `RESEARCH.md`; ask or resolve with evidence before proceeding.
 
 Always: inspect repository (`repo-discovery`) before changing; test safe assumptions (single command/file read); protect uncommitted changes (`git status`, `git diff --check`); surface conflicts with architecture rather than inventing fixes.
@@ -81,7 +81,7 @@ Supporting skills: `template-library`, `readme-authoring`, `git-practices`, `aut
 
 ## Learning Loop
 
-When the `reviewer` subagent returns a `LEARNING_BRIEF` block after a failure survived a correction attempt: do NOT edit code to retry blindly. Write the block to `memory/learning/briefs/<task-id>.md`, load `self-help`, and pass it the Brief path. `self-help` researches, drafts a Power-of-10 skill, and (by default) pauses for human approval. Never generate a skill for a trivial `IMPLEMENTATION_DEFECT`.
+When the `review` subagent returns a `LEARNING_BRIEF` block after a failure survived a correction attempt: do NOT edit code to retry blindly. Write the block to `memory/learning/briefs/<task-id>.md`, load `self-help`, and pass it the Brief path. `self-help` researches, drafts a Power-of-10 skill, and (by default) pauses for human approval. Never generate a skill for a trivial `IMPLEMENTATION_DEFECT`.
 
 ## Language Tool Mapping
 

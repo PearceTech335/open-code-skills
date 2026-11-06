@@ -21,7 +21,7 @@ Triggered by repeated roadblocks where existing skills fall short (e.g. `python-
 When an adversarial review produces a Learning Brief after a failed correction attempt:
 1. Read the brief at the given path (`memory/learning/briefs/<task>.md`).
 2. Validate the proposed root cause against the actual implementation. Do not accept the diagnosis blindly.
-3. If the reviewer cited no attribution evidence, the brief is UNKNOWN — investigate or escalate.
+3. If the `review` agent cited no attribution evidence, the brief is UNKNOWN — investigate or escalate.
 4. Route per the brief's Recommended Artifact: load existing skill / update existing / project skill / temporary note / escalate.
 
 ## Research Protocol (Mandatory Before Drafting)
@@ -105,12 +105,12 @@ When a knowledge-gap failure triggers self-help (AGENTS.md section 5), split the
 3. Draft the skill using templates/skill-template.md.
 4. Output: draft skill + sources + evidence labels.
 
-**Phase B — Learning Gate (reviewer):**
+**Phase B — Learning Gate (review):**
 1. Validate all 5 checks (evidence, relevance, correctness, scope, executable check).
 2. Approve or reject with one-line reason per check.
 3. If approved -> activate as auto-approved-provisional (per AGENTS.md section 6). If rejected -> return to Phase A with specific feedback.
 
-Quality is preserved: same research depth, same Learning Gate. The split moves heavy reasoning to the planner and verification to the reviewer.
+Quality is preserved: same research depth, same Learning Gate. The split moves heavy reasoning to the planner and verification to the `review` agent.
 
 ## Compact Learning Brief (standard format)
 

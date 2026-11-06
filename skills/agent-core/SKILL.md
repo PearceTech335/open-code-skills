@@ -18,7 +18,7 @@ Before writing code, verify which skills apply:
 4. Load meta/quality skills when their guidance is needed (`readable-code`, `designer`, `quality-gate`).
 5. Load `long-running-task-research` for large-file edits or multi-module refactors.
 6. Load `self-help` **only** when a failure survives a second correction attempt on a knowledge gap (`AGENTS.md` §5). Never invent a missing skill; never load `self-help` for a trivial `IMPLEMENTATION_DEFECT`.
-7. Load subagent specs (`reviewer.md`, `research.md`, `coder.md`) only when the planner explicitly invokes them (`--agent` / agent invocation); they inherit `model` and work independently.
+7. Load subagent specs (`review.md`, `research.md`, `coder.md`) only when the planner explicitly invokes them (`--agent` / agent invocation); they inherit `model` and work independently.
 8. Report which skills were loaded in your response or `RESEARCH.md`. If none matched and you needed a new capability, document the gap; do not invent APIs or skills.
 
 Do not load unrelated skills (e.g., `bash-skill` for a Python module, `security` for a simple UI edit) — unnecessary context bloat degrades reasoning.
@@ -86,12 +86,12 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 - **Stop-and-ask threshold**: If you cannot verify an assumption with a single file read or command, label it PRELIMINARY and stop. Do not proceed on unverified assumptions.
 - **Deep research**: Read PROJECT_INDEX.md first. Break task into sub-tasks in TASKS.md using IDs (mN-tN-stN-ssN). Each sub-task gets its own attempt file.
 - **Compact output**: Use compact Learning Brief (4-field) instead of full 8-field. Use PASS/FAIL checklist for reviews.
-- **Temperature**: Set per agent role: planner 0.1-0.3, coder 0.2, research 0.4, reviewer 0.1.
+- **Temperature**: Set per agent role: planner 0.1-0.3, coder 0.2, research 0.4, review 0.1.
 
 ## Planner vs Execution Model Divergence
 
 - Planner (opencode.json model) runs on the free/cloud endpoint (e.g., MiMo-2.6). All planning, root-cause classification, LEARNING_BRIEF emission, and approval decisions use this endpoint only.
-- Subagent execution (coder, research, reviewer, autopilot) must route through the local endpoint (declared in opencode.json as the local provider) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
+- Subagent execution (coder, research, review, autopilot) must route through the local endpoint (declared in opencode.json as the local provider) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
 - Rationale: planner token budget is limited (daily allowance); execution token budget is unbounded (local GPU). Enforce this split at every subagent invocation.
 - If subagent execution needs a different model for a specific task, declare it in the subagent spec (execution_model) rather than overriding the planners model.
 
@@ -99,7 +99,7 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 
 When invoking a subagent, use the corresponding template from templates/subagent-calls/:
 - researcher.md -- investigation/discovery tasks
-- reviewer.md -- code review tasks
+- review.md -- code review tasks
 - coder.md -- code generation tasks
 - autopilot.md -- overnight/unattended runs
 
@@ -127,7 +127,7 @@ This ensures each researcher call is focused and verifiable, rather than one mas
 ## Subagent Invocation Reference
 
 - --agent research: loads agents/research.md (fast file parser, discovery)
-- --agent reviewer: loads agents/reviewer.md (adversarial review, LEARNING_BRIEF emitter)
+- --agent review: loads agents/review.md (adversarial review, LEARNING_BRIEF emitter)
 - --agent coder: loads agents/coder.md (code generation subagent)
 - --agent autopilot: loads agents/autopilot.md (overnight autonomous worker)
 - --agent network-engineer: loads agents/network-engineer.md (OT/network troubleshooting)

@@ -1,6 +1,6 @@
 ---
 description: Review current changes for correctness and regressions
-agent: reviewer
+agent: review
 ---
 
 Review the current working tree changes.

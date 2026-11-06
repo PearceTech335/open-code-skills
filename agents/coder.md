@@ -43,7 +43,7 @@ Never invent APIs, filenames, or module structures. Before writing code:
 
 - Can a malicious input break this?
 - Does the change leak data or weaken security?
-- Would this pass review by `reviewer` (see `agents/reviewer.md`)?
+- Would this pass review by `review` (see `agents/review.md`)?
 - Is any assumption unverified? Label it `probable` or `preliminary`.
 
 ## 7. Tool and model discipline

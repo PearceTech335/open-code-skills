@@ -32,9 +32,9 @@ This prevents the planner from giving vague prompts that produce unverified repo
 
 Before ticking any task complete in the loop:
 
-1. Load `reviewer` subagent (`--agent reviewer`) with `templates/subagent-calls/reviewer.md`.
+1. Load `review` subagent (`--agent review`) with `templates/subagent-calls/review.md`.
 2. **Reviewer Mandate (Negative Goal)**: Identify vulnerabilities, regressions, failure modes, security boundary breaks. Never assume correctness. Focus: counterexamples + failure modes + security boundaries.
-3. The reviewer uses structured PASS/FAIL checklist (`AGENTS.md` §7.7): 1.Correctness 2.Error handling 3.Edge cases 4.Concurrency 5.Resource cleanup 6.Security 7.Backwards compat 8.Tests 9.Complexity 10.Assumptions — one-line verdict per axis.
+3. The `review` agent uses structured PASS/FAIL checklist (`AGENTS.md` §7.7): 1.Correctness 2.Error handling 3.Edge cases 4.Concurrency 5.Resource cleanup 6.Security 7.Backwards compat 8.Tests 9.Complexity 10.Assumptions — one-line verdict per axis.
 4. If any axis fails: do NOT tick. Document failure in `RESEARCH.md` (line refs, evidence, severity), fix or split the sub-subtask, and retry.
 5. Only tick when all 10 axes pass (PASS) and verification commands ran with observed output.
 6. For ambiguous conditions (multiple valid fixes): load `templates/subagent-calls/research.md` (Multi-Path Decision Protocol) before committing to one path — evaluate each option independently against suitability, security, performance.
