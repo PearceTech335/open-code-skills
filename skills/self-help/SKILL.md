@@ -22,7 +22,7 @@ When an adversarial review produces a Learning Brief after a failed correction a
 1. Read the brief at the given path (`memory/learning/briefs/<task>.md`).
 2. Validate the proposed root cause against the actual implementation. Do not accept the diagnosis blindly.
 3. If the `review` agent cited no attribution evidence, the brief is UNKNOWN — investigate or escalate.
-4. Route per the brief's Recommended Artifact: load existing skill / update existing / project skill / temporary note / escalate.
+4. Route per the brief's Recommended Artifact: load existing skill / update existing / project skill / temporary note / escalate. Routing rank (prefer in this order): USE_EXISTING > UPDATE_EXISTING > CREATE_PROJECT > TEMPORARY_NOTE > ESCALATE.
 
 ## Research Protocol (Mandatory Before Drafting)
 

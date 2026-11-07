@@ -12,4 +12,5 @@ Rules:
 - Break the request into 3-12 independently verifiable checklist items, each written as `- [ ] ...`.
 - Each item must be small enough to complete and verify in one pass.
 - Add a final item that records the verification command used and its result.
+- Each item is verified per template §3.5 (review → test) before ticking; the final item re-runs the full verification.
 - Then take the first unchecked item and work it. Do not ask questions.

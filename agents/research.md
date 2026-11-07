@@ -68,4 +68,5 @@ Edit permissions (`edit: deny`, `bash: deny`) are deliberate. If the planner ask
 - Stop and ask on unverified assumptions (label PRELIMINARY).
 - Load at most 3 skills per task (see AGENTS.md section 2).
 - Use the compact Learning Brief (4-field) as the standard format.
+- Every recommendation must quote the exact file:line that currently lacks the proposed behaviour — no recommendation without a cited gap.
 - Deep research: read PROJECT_INDEX.md first; break task into sub-tasks in TASKS.md; each sub-task gets its own attempt file.

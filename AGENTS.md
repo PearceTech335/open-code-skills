@@ -55,6 +55,7 @@ Proportional to the change. Minimum: syntax → static analysis → targeted tes
 
 - Go: `go vet ./...`, `go build ./...`, `go test ./...` (`-race` for concurrent code), `golangci-lint run` if configured.
 - Python: `python -m py_compile`, `ruff check`, `mypy` if configured, `pytest <target>` then full `pytest`.
+  - **Code repetition check**: For generated code, ensure identical lines (e.g., imports, statements) are not repeated without clear purpose. Consolidate into single line with comment explaining necessity (e.g., `# Reconfigured sys.stdout encoding once for UTF-8`).
 
 ## Behaviour
 
@@ -86,7 +87,7 @@ Skills are organized in a hierarchy — load the ones relevant to the task:
 6. **`architect`** — architectural design, system boundaries, dependency analysis and architecture change management. Invoke through `agent-core` when architectural escalation criteria are met.
 7. **`long-running-task-research`** — persistent notes, resumable state, overnight-safe verification. Load for multi-stage/research/overnight work.
 
-Supporting skills: `template-library`, `readme-authoring`, `git-practices`, `auto-memory`, `research-method`, `self-help`. Skills load on demand via the `skill` tool. Topic memory is wired via `opencode.json: instructions[]`.
+Supporting skills: `template-library`, `readme-authoring`, `git-practices`, `auto-memory`, `research-method`, `self-help`, `supervisor`. Skills load on demand via the `skill` tool. Topic memory is wired via `opencode.json: instructions[]`.
 
 ## Learning Loop
 

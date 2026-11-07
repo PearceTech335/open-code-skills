@@ -86,7 +86,7 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 - **Stop-and-ask threshold**: If you cannot verify an assumption with a single file read or command, label it PRELIMINARY and stop. Do not proceed on unverified assumptions.
 - **Deep research**: Read PROJECT_INDEX.md first. Break task into sub-tasks in TASKS.md using IDs (mN-tN-stN-ssN). Each sub-task gets its own attempt file.
 - **Compact output**: Use compact Learning Brief (4-field) instead of full 8-field. Use PASS/FAIL checklist for reviews.
-- **Temperature**: Set per agent role: planner 0.1-0.3, coder 0.2, research 0.4, review 0.1.
+- **Temperature**: Set per agent role: planner 0.1-0.3, coder 0.2, research 0.4, review 0.1. Do not add sampling parameters beyond `temperature` in agent frontmatter — none (e.g. presence/frequency penalty, thinking toggles) are supported by the current providers.
 
 ## Planner vs Execution Model Divergence
 

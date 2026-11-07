@@ -24,6 +24,7 @@ establish correctness.
 ## 2. Mandatory Task Startup (Checklist)
 
 Before any work: `PROJECT_INDEX.md` → `CURRENT_STATE.md` → `TASKS.md`.
+Each loop iteration, re-read `CURRENT_STATE.md` + `TASKS.md` (not `RESEARCH.md`, not conversation history) and advance the single unchecked item there.
 If index missing/stale: load `project-index` (and `repo-discovery` if needed), inspect, update/create index first.
 
 For non-trivial tasks (consolidated flow):
@@ -201,6 +202,9 @@ Controls whether new project skills need human approval before activating.
   escalate rather than generating more.
 - Every auto-approved skill is PROVISIONAL (`Status: auto-approved-provisional`)
   until reviewed. Audit them in `.opencode/skills/` and `metrics.jsonl`.
+  `auto-approve` applies to project skills only; global promotion always
+  requires review, and unattended runs still require a post-run audit of
+  provisional skills.
 
 ## 7. Skill Management
 
@@ -307,6 +311,7 @@ Global Engineering Standards (verification, principles, behaviour) apply. This s
 - Distinguish between verified facts, reasonable hypotheses, unverified assumptions, and known limitations.
 - Prefer repository evidence and reproducible experiments over memory.
 - When code behaviour is unclear, inspect the implementation and construct a test that distinguishes competing explanations.
+- Keep evidence cited in a report in-context; spill only raw tool output (not derived findings with line refs) to `RESEARCH.md` and cite the spill path.
 - If applicable to this project (e.g. ML/data work), investigate temporal leakage, data leakage, incorrect labels, invalid evaluation splits, and inappropriate baselines.
 
 ## 9. Completion

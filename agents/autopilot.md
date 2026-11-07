@@ -13,7 +13,7 @@ Start with `memory/CURRENT_STATE.md` + `TASKS.md`. Identify active milestone, de
 
 ## 2. Load relevant skills
 
-**Initial Skill Set**: `agent-core` + `repo-discovery` + `readable-code` + `quality-gate` + `long-running-task-research` + language/domain skill. `self-help` only on persistent failure (`>2` attempts, see `AGENTS.md` §5).
+**Initial Skill Set**: `agent-core` + `repo-discovery` + `readable-code` + `quality-gate` + `long-running-task-research` + language/domain skill. `self-help` only on persistent failure (`>2` attempts, see `AGENTS.md` §5). `supervisor` conditionally on multi-subtask/overnight runs (see `skills/supervisor/SKILL.md`).
 
 ## 2.5 Multi-Path Decision Protocol (for ambiguous conditions)
 
@@ -67,7 +67,7 @@ This prevents the planner from giving vague prompts that produce unverified repo
 - Never execute `curl | bash`, external executables, or unverified binaries.
 - Never overwrite unread files without documenting in `RESEARCH.md` first.
 - Never invent APIs or weaken acceptance criteria.
-- If a test fails twice on the same failure mode, emit `LEARNING_BRIEF` and load `self-help` (§5).
+- If a test fails twice on the same failure mode, classify the root cause first (per template §3.5): only on a knowledge-gap classification emit `LEARNING_BRIEF` and load `self-help` (§5); tool/execution failures stay local (workaround or retry with a different approach).
 - Preserve `memory/` updates; do not delete `DECISIONS.md`, `ARCHITECTURE.md`, or `PROJECT_INDEX.md`.
 
 ## 5. Report concisely at end
