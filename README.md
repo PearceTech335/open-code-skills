@@ -1,4 +1,4 @@
-# Open-Code-Skills 🧠🛠️
+# Open-Code-Skills
 
 > *Because even AI coding agents need a little emotional and technical growth.*
 
@@ -6,7 +6,7 @@ A curated collection of production-grade, highly compressed, Power-of-10-inspire
 
 ---
 
-## 🌟 Self-Help Yourself - The `self-help` Skill
+## Self-Help Yourself - The `self-help` Skill
 
 When an AI agent hits a persistent, systemic knowledge gap during task execution (such as encountering an unhandled domain framework or complex protocol), you can trigger **therapy mode** via the **`self-help`** skill (located in `skills/self-help/`):
 
@@ -18,35 +18,38 @@ When an AI agent hits a persistent, systemic knowledge gap during task execution
 
 ---
 
-## 📂 What’s Inside?
+## What’s Inside?
 
-### 🧠 Core & Meta Skills
+### Core & Meta Skills
 - **`agent-core`**: Tool call discipline, four-phase protocol (Explore, Plan, Execute, Verify), and course-correction rules.
 - **`self-help`**: Autonomous skill generation for systemic gaps with strict safety guardrails.
 - **`auto-memory`**: Session learning journal to persist non-obvious insights across sessions without RAG.
 - **`template-library`**: Reusable code patterns and snippet management.
+- **`supervisor`**: Lightweight process judge for multi-subtask/overnight runs (CONTINUE/REPLAN/ESCALATE/STOP; see `skills/supervisor/SKILL.md`).
+- **`long-running-task-research`**, **`git-practices`**, **`readme-authoring`**, **`research-method`**: persistent multi-stage research, Git workflow, README authoring, and research-method guardrails.
 
-### 🏗️ Design & Quality Skills
+### Design & Quality Skills
 - **`readable-code`**: Cross-language coding standards for human-maintainable code (intent-obvious naming, simple solutions, robust error handling).
 - **`designer`**: Enforces solid project design methods (Single Responsibility, Separation of Concerns, Dependency Direction, Minimal Abstraction).
 - **`quality-gate`**: Final multi-dimensional review checklist (correctness, readability, architecture, security, performance).
 - **`repo-discovery`**: Architecture exploration before changing code (entry points, dependency mapping, call-chain tracing).
 - **`project-index`**: Maintains the standardised `PROJECT_INDEX.md` repository map; load it when project context is missing or stale (pair with `repo-discovery` when exploring before changes).
 
-### 💻 Language & Domain Skills
+### Language & Domain Skills
 - **`python-code`**, **`go-code`**, **`typescript-code`**: Production coding standards inspired by the NASA/JPL Power of 10 rules (short functions, strict type hints, path operations via `pathlib`, specific exception handling).
 - **`bash-skill`**, **`powershell-skill`**, **`ansible-code`**: Robust, idempotent automation guardrails for sysadmins and OT engineers.
 - **`security`**, **`penetration-tester`**, **`networking`**, **`ot-networking`**, **`packet-analysis`**: Evidence-first domain investigation and security review standards.
 
-### ⚡ Custom Commands (`commands/`)
+### Custom Commands (`commands/`)
 - **`/overnight`**: Turns any prompt into a `TASKS.md` checklist and runs an unattended autonomous worker.
 - **`/research`**: Fast file parsing and information extraction via specialized subagents.
 - **`/improve`**: Triggers the `self-help` skill workflow to research and draft new skills.
-- **`/review` & `/investigate`**: Evidence-first code and network troubleshooting commands.
+- **`/review`**: Evidence-first code review command.
+- **`/investigate`**: Evidence-first network troubleshooting command.
 
 ---
 
-## 🚀 Quick Start & File Placement
+## Quick Start & File Placement
 
 Drop these files directly into your OpenCode global configuration directory (`~/.config/opencode/` on Linux/macOS/Windows) or a project-level `.opencode/` folder. 
 
@@ -71,16 +74,15 @@ Your directory structure should include:
 ├── skills/
 │   ├── agent-core/SKILL.md
 │   ├── self-help/SKILL.md         # autonomous skill generation + brief templates
-│   ├── agent-core/SKILL.md
 │   ├── readable-code/SKILL.md
-│   └── ... (full skill library)
+│   └── ... (full skill library, incl. supervisor)
 ├── skills/self-help/templates/
 │   ├── learning-brief.md
 │   └── skill-template.md
 ├── templates/AGENTS_TEMPLATES/    # copy/paste starter (AGENTS.md + MISSION.md + TASKS.md + memory/ + .opencode/skills/)
-├── templates/subagent-calls/      # invocation templates (researcher, review, test, coder, autopilot)
-├── AGENTS.md                     # global agent config (engineering standards, skill hierarchy, verification, Behaviour protocol)
-├── opencode.json                  # local-only (gitignored) — endpoint config; agent block removed; model/small_model inheritance
+├── templates/subagent-calls/      # invocation templates (research.md, researcher.md, review.md, test.md, coder.md, autopilot.md)
+├── AGENTS.md                     # global agent config (engineering standards, skill hierarchy, verification, Behaviour + Test Agent protocol)
+├── opencode.json                  # local-only (gitignored) — endpoint config; agent block removed; subagents inherit `model`
 ├── .gitignore                     # excludes opencode.json; tracks skills/, agents/, commands/, README.md, templates/
 └── README.md
 ```
@@ -89,9 +91,17 @@ Project-level starter (`templates/AGENTS_TEMPLATES/`) layers on top of this glob
 
 ---
 
-## ⚡ Long Horizon Agentic Tasks
+## Long Horizon Agentic Tasks
 
 This repo wires up the framework for sustained, multi-turn agentic work — from overnight autonomous tasks (`autopilot.md`) through adversarial review (`review.md`) and QA testing (`test.md`) to autonomous skill creation (`self-help`). Each piece is designed to survive beyond a single prompt.
+
+### Process Enforcement for Small Local Models
+
+This framework targets sustained agentic coding on small local models (e.g. Qwen3.5-4B-class models at small configured contexts — see `opencode.json`) by enforcing a frontier-model-style process per task: file-first state (`PROJECT_INDEX`/`CURRENT_STATE`/`TASKS`), research before implementation for non-trivial changes, adversarial `review`, execution-based `test`, and `supervisor` gating before any tick. Checklists, templates, and the 3-strike failure budget externalise process discipline so it does not depend on model scale — at the cost of per-task subagent latency, which the file-first design contains.
+
+In unattended/autopilot runs, `supervisor` decisions execute immediately — `ESCALATE` records the blocker and moves on; only hard blockers stop the run (post-run audit of `PROGRESS.md`, `metrics.jsonl`, and provisional skills).
+
+Agent frontmatter sets `temperature` only (no other sampling parameters); `research` recommendations must cite the `file:line` gap they address.
 
 ### Subagent Delegation (Updated Behaviour Protocol)
 Every agent spec is a `.md` file (`agents/*.md` + `commands/*.md`), not a JSON block. When uncertain: load `agent-core` → invoke structured subagent (`research.md` for ambiguous conditions, `review.md` for verification/failure modes, `test.md` for QA testing of code changes) via completed template; never guess. All subagents inherit the active `model`; planner uses cloud endpoint for planning/classification, local endpoint for execution (protect planner token cap).
@@ -114,10 +124,10 @@ When a failure survives a second correction attempt on a **knowledge-gap** root 
 7. Retry against ORIGINAL criteria (never weakened) + FULL regression suite
 8. Append JSON line → memory/learning/metrics.jsonl
 ```
-Auto-approved skills are provisional — audit `.opencode/skills/` and `metrics.jsonl`. Cap: `max-new-skills-per-run: 3`; exceed → stop/escalate.
+Auto-approved skills are provisional — audit `.opencode/skills/` and `metrics.jsonl`. Cap: `max-new-skills-per-run: 3`; exceed → stop/escalate. Routing prefers existing skills (update before create); drafted skills target ~60 lines (soft limit).
 
 ### Skill Policy & Lightweight Design
-`AGENTS.md` §6 declares `auto-approve: project-skills` and the cap above; set policy to `off` for full human gate. Skills live in `skills/` (global) and `.opencode/skills/` (project); agent specs live in `agents/*.md` + `commands/*.md`. `templates/AGENTS_TEMPLATES/` is the copy/paste starter (includes `AGENTS.md`, `TASKS.md`, `memory/`, `.opencode/skills/`). No JSON `agent` block — managing agents is add/remove one `.md` file.
+`AGENTS.md` §6 declares `auto-approve: project-skills` and the cap above; set policy to `off` for full human gate. Skills live in `skills/` (global) and `.opencode/skills/` (project); agent specs live in `agents/*.md` + `commands/*.md`. `templates/AGENTS_TEMPLATES/` is the copy/paste starter (includes `AGENTS.md`, `MISSION.md`, `TASKS.md`, `memory/`, `.opencode/skills/`). No JSON `agent` block — managing agents is add/remove one `.md` file.
 
 ### Failure Budget (3-Strike Gate)
 Every sub-subtask (`TASKS.md` ID) gets its own `memory/learning/tasks/<id>-attempts.jsonl`; after resolution (success/final failure/workaround) summarize one line to `memory/learning/metrics.jsonl` and delete the per-task file — no unbounded growth. Tool/execution failures (repeated edit mismatches, exact-match errors) stay local (RCA by `review`, workaround, no global `self-help`) unless `review` classifies a recurring structural gap (`ALGORITHM_UNDERSTANDING_GAP`, etc.), which then triggers §5.
@@ -127,12 +137,13 @@ Every sub-subtask (`TASKS.md` ID) gets its own `memory/learning/tasks/<id>-attem
 
 ```text
 <project-root>/
-├── AGENTS.md              # §3 execution + §3.5 failure budget (3-strike gate)
+├── AGENTS.md              # §2 checklist (steps 5/9a/9b) + §3.5 failure budget (steps 6-7: test PASS + supervisor gate)
 ├── MISSION.md             # mission brief (separate from AGENTS.md §1; edit when mission changes)
 ├── TASKS.md               # milestone / sub-subtask IDs (mN-tN-stN-ssN)
 ├── memory/
 │   ├── CURRENT_STATE.md   # active milestone + open sub-subtasks
 │   ├── PROJECT_INDEX.md   # repo navigation
+│   ├── PROGRESS.md        # supervisor heartbeat (one line per sub-subtask decision)
 │   ├── learning/tasks/    # per-sub-subtask attempt files (created, then purged)
 │   ├── learning/metrics.jsonl  # summary line after resolution
 │   └── ...
@@ -147,7 +158,7 @@ The starter implements `AGENTS.md` rules (§3, §3.5, §5, §6) at project level
 When a subagent returns a report, the planner must verify key claims before using them: (1) mandatory answer to the mission question stated, (2) every factual claim has attached evidence (command/file reference), (3) no empty sections, (4) cross-check with at least two independent sources. Small models produce reports that "have the shape of an answer" but may contain unverified specifics — the planner is the quality gate.
 
 ### Subagent Invocation Templates
-Standardized prompt templates in `templates/subagent-calls/` (`researcher.md`, `review.md`, `test.md`, `coder.md`, `autopilot.md`). When invoking a subagent, use the corresponding template and fill in the bracketed sections. If no template exists, create one via the self-help process before invoking. Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
+Standardized prompt templates in `templates/subagent-calls/` (`research.md`, `researcher.md`, `review.md`, `test.md`, `coder.md`, `autopilot.md`). When invoking a subagent, use the corresponding template and fill in the bracketed sections. If no template exists, create one via the self-help process before invoking. Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
 
 ### Research Decomposition (Vague Prompts)
 When given a vague or broad research prompt, do not attempt to answer in one pass: (1) broad-brush scan to identify major areas and sub-questions, (2) decompose into 3-5 specific targeted sub-questions, (3) invoke researcher for each sub-question with a focused prompt, (4) synthesize findings into the final report. This ensures each researcher call is focused and verifiable.
@@ -156,12 +167,12 @@ When given a vague or broad research prompt, do not attempt to answer in one pas
 The planner (top-level `model` in `opencode.json`) runs on the cloud endpoint for planning, root-cause classification, `LEARNING_BRIEF` emission, and approval. Subagent execution (`coder`, `research`, `review`, `test`, `autopilot`) routes through the local endpoint for all writes, reads, edits, tests. This protects the planner's token budget (daily allowance) while keeping execution unbounded (local GPU).
 
 ### Endpoint & Model Configuration
-`opencode.json` declares endpoint providers generically (`ollama`, `lmstudio-local`, `lmstudio`) and a single `model`; `small_model` removed so all subagents inherit one path — no cross-endpoint routing divergence. The framework is endpoint-agnostic: the same `.md` specs and skills work regardless of which server is active, as long as the declared `model` supports tool calls.
+`opencode.json` is local-only (gitignored) and declares endpoint providers plus a single `model`; all subagents inherit that one path — no cross-endpoint routing divergence. The framework is endpoint-agnostic: the same `.md` specs and skills work regardless of which local server is active, as long as the declared `model` supports tool calls. Where a separate planner model is configured, the planner/execution split in `AGENTS.md` applies.
 
 ---
 
-## 🛡️ Security & Supply Chain Safety
+## Security & Supply Chain Safety
 - **Local Authorship**: All skills must be authored locally from verified static sources to prevent remote supply chain tampering.
-- **WebFetch Guardrails**: WebFetch is restricted by policy to verified documentation only—never for remote agent or config files.
+- **WebFetch Guardrails**: WebFetch is restricted by policy to verified documentation only — never for agent/config files, `github.com/anomalyco/` repos, or `.config/opencode/` URLs.
 
-*Fork, adapt, and help your AI learn some skills.* 🤖✨
+*Fork, adapt, and help your AI learn some skills.*

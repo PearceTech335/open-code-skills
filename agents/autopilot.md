@@ -76,4 +76,4 @@ Write `PROGRESS.md` with: completed / blocked / next actions; verification comma
 
 ## 6. No questions — no approvals — do not wait
 
-If you need clarification that is not in `TASKS.md`, `memory/`, or `AGENTS.md`, make the best evidenced decision, document it as `preliminary`, and continue. Escalate only on hard blockers (missing index, broken endpoint, unrecoverable error).
+If you need clarification that is not in `TASKS.md`, `memory/`, or `AGENTS.md`, make the best evidenced decision, document it as `preliminary`, and continue. Escalate only on hard blockers (missing index, broken endpoint, unrecoverable error). The `supervisor` skill runs autonomously in this mode: its `CONTINUE`/`REPLAN` decisions execute immediately; `ESCALATE` records a blocker and moves to the next item — do not stop or wait for a human except on hard blockers (see `skills/supervisor/SKILL.md`, Unattended Mode).

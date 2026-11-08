@@ -5,12 +5,16 @@ This folder is the **copy/paste starter template** for new OpenCode projects. Co
 ## What this folder is for
 
 - **Project mission brief** (`MISSION.md`) — what the project is, its source of truth, execution host, sync discipline, credentials, and priorities. Kept separate from `AGENTS.md` so the workflow file can be re-aligned with the global template without losing project context (`AGENTS.md` §1 points here).
-- **Project-level agent instructions** (`AGENTS.md`) — startup rules (§2 checklist), execution protocol (§3), evidence/correctness standards (§8 Verification Standard: VERIFIED claims cite independent source; PRELIMINARY states limitation), and the Learning Loop (§5) + Skill Policy (§6). Behaviour (§3.5/§2.6): uncertain conditions trigger structured `research.md`/`review.md` subagent calls, not open-ended prose.
+- **Project-level agent instructions** (`AGENTS.md`) — startup rules (§2 checklist), execution protocol (§3), evidence/correctness standards (§8 Verification Standard: VERIFIED claims cite independent source; PRELIMINARY states limitation), and the Learning Loop (§5) + Skill Policy (§6). Behaviour (§3.5/§2.6): uncertain conditions trigger structured `research.md`/`review.md` subagent calls, not open-ended prose. `supervisor` gates ticks on multi-subtask runs (§3.5 step 7; heartbeat to `PROGRESS.md`).
 - **Self-improving skills** (`.opencode/skills/`) — where project-specific skills live; the `self-help` skill drafts them, the Learning Gate validates them, and the Skill Policy controls approval.
 - **Project knowledge scaffold** (`memory/`) — persistent index, state, architecture, decisions, known issues, milestones, and the `learning/` sink (`briefs/` + `metrics.jsonl`).
 - **Copy/paste starter** — new repo? Drop this folder's contents at root and fill in `MISSION.md` and `memory/PROJECT_INDEX.md` from the real repo.
 
 Global rules (`agent-core`, `readable-code`, `repo-discovery`, `quality-gate`, `security`, WebFetch policy, the global Learning Loop pointer in `AGENTS.md`) still apply. This file gives the project its spin on workflow, knowledge layout, and autonomous improvement.
+
+## Process enforcement for small local models
+
+This starter targets sustained agentic coding on small local models (e.g. Qwen3.5-4B-class models at small configured contexts — see `opencode.json`) by enforcing a frontier-model-style process per task: file-first state (`PROJECT_INDEX`/`CURRENT_STATE`/`TASKS`), research before implementation for non-trivial changes, adversarial `review`, execution-based `test`, and `supervisor` gating before any tick (§2 steps 5/9b, §3.5 steps 6–7). Checklists, templates, and the 3-strike failure budget externalise process discipline so it does not depend on model scale — at the cost of per-task subagent latency, which the file-first design contains. `AGENTS.md` stays lean: it only points at the skill/agent/template files that carry the detail.
 
 ## How the autonomous Learning Loop works
 
@@ -39,6 +43,10 @@ Retry against ORIGINAL acceptance criteria (not weakened)
         ↓
 Run FULL regression suite (not just failing test)
         ↓
+`test` PASS required (§3.5 step 6)
+         ↓
+`supervisor` CONTINUE required to tick (§3.5 step 7)
+         ↓
 Append JSON line to memory/learning/metrics.jsonl
         ↓
 Audit provisional skills in .opencode/skills/ + metrics.jsonl
@@ -52,17 +60,18 @@ Audit provisional skills in .opencode/skills/ + metrics.jsonl
 - Auto-approved skills are `Status: auto-approved-provisional`; always audit.
 - `max-new-skills-per-run: 3` (cap per autonomous run; exceed → stop/escalate).
 - Tool/execution failures (repeated edit mismatches, exact-match errors) stay local (RCA by `review`, workaround, no global `self-help`) unless `review` classifies a recurring structural gap, which then triggers §5.
+- Routing prefers existing skills (update before create); drafted skills target ~60 lines (soft limit).
+- Spill raw tool output to `RESEARCH.md` and cite the path; keep cited evidence in-context (§8).
+- `auto-approve` is project-scoped and provisional — post-run audit required (§6).
 
 ## Where agent/skill files live
 
 | Scope | Path | How it's used |
 |---|---|---|
-| **Global skills** (engineering practices, templates) | `~/.config/opencode/skills/` | Load on demand by agent; include `self-help`, `agent-core`, `readable-code`, `repo-discovery`, `quality-gate`, `long-running-task-research`, `git-practices`, etc. |
+| **Global skills** (engineering practices, templates) | `~/.config/opencode/skills/` | Load on demand by agent; include `self-help`, `agent-core`, `readable-code`, `repo-discovery`, `quality-gate`, `long-running-task-research`, `git-practices`, `supervisor`, `readme-authoring`, `research-method`, `auto-memory`, etc. |
 | **Project skills** (project-specific patterns, new capabilities) | `.opencode/skills/` (inside this folder / project root) | Drafted by `self-help`; validated by Learning Gate; approved via §6; kept separate from global to avoid pollution |
-| **Project agents / subagent specs** | `agents/*.md`, `commands/*.md` | Define roles (`review`, `coder`, etc.) with `description`, `mode`, `prompt`, optional `model:` override (omit to inherit global `model`/`small_model`) |
+| **Project agents / subagent specs** | `agents/*.md`, `commands/*.md` | Define roles (`review`, `coder`, etc.) with `description`, `mode`, `prompt`, optional `model:` override (omit to inherit global `model`) |
 | **Self-help templates** | `~/.config/opencode/skills/self-help/templates/` | `skill-template.md`, `learning-brief.md` — starter formats for new skills/briefs |
-
-**If you delete `small_model` from `opencode.json`,** subagents inherit `model` exactly 
 
 ## Skill Policy (§6 of this file) — quick setup
 
@@ -95,6 +104,7 @@ Standardized prompt templates for invoking subagents. Use the corresponding temp
 | Template | Purpose |
 |----------|---------|
 | `researcher.md` | Investigation/discovery tasks |
+| `research.md` | Structured multi-path decision protocol (autopilot multi-path) |
 | `review.md` | Code review tasks |
 | `test.md` | QA testing tasks (runs test suite, PASS/FAIL with evidence) |
 | `coder.md` | Code generation tasks |
@@ -117,13 +127,13 @@ When a subagent returns a report, the planner must verify key claims before usin
 ## Verification checklist (before reporting complete)
 
 - [ ] `MISSION.md` filled (mission brief, source of truth, execution host, priorities); `AGENTS.md` §5 (Learning Loop) and §6 (Skill Policy) intact.
-- [ ] §3.5 (Failure Budget), §3.6 (Subagent Templates), §3.7 (Planner vs Execution), §3.8 (Output Verification), §3.9 (Research Decomposition) intact.
+- [ ] §2 steps 5/9a/9b and §3.5 steps 6-7 (test PASS + supervisor gate) intact; §3.5 (Failure Budget), §3.6 (Subagent Templates, incl. `test.md`), §3.7 (Planner vs Execution, incl. `test`), §3.8 (Output Verification), §3.9 (Research Decomposition) intact.
 - [ ] §7.5-§7.9 intact (Template Management, Self-Help Two-Phase, Reviewer Checklist, Deep Research, Compact Learning Brief).
 - [ ] `TASKS.md` reflects actual milestone/task status with sub-subtask IDs (`mN-tN-stN-ssN`).
 - [ ] `memory/PROJECT_INDEX.md` verified against repo; paths exist, not invented.
 - [ ] `.opencode/skills/` exists with `.gitkeep`; first skill draft placed when loop triggers.
 - [ ] `memory/learning/briefs/` + `metrics.jsonl` + `tasks/` present (zero-byte sink ready).
-- [ ] `templates/subagent-calls/` contains invocation templates (researcher, review, test, coder, autopilot).
+- [ ] `templates/subagent-calls/` contains invocation templates (research.md, researcher, review, test, coder, autopilot).
 - [ ] Evidence for any skill creation: source URLs, cross-check ≥2, counterexample, reproduction, Learning Gate checks.
 
 

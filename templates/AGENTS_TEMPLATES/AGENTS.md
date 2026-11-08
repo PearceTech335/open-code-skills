@@ -27,11 +27,12 @@ For non-trivial tasks (consolidated flow):
 2. Set acceptance criteria.
 3. Identify affected modules + tests.
 4. Load language/domain skill; plan smallest coherent change.
-5. If complex: invoke `--agent research` (structured prompt only).
+5. If the task touches >1 file, changes behaviour/API, or the planner is uncertain: invoke `--agent research` with `templates/subagent-calls/researcher.md` (structured prompt only). Exempt: comment/format-only and single-line trivial changes.
 6. Implement (`coder` subagent or direct edit).
 7. GIT commit after edit.
 8. Load `review` subagent (`templates/subagent-calls/review.md`) — adversarial PASS/FAIL (§7.7). Only tick when all 10 axes PASS.
-9. Verify: syntax → targeted test → regression → diff review (with observed output).
+9a. Verify (planner): syntax → static analysis → diff review (with observed output).
+9b. Invoke `--agent test` (`templates/subagent-calls/test.md`) — targeted → regression → broader suite, explicit timeouts, PASS/FAIL with evidence. Only proceed past this step on test PASS; failures return to implementer/`review` for classification.
 10. Record in `CURRENT_STATE.md`; tick in `TASKS.md`.
 
 Never claim a test passed without observed output.
@@ -87,6 +88,8 @@ Before ticking any sub-subtask complete:
 3. If any axis fails: do NOT tick. Document failure in `RESEARCH.md` (line refs, evidence, severity, which option was evaluated), fix or split further, retry.
 4. Only tick when all 10 axes pass AND verification commands ran with observed output.
 5. This applies to ALL sub-subtasks, not just the final milestone — overnight runs must not silently accumulate errors.
+6. After `review` PASS (steps 1–3) and verification evidence (step 4): invoke `--agent test` (targeted → regression) — require test PASS.
+7. Load `supervisor` skill (multi-subtask/overnight runs only, per `skills/supervisor/SKILL.md`): tick only on `CONTINUE`/`STOP-SUCCESS`. `REPLAN` → planner edits the affected `TASKS.md` section only, then re-runs supervisor; do not tick. `ESCALATE`/`STOP-FAILURE` → write blocker note + evidence, do not tick, stop (in autopilot/overnight runs `ESCALATE` instead records the blocker and moves to the next item — no human wait; stop only on hard blockers, per `skills/supervisor/SKILL.md` Unattended Mode). Supervisor appends its heartbeat to `PROGRESS.md` (never `metrics.jsonl`).
 
 The planner never approves its own work unverified — an adversarial subagent verifies each step.
 
@@ -110,6 +113,7 @@ Never retry the same action unchanged after a failure.
 When invoking a subagent, use the corresponding template from `templates/subagent-calls/`:
 - `researcher.md` — for investigation/discovery tasks (invoke: `--agent research`)
 - `review.md` — for code review tasks
+- `test.md` — for QA testing tasks (invoke: `--agent test`)
 - `coder.md` — for code generation tasks
 - `autopilot.md` — for overnight/unattended runs
 
@@ -118,7 +122,7 @@ Fill in the bracketed sections. If no template exists for the task type, create 
 ## 3.7 Planner vs Execution Model Divergence
 
 - All planning, root-cause classification, `LEARNING_BRIEF` emission, and approval decisions use the planner endpoint (declared in `opencode.json` as `model`).
-- Subagent execution (`coder`, `research`, `review`, `autopilot`) must route through the local endpoint (declared in `opencode.json` as the local provider) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
+- Subagent execution (`coder`, `research`, `review`, `test`, `autopilot`) must route through the local endpoint (declared in `opencode.json` as the local provider) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
 - Rationale: planner token budget is limited (daily allowance); execution token budget is unbounded (local GPU). Enforce this split at every subagent invocation to protect the planner's cap and avoid burning free tokens on code-generation loops.
 - If subagent execution needs a different model for a specific task, declare it in the subagent spec (`execution_model`) rather than overriding the planner's `model`.
 

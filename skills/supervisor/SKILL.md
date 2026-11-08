@@ -39,11 +39,20 @@ Emit exactly one, with one-line rationale + evidence:
 
 - `CONTINUE` — healthy; proceed to next open leaf item.
 - `REPLAN` — recommend rewrite of the affected TASKS.md section only; the planner edits, never completed items, never the supervisor.
-- `ESCALATE` — hard blocker, repeated structural failure, or budget exceeded; write blocker note + evidence, stop or hand to human.
+- `ESCALATE` — hard blocker, repeated structural failure, or budget exceeded; write blocker note + evidence, stop or hand to human (interactive runs). In autopilot, use Unattended Mode below instead.
 - `STOP-SUCCESS` — all acceptance criteria met, final verification item passed, PROGRESS.md updated.
 - `STOP-FAILURE` — cannot proceed without violating constraints; document why.
 
 Never invent a sixth outcome.
+
+## Unattended (Autopilot) Mode
+
+In autopilot/overnight runs supervisor decisions are final — never pause for approval:
+
+- `CONTINUE`/`REPLAN` execute immediately (planner edits the affected TASKS.md section only).
+- `ESCALATE` records blocker + evidence to `CURRENT_STATE.md`/`PROGRESS.md`, marks/splits the item, moves on; human review deferred to post-run audit (`PROGRESS.md`, `metrics.jsonl`, provisional skills).
+- `STOP-FAILURE` only on hard blockers (missing index, broken endpoint, unrecoverable error, budget exhausted across all remaining items).
+- Skills stay provisional per §6; supervisor never approves skills — post-run audit, not a mid-run pause.
 
 ## Heartbeat Protocol
 

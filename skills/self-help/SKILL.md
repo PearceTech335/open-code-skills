@@ -56,7 +56,7 @@ Every generated skill MUST follow `templates/skill-template.md`:
 - Guardrails (what NOT to do).
 - Verification protocol (how to test compliance).
 - Provenance section (sources + verification labels).
-- Under ~60 lines where possible.
+- Under ~60 lines where possible. This is a soft anti-bloat guideline, not a hard cap: if the skill legitimately needs more (e.g. distinct outcome semantics, guardrails, or verification steps that cannot be merged without losing precision), exceeding 60 lines is allowed — provided every line earns its place and no verbosity is added for its own sake.
 
 ## Learning Gate (Before Any Retry)
 
