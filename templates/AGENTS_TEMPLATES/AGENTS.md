@@ -10,16 +10,11 @@
 
 ## 1. Mission
 
-<One or two sentences: what this project is, and its priorities in order.
-Example: "Build and maintain X.">
-
-Priorities:
-1) correctness
-2) data integrity
-3) testability
-4) performance
-A passing test suite does not by itself
-establish correctness.
+Read `MISSION.md` in this directory for the project mission brief (what this
+project is, and its priorities in order). It is kept separate so this file can
+be re-aligned with the global template without losing project context. Edit
+`MISSION.md` when the mission changes; edit this file when the workflow/rules
+change.
 
 ## 2. Mandatory Task Startup (Checklist)
 

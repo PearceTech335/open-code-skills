@@ -1,13 +1,14 @@
 # AGENTS_TEMPLATES — Project Starter + Autonomous Learning Loop
 
-This folder is the **copy/paste starter template** for new OpenCode projects. Copypaste its contents (`AGENTS.md`, `TASKS.md`, `memory/`, `.opencode/skills/`) to a new project root. It does **not** replace your global config (`~/.config/opencode/AGENTS.md` + global skills); it layers project-specific rules, the self-improving Learning Loop, and the Skill Policy on top.
+This folder is the **copy/paste starter template** for new OpenCode projects. Copypaste its contents (`AGENTS.md`, `MISSION.md`, `TASKS.md`, `memory/`, `.opencode/skills/`) to a new project root. It does **not** replace your global config (`~/.config/opencode/AGENTS.md` + global skills); it layers project-specific rules, the self-improving Learning Loop, and the Skill Policy on top.
 
 ## What this folder is for
 
-- **Project-level agent instructions** (`AGENTS.md`) — mission, startup rules (§2 checklist), execution protocol (§3), evidence/correctness standards (§8 Verification Standard: VERIFIED claims cite independent source; PRELIMINARY states limitation), and the Learning Loop (§5) + Skill Policy (§6). Behaviour (§3.5/§2.6): uncertain conditions trigger structured `research.md`/`review.md` subagent calls, not open-ended prose.
+- **Project mission brief** (`MISSION.md`) — what the project is, its source of truth, execution host, sync discipline, credentials, and priorities. Kept separate from `AGENTS.md` so the workflow file can be re-aligned with the global template without losing project context (`AGENTS.md` §1 points here).
+- **Project-level agent instructions** (`AGENTS.md`) — startup rules (§2 checklist), execution protocol (§3), evidence/correctness standards (§8 Verification Standard: VERIFIED claims cite independent source; PRELIMINARY states limitation), and the Learning Loop (§5) + Skill Policy (§6). Behaviour (§3.5/§2.6): uncertain conditions trigger structured `research.md`/`review.md` subagent calls, not open-ended prose.
 - **Self-improving skills** (`.opencode/skills/`) — where project-specific skills live; the `self-help` skill drafts them, the Learning Gate validates them, and the Skill Policy controls approval.
 - **Project knowledge scaffold** (`memory/`) — persistent index, state, architecture, decisions, known issues, milestones, and the `learning/` sink (`briefs/` + `metrics.jsonl`).
-- **Copy/paste starter** — new repo? Drop this folder's contents at root and fill in Section 1 (Mission) and `memory/PROJECT_INDEX.md`.
+- **Copy/paste starter** — new repo? Drop this folder's contents at root and fill in `MISSION.md` and `memory/PROJECT_INDEX.md` from the real repo.
 
 Global rules (`agent-core`, `readable-code`, `repo-discovery`, `quality-gate`, `security`, WebFetch policy, the global Learning Loop pointer in `AGENTS.md`) still apply. This file gives the project its spin on workflow, knowledge layout, and autonomous improvement.
 
@@ -82,10 +83,10 @@ Audit trail lives in `.opencode/skills/` + `memory/learning/metrics.jsonl` (one 
 This directory (`C:\Users\pearc\.config\opencode\templates/AGENTS_TEMPLATES/`) holds the **master starter scaffold** — the same contents you copy into a new project root. It's kept separate from global `AGENTS.md` so that:
 
 - Global config (`~/.config/opencode/AGENTS.md`) stays stable across all projects.
-- Each project gets its own `AGENTS.md`, `TASKS.md`, `memory/`, `.opencode/skills/` without overriding globals.
+- Each project gets its own `AGENTS.md`, `MISSION.md`, `TASKS.md`, `memory/`, `.opencode/skills/` without overriding globals.
 - The template is version-controlled (git) and reusable; changes to the starter propagate by copying fresh.
 
-When creating a new project: copy the contents of `/templates/AGENTS_TEMPLATES/` (not the folder envelope) into the new repo root, then edit Section 1 (Mission) and `memory/PROJECT_INDEX.md` from the real repo.
+When creating a new project: copy the contents of `/templates/AGENTS_TEMPLATES/` (not the folder envelope) into the new repo root, then fill in `MISSION.md` and `memory/PROJECT_INDEX.md` from the real repo.
 
 ## Subagent Invocation Templates (`templates/subagent-calls/`)
 
@@ -115,7 +116,7 @@ When a subagent returns a report, the planner must verify key claims before usin
 
 ## Verification checklist (before reporting complete)
 
-- [ ] `AGENTS.md` Section 1 filled (Mission); §5 (Learning Loop) and §6 (Skill Policy) intact.
+- [ ] `MISSION.md` filled (mission brief, source of truth, execution host, priorities); `AGENTS.md` §5 (Learning Loop) and §6 (Skill Policy) intact.
 - [ ] §3.5 (Failure Budget), §3.6 (Subagent Templates), §3.7 (Planner vs Execution), §3.8 (Output Verification), §3.9 (Research Decomposition) intact.
 - [ ] §7.5-§7.9 intact (Template Management, Self-Help Two-Phase, Reviewer Checklist, Deep Research, Compact Learning Brief).
 - [ ] `TASKS.md` reflects actual milestone/task status with sub-subtask IDs (`mN-tN-stN-ssN`).

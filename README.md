@@ -77,7 +77,7 @@ Your directory structure should include:
 ├── skills/self-help/templates/
 │   ├── learning-brief.md
 │   └── skill-template.md
-├── templates/AGENTS_TEMPLATES/    # copy/paste starter (AGENTS.md + TASKS.md + memory/ + .opencode/skills/)
+├── templates/AGENTS_TEMPLATES/    # copy/paste starter (AGENTS.md + MISSION.md + TASKS.md + memory/ + .opencode/skills/)
 ├── templates/subagent-calls/      # invocation templates (researcher, review, test, coder, autopilot)
 ├── AGENTS.md                     # global agent config (engineering standards, skill hierarchy, verification, Behaviour protocol)
 ├── opencode.json                  # local-only (gitignored) — endpoint config; agent block removed; model/small_model inheritance
@@ -85,7 +85,7 @@ Your directory structure should include:
 └── README.md
 ```
 
-Project-level starter (`templates/AGENTS_TEMPLATES/`) layers on top of this global structure and contains its own `memory/`, `.opencode/skills/`, and `AGENTS.md` (with Learning Loop section 5 + Skill Policy section 6).
+Project-level starter (`templates/AGENTS_TEMPLATES/`) layers on top of this global structure and contains its own `MISSION.md` (mission brief, kept separate from `AGENTS.md` §1 so the workflow file can be re-aligned without losing project context), `memory/`, `.opencode/skills/`, and `AGENTS.md` (with Learning Loop section 5 + Skill Policy section 6).
 
 ---
 
@@ -128,6 +128,7 @@ Every sub-subtask (`TASKS.md` ID) gets its own `memory/learning/tasks/<id>-attem
 ```text
 <project-root>/
 ├── AGENTS.md              # §3 execution + §3.5 failure budget (3-strike gate)
+├── MISSION.md             # mission brief (separate from AGENTS.md §1; edit when mission changes)
 ├── TASKS.md               # milestone / sub-subtask IDs (mN-tN-stN-ssN)
 ├── memory/
 │   ├── CURRENT_STATE.md   # active milestone + open sub-subtasks
