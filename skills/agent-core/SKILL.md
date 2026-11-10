@@ -29,7 +29,7 @@ Call tools directly in `<tool_use>` blocks. Never describe them as text. Keep us
 
 ## Four-Phase Protocol
 
-1. **Explore** (read-only) — grep/glob for the relevant path, trace data flow, identify conventions. List files that will and will not change.
+1. **Explore** (read-only) — grep/glob for the relevant path, trace data flow, identify conventions. List files that will and will not change. **Requirements micro-checklist (always):** (1) Goal/acceptance criteria explicit? If not, clarify or label `PRELIMINARY`. (2) Verify existing behavior by reading target file + relevant tests/call sites. (3) Check API/contracts/schema impact. (4) Check alignment with `PROJECT_INDEX.md`/`ARCHITECTURE.md`. (5) Escalation triggers (cross-module/boundaries/deps/schema/unclear ownership/ambiguous requirements)? If yes, escalate to `architect` subagent or `research` subagent per escalation rules. Pay a little upfront to avoid future refactors.
 2. **Plan** — 2–5 bullets naming every file that will change. Split >5-file changes into sub-tasks.
 3. **Execute** — smallest coherent change. Preserve APIs. No new dependencies without approval.
 4. **Verify** — syntax → lint → targeted tests → full build → adversarial self-review. Show evidence, never assert.
@@ -82,7 +82,7 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 
 ## Guardrails
 
-- **Skill-count cap**: Load at most 2 skills per task. If more are needed, split the task into sub-tasks.
+- **Skill-count cap**: `agent-core` is mandatory and is **not counted** toward the skill cap. Load at most **2 additional skills** per task beyond `agent-core`. If more capabilities are needed, split the task into sub-tasks or delegate to subagents/templates/checklists rather than loading extra skills.
 - **Stop-and-ask threshold**: If you cannot verify an assumption with a single file read or command, label it PRELIMINARY and stop. Do not proceed on unverified assumptions.
 - **Deep research**: Read PROJECT_INDEX.md first. Break task into sub-tasks in TASKS.md using IDs (mN-tN-stN-ssN). Each sub-task gets its own attempt file.
 - **Compact output**: Use compact Learning Brief (4-field) instead of full 8-field. Use PASS/FAIL checklist for reviews.
@@ -98,7 +98,7 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 ## Subagent Invocation Templates
 
 When invoking a subagent, use the corresponding template from templates/subagent-calls/:
-- researcher.md -- investigation/discovery tasks
+- research.md -- investigation/discovery/decision research (unified template: evidence-first, adversarial review, references)
 - review.md -- code review tasks
 - coder.md -- code generation tasks
 - autopilot.md -- overnight/unattended runs
@@ -120,7 +120,7 @@ Do not trust subagent claims blindly — small models produce reports that look 
 When the operator gives a vague or broad research prompt, do NOT attempt to answer it in one pass:
 1. Broad-brush scan (quick, shallow): identify major areas, files, and questions. Output a list of sub-questions, not a full report.
 2. Decompose: break into 3-5 specific, targeted sub-questions. Each answerable with a focused file read or command.
-3. Targeted research: invoke the researcher for each sub-question with a specific prompt using templates/subagent-calls/researcher.md. Each prompt answers ONE question.
+3. Targeted research: invoke the researcher for each sub-question with a specific prompt using templates/subagent-calls/research.md (unified). Each prompt answers ONE question.
 4. Synthesize: after all sub-researchers return, synthesize findings into the final report. The planner (not the sub-researchers) does the synthesis.
 This ensures each researcher call is focused and verifiable, rather than one massive vague prompt that produces unverified claims.
 
@@ -130,5 +130,5 @@ This ensures each researcher call is focused and verifiable, rather than one mas
 - --agent review: loads agents/review.md (adversarial review, LEARNING_BRIEF emitter)
 - --agent coder: loads agents/coder.md (code generation subagent)
 - --agent autopilot: loads agents/autopilot.md (overnight autonomous worker)
-- --agent network-engineer: loads agents/network-engineer.md (OT/network troubleshooting)
+- network-engineer: load skill `skills/network-engineer/SKILL.md` (OT/network troubleshooting). Prefer subagents only when escalation needs investigation orchestration; otherwise use the skill to conserve slots.
 The template file (templates/subagent-calls/) provides the structured prompt; the agent spec (agents/) provides the role definition. Both must match.

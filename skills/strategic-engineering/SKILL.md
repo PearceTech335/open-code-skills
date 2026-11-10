@@ -20,7 +20,7 @@ Read-only advisor. Does **not** replace `review`, `test`, `quality-gate`, `desig
 - Plan review before implementation of a strategic change.
 - Milestone gate before `supervisor` evaluates `STOP-SUCCESS`.
 
-Do **not** auto-load on trivial/comment/format-only changes. Counts toward `agent-core`'s "max 2 skills per task" cap.
+Do **not** auto-load on trivial/comment/format-only changes. Counts toward the `agent-core` cap of **2 additional skills per task** (beyond `agent-core`). Use sparingly.
 
 ## Inputs (file-first)
 1. `PROJECT_INDEX.md` / `ARCHITECTURE.md` / `DECISIONS.md`
@@ -87,5 +87,5 @@ A `DEGRADING` classification does not automatically make a change unacceptable â
 - **No new gates.** Inform the supervisor/planner; respects Unattended Mode (no mid-run human pause). Supervisor remains the process judge.
 - **Evidence-first.** Cite `file:line` or command output. Label `VERIFIED`/`PROBABLE`/`PRELIMINARY`.
 - **Reuse first.** Use `DECISIONS.md`/`KNOWN_ISSUES.md`/`ARCHITECTURE.md` before introducing new files. Aggregate existing trend data (`PROGRESS.md`/`metrics.jsonl`); do not duplicate event logs.
-- **Lean.** Respect `agent-core`'s 2-skill cap, load conditionally. Target compact output (~60 lines; soft limit only).
+- **Lean.** Respect `agent-core`'s cap of **2 additional skills per task** (beyond `agent-core`), load conditionally. Target compact output (~60 lines; soft limit only).
 - **Measured improvements.** Favor incremental, measurable improvements with clear acceptance criteria over large rewrites or premature abstraction.

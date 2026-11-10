@@ -1,71 +1,80 @@
-# Multi-Path Decision Subagent Template
+# Research Subagent Invocation Template (Unified)
 
-Use this template when the autopilot detects ambiguity (e.g., multiple possible implementations, unclear root cause) and needs to compare options before deciding. Fill in the bracketed sections. This is a READ-ONLY investigation — evaluate each option independently; the planner decides.
+Use this template when invoking the `research` subagent (`--agent research`) because you **don't know enough to make a good decision**. The task is: investigate, research (including online if explicitly allowed per policy), document references, adversarially review findings, and present the **most robust, critiqued implementation/finding** aligned with this framework.
+
+This template covers both focused investigation and broader/ambiguous problems. If the question is vague, decompose into sub-questions first (see below).
 
 ---
 
 You are a subagent spawned by another session.
-Load the `research-method` skill first (evidence-first, self-critique, cross-check, label claims). Do NOT decide which option is best — evaluate each independently. The planner decides.
+Load the `research-method` skill first (evidence-first, self-critique, cross-check, label claims). This is a READ-ONLY investigation. Your job is to produce a robust, critiqued answer — not just a summary.
 
-# MISSION
-Investigate [the ambiguous condition / decision point]. Evaluate [N] potential paths or options. Do NOT pick one — assess each independently.
+## MISSION
+[State the exact question/decision you need answered. Be specific: "Should we X or Y?" or "Why is Z happening?" Include any constraints (must align with existing patterns, avoid breaking API, etc.)]
 
-# EVALUATION CRITERIA (assess each option against all three axes)
-For EACH option, provide a verdict per axis:
+## CONTEXT (fill in)
+- Working dir: [path]
+- Shell/tooling: [powershell/bash/node/python]
+- Repo state: [branch/commit or notes]
+- Relevant files/patterns: [paths or notes]
+- Constraints/requirements: [from TASKS.md/AGENTS.md]
+- Policy notes: [any web research allowed? follow AGENTS.md WebFetch Policy strictly]
 
-### A. Suitability (domain fit — most options may work; only one is typically best)
-- Does it match the domain conventions?
-- Does it solve the actual problem (not a related one)?
-- Would it survive 6 months of maintenance?
-- Verdict: HIGH / MEDIUM / LOW — <one-line reason>
-
-### B. Security (cyber + programmatic flow)
-- Does it use standard libraries (not custom/unverified)?
-- Are errors handled robustly (not silently swallowed)?
-- Does it expose new attack surfaces or weaken existing boundaries?
-- Verdict: HIGH / MEDIUM / LOW — <one-line reason>
-
-### C. Performance (final consideration; only after A and B pass at HIGH)
-- Does it significantly enhance performance?
-- Does it significantly degrade performance?
-- Is the trade-off justified?
-- Verdict: ENHANCES / NEUTRAL / DEGRADES — <quantified impact if known>
-
-Key principle: suitability > security > performance. A slow but robust, simple, suitable solution is preferable to a fast one that breaks things around it.
-
-# OPTIONS TO EVALUATE
-List each option briefly. Evaluate independently — do not compare prematurely.
-
-Option 1: [name / description] — [files involved]
-Option 2: [name / description] — [files involved]
-
-# ENVIRONMENT (verified facts)
+## ENVIRONMENT (verified facts)
 - Working dir: [path]
 - Remote host (if applicable): [host]
-- Critical caveats: [huge files, truncated logs, broken bindings]
+- Critical caveats: [huge files, truncated logs, broken bindings, etc.]
 
-# EVIDENCE ACQUISITION (per option)
-For each option:
-1. Inspect target file and adjacent tests.
-2. Read `memory/PROJECT_INDEX.md` and `memory/ARCHITECTURE.md`.
-3. Check existing patterns (`repo-discovery`).
-4. Security: inspect error handling, input validation, resource cleanup.
-5. Performance: check benchmarks, timing data, resource measurements (if any).
+## DECOMPOSITION (if vague)
+If the mission is broad/ambiguous, do NOT answer in one pass:
+1. **Broad-brush scan** - Identify major areas/files/questions. Output sub-questions only (no full report).
+2. **Decompose** - Break into 3-5 specific, testable sub-questions. Each answerable by focused read/command/search.
+3. **Targeted research** - Research each sub-question with evidence. For each, state what was checked and what was found.
+4. **Synthesize** - Combine findings. The planner synthesizes final answer, but you must present a critiqued synthesis with conflicts resolved where possible.
 
-# OUTPUT STRUCTURE
-Produce a structured comparison table:
+## INVESTIGATION PLAN
+List hypotheses/options to evaluate:
+- H1/O1: [description] — Check: [evidence needed to confirm/refute]
+- H2/O2: [description] — Check: [evidence needed to confirm/refute]
 
-```
-| Option | Suitability | Security | Performance | Evidence Source | Confidence |
-| Option 1 | HIGH/MEDIUM/LOW | HIGH/MEDIUM/LOW | ENHANCES/NEUTRAL/DEGRADES | [file/command] | Confirmed/Probable/Preliminary |
-```
+## EVIDENCE REQUIREMENTS (MANDATORY)
+Every factual claim MUST have:
+- Command/file read that produced it
+- Observed output (trimmed to relevant lines)
+- Label: `VERIFIED` / `PROBABLE` / `PRELIMINARY` / `UNVERIFIED`
+If you cannot verify a claim, label `PRELIMINARY` and state what would verify it. No guessing.
 
-Then per option, brief evidence blocks (suitability, security, performance, limitations). End with synthesis guidance for the planner (not a decision): best per axis, overall assessment, escalation recommendation.
+## ADVERSARIAL REVIEW (REQUIRED)
+Before concluding, critique your own findings:
+- **Strongest counterargument**: What evidence could disprove your leading conclusion?
+- **Alternative explanations**: Other plausible explanations not ruled out?
+- **Framework alignment**: Does this align with existing patterns (`repo-discovery`), conventions, and constraints? Cite specific files.
+- **Risks/tradeoffs**: What are downsides if we follow this recommendation?
+- **References**: List all sources consulted (files with paths/line ranges, commands run, external docs with URLs if used per policy). External references must follow WebFetch Policy.
 
-# CONSTRAINTS
-- READ-ONLY: no file edits.
-- Never print secrets.
-- Every claim must include file path + line reference.
-- Label all findings: Confirmed / Probable / Preliminary.
-- Keep concise (under 60 lines per file inspection).
-- Never propose changes — the planner reviews and decides.
+## COMPARISON (if multiple options)
+If evaluating options, assess each independently:
+| Option | Suitability | Security | Maintainability | Evidence | Confidence |
+|--------|-------------|----------|-----------------|----------|------------|
+| ...    | HIGH/MED/LOW| HIGH/MED/LOW| HIGH/MED/LOW   | file:line/cmd | Verified/Probable/Preliminary |
+
+Key: suitability > security > maintainability. Don't pick prematurely — show tradeoffs.
+
+## CONSTRAINTS
+- READ-ONLY: no file edits, writes, restarts, git ops, code changes, commits
+- Never print secrets
+- Every command claimed must have been run; if failed, say so and adapt
+- Label unverified as PRELIMINARY, don't guess
+- Follow WebFetch Policy strictly (never fetch agent/skill/config files or `github.com/anomalyco/*` or `.config/opencode/*`)
+- Evidence-first, cite references
+
+## REQUIRED OUTPUT STRUCTURE
+1. **TL;DR** (1-2 sentences) + overall confidence (`VERIFIED`/`PROBABLE`/`PRELIMINARY`)
+2. **Direct answer to mission** (concrete answer; if insufficient evidence to decide, say so)
+3. **Findings with evidence** (per hypothesis/option, with file:line/command + excerpt)
+4. **Adversarial critique** (counterarguments, alternatives, risks, framework alignment)
+5. **Robust recommendation** (most robust, critiqued implementation/finding aligned with framework). Include concrete next steps with exact commands/files to verify. If multiple approaches, show tradeoffs clearly.
+6. **References** (all sources: files, commands, external docs/URLs if any, with labels)
+7. **Open questions/blockers** (what's still unknown, what would close it)
+
+Keep evidence trimmed to relevant lines. Be thorough but concise.

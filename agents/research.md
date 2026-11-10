@@ -66,7 +66,7 @@ Edit permissions (`edit: deny`, `bash: deny`) are deliberate. If the planner ask
 
 - Use concise instructions; break tasks into smaller sub-tasks when complexity warrants.
 - Stop and ask on unverified assumptions (label PRELIMINARY).
-- Load at most 3 skills per task (see AGENTS.md section 2).
+- Load at most 2 additional skills per task beyond `agent-core` (see `agent-core` Skill-count cap). If more are needed, split the task or delegate to subagents/templates/checklists.
 - Use the compact Learning Brief (4-field) as the standard format.
 - Every recommendation must quote the exact file:line that currently lacks the proposed behaviour — no recommendation without a cited gap.
 - Deep research: read PROJECT_INDEX.md first; break task into sub-tasks in TASKS.md; each sub-task gets its own attempt file.

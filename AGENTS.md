@@ -77,17 +77,20 @@ The `test` agent performs QA testing of code changes — dynamic verification by
 
 ## Skills & Memory
 
-Skills are organized in a hierarchy — load the ones relevant to the task:
+Skills are organized in a hierarchy — load the ones relevant to the task. **Cap:** `agent-core` is mandatory and **not counted** toward the skill cap. Load at most **2 additional skills** per task beyond `agent-core`. Use subagents/templates/checklists to avoid consuming skill slots.
 
-1. **`agent-core`** — how the agent investigates, plans, changes, and verifies. Load on any coding task.
-2. **`readable-code`** + **`repo-discovery`** + **`project-index`** — how to understand the project, write maintainable code, and maintain the standardised `PROJECT_INDEX.md`. Load when writing, refactoring, reviewing code, or when project structure changes.
-3. **Language and domain skills** — `python-code`, `go-code`, `typescript-code`, `powershell-skill`, `bash-skill`, `ansible-code`, `networking`, `ot-networking`, `packet-analysis`, `security`, `penetration-tester`. Load for the specific language or domain.
-4. **`quality-gate`** — final review of correctness, readability, security, verification. Load before reporting done.
-5. **`designer`** — design and review standards. Load for UI/UX, component design and interface reviews.
-6. **`architect`** — architectural design, system boundaries, dependency analysis and architecture change management. Invoke through `agent-core` when architectural escalation criteria are met.
-7. **`long-running-task-research`** — persistent notes, resumable state, overnight-safe verification. Load for multi-stage/research/overnight work.
+1. **`agent-core`** — how the agent investigates, plans, changes, and verifies. Load on any coding task. Includes requirements micro-checklist (always-on) and escalation rules.
+2. **Understanding/maintainability** — `readable-code`, `repo-discovery`, `project-index`. Load when writing, refactoring, reviewing code, or when project structure changes.
+3. **Language and domain skills** — `python-code`, `go-code`, `typescript-code`, `powershell-skill`, `bash-skill`, `ansible-code`, `networking`, `ot-networking`, `packet-analysis`, `security`, `penetration-tester`. Load for the specific language or domain (typically 1 additional skill).
+4. **`quality-gate`** — final review of correctness, readability, security, verification. Load before reporting done if not already covered.
+5. **`designer`** — design/review methodology for components/interfaces (micro/mid-level design). Load for component design/interface reviews; not a substitute for architectural governance.
+6. **`architect`** — **subagent** (`agents/architect.md`), invoked via `agent-core` when architectural escalation criteria are met (system boundaries, major deps/schema/cross-module). Not a loadable skill slot in the usual sense; use subagent delegation.
+7. **`strategic-engineering`** — read-only advisor skill for trajectory/debt/systemic issues at plan/milestone/recurrent-debt points. Load sparingly (counts toward the 2 additional skills cap).
+8. **`long-running-task-research`** — persistent notes, resumable state, overnight-safe verification. Load for multi-stage/research/overnight work.
 
-Supporting skills: `template-library`, `readme-authoring`, `git-practices`, `auto-memory`, `research-method`, `self-help`, `supervisor`. Skills load on demand via the `skill` tool. Topic memory is wired via `opencode.json: instructions[]`.
+Supporting skills: `template-library`, `readme-authoring`, `git-practices`, `auto-memory`, `research-method`, `self-help`, `supervisor`, `test-engineering`, `root-cause-analysis`, `interface-design`, `production-readiness`, `network-engineer`. Skills load on demand via the `skill` tool. Topic memory is wired via `opencode.json: instructions[]`. For heavy analysis, prefer subagents (`research`, `review`, `architect`) over loading extra skills.
+
+**Framework-level (not task skills):** `agent-evaluation` (independent benchmarks, run separately) and `framework-validator` (automated checks for refs/agents/skills/frontmatter/conflicts) — not loaded per coding task; run as separate processes.
 
 ## Learning Loop
 

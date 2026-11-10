@@ -13,7 +13,7 @@ Start with `memory/CURRENT_STATE.md` + `TASKS.md`. Identify active milestone, de
 
 ## 2. Load relevant skills
 
-**Initial Skill Set**: `agent-core` + `repo-discovery` + `readable-code` + `quality-gate` + `long-running-task-research` + language/domain skill. `self-help` only on persistent failure (`>2` attempts, see `AGENTS.md` §5). `supervisor` conditionally on multi-subtask/overnight runs (see `skills/supervisor/SKILL.md`).
+**Initial Skill Set**: `agent-core` (base, not counted) + language/domain skill (1 additional). Load others (`repo-discovery`, `readable-code`, `quality-gate`, `long-running-task-research`, `designer`, `strategic-engineering`) **only when triggered** by the task (per agent-core guidance). `self-help` only on persistent failure (`>2` attempts, see `AGENTS.md` §5). `supervisor` conditionally on multi-subtask/overnight runs (see `skills/supervisor/SKILL.md`). Use subagents/templates for heavy analysis to avoid consuming skill slots.
 
 ## 2.5 Multi-Path Decision Protocol (for ambiguous conditions)
 
