@@ -6,18 +6,6 @@ A curated collection of production-grade, highly compressed, Power-of-10-inspire
 
 ---
 
-## Self-Help Yourself - The `self-help` Skill
-
-When an AI agent hits a persistent, systemic knowledge gap during task execution (such as encountering an unhandled domain framework or complex protocol), you can trigger **therapy mode** via the **`self-help`** skill (located in `skills/self-help/`):
-
-1. **Functional Friction & Discovery**: Instead of sniffing out flaws continuously, the agent discovers a gap when hitting repeated roadblocks where existing Power-of-10 skills (`python-code`, `designer`, etc.) fall short, or when invoked directly via `/improve`.
-2. **Strict Gap Analysis**: It proves the gap is structural and recurring (*"Remember: reading a self-help book doesn't fix a broken chair"* — one-off difficult bugs do not qualify).
-3. **Sourced Research**: It gathers verified local patterns or official documentation (strictly local & verified sources only — remote URL-based skill injections are forbidden to prevent supply chain rug-pulls).
-4. **Drafts & Places SKILL.md**: It writes a compact, Power-of-10 compliant skill directly into `skills/<skill-name>/SKILL.md` and registers it in `AGENTS.md`.
-5. **Mandatory Human Review Gate**: It pauses execution, presents its newly drafted skill to you, and waits for explicit approval before activation.
-
----
-
 ## What’s Inside?
 
 ### Core & Meta Skills
@@ -104,6 +92,19 @@ The `templates/` directory is the operational side of this: a copy/paste project
 In unattended/autopilot runs, `supervisor` decisions execute immediately — `ESCALATE` records the blocker and moves on; only hard blockers stop the run (post-run audit of `PROGRESS.md`, `metrics.jsonl`, and provisional skills).
 
 Agent frontmatter sets `temperature` only (no other sampling parameters); `research` recommendations must cite the `file:line` gap they address.
+
+
+### Self-Help Yourself - The `self-help` Skill
+
+When an AI agent hits a persistent, systemic knowledge gap during task execution (such as encountering an unhandled domain framework or complex protocol), you can trigger **therapy mode** via the **`self-help`** skill (located in `skills/self-help/`):
+
+1. **Functional Friction & Discovery**: Instead of sniffing out flaws continuously, the agent discovers a gap when hitting repeated roadblocks where existing Power-of-10 skills (`python-code`, `designer`, etc.) fall short, or when invoked directly via `/improve`.
+2. **Strict Gap Analysis**: It proves the gap is structural and recurring (*"Remember: reading a self-help book doesn't fix a broken chair"* — one-off difficult bugs do not qualify).
+3. **Sourced Research**: It gathers verified local patterns or official documentation (strictly local & verified sources only — remote URL-based skill injections are forbidden to prevent supply chain rug-pulls).
+4. **Drafts & Places SKILL.md**: It writes a compact, Power-of-10 compliant skill directly into `skills/<skill-name>/SKILL.md` and registers it in `AGENTS.md`.
+5. **Mandatory Human Review Gate**: It pauses execution, presents its newly drafted skill to you, and waits for explicit approval before activation.
+
+---
 
 ### Subagent Delegation (Updated Behaviour Protocol)
 Every agent spec is a `.md` file (`agents/*.md` + `commands/*.md`), not a JSON block. When uncertain: load `agent-core` → invoke structured subagent (`research.md` for ambiguous conditions, `review.md` for verification/failure modes, `test.md` for QA testing of code changes) via completed template; never guess. All subagents inherit the active `model`; planner uses cloud endpoint for planning/classification, local endpoint for execution (protect planner token cap).
