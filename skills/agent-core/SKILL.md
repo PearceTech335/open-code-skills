@@ -129,6 +129,6 @@ This ensures each researcher call is focused and verifiable, rather than one mas
 - --agent research: loads agents/research.md (fast file parser, discovery)
 - --agent review: loads agents/review.md (adversarial review, LEARNING_BRIEF emitter)
 - --agent coder: loads agents/coder.md (code generation subagent)
-- --agent autopilot: loads agents/autopilot.md (overnight autonomous worker)
+- --agent autopilot: loads agents/autopilot.md (autonomous end-to-end worker: bootstrap tasks infra, research, implement, review, test, loop until complete — used as a primary agent via the agent switch, not a subagent)
 - network-engineer: load skill `skills/network-engineer/SKILL.md` (OT/network troubleshooting). Prefer subagents only when escalation needs investigation orchestration; otherwise use the skill to conserve slots.
 The template file (templates/subagent-calls/) provides the structured prompt; the agent spec (agents/) provides the role definition. Both must match.

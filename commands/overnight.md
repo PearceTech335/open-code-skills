@@ -1,17 +1,8 @@
 ---
-description: Turn a request into TASKS.md, then start unattended work on it
+description: Shortcut for "switch to autopilot and run this request to completion". The autopilot agent owns the full workflow; this command just enters it with a new goal.
 agent: autopilot
 ---
 
-Create or update `TASKS.md` in the project root from this request, then start working immediately.
+You are now in autopilot mode (see `agents/autopilot.md`). Treat the request below as **Mode B (new goal)** of its §0 bootstrap: merge it into the existing `TASKS.md` as a new milestone (create the file only if missing), create the `tasks/<id>.md` detail files, then run the full loop (research → implement → adversarial review → test → tick) until every unchecked root item is complete. Do not ask questions.
 
 Request: $ARGUMENTS
-
-Rules:
-
-- Break the request into 3-12 independently verifiable checklist items, each written as `- [ ] <id> — <one-line task> → tasks/<id>.md` (one line only, no detail in this file).
-- Create `tasks/<id>.md` for each item from `templates/AGENTS_TEMPLATES/tasks/TEMPLATE.md` with Goal + Acceptance criteria filled in (the rest is elaborated by the research/review agents as the task is worked).
-- Each item must be small enough to complete and verify in one pass.
-- Add a final item that records the verification command used and its result.
-- Each item is verified per template §3.5 (review → test) before ticking; the final item re-runs the full verification.
-- Then take the first unchecked item and work it. Do not ask questions.

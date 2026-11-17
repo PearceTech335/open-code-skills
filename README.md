@@ -29,7 +29,7 @@ A curated collection of production-grade, highly compressed, Power-of-10-inspire
 - **`security`**, **`penetration-tester`**, **`networking`**, **`ot-networking`**, **`packet-analysis`**: Evidence-first domain investigation and security review standards.
 
 ### Custom Commands (`commands/`)
-- **`/overnight`**: Turns any prompt into a thin `TASKS.md` index plus one `tasks/<id>.md` detail file per task, then runs an unattended autonomous worker.
+- **`/overnight`**: Shortcut for autopilot mode with a new goal — the request is merged into the existing `TASKS.md` as a new milestone (thin index + `tasks/<id>.md` detail file per task), then the full research → implement → review → test loop runs until all root tasks are done. Switching to the `autopilot` agent does the same thing directly.
 - **`/research`**: Fast file parsing and information extraction via specialized subagents.
 - **`/improve`**: Triggers the `self-help` skill workflow to research and draft new skills.
 - **`/review`**: Evidence-first code review command.
@@ -46,7 +46,7 @@ Your directory structure should include:
 ```text
 ~/.config/opencode/
 ├── agents/
-│   ├── autopilot.md        # overnight autonomous worker
+│   ├── autopilot.md        # autonomous end-to-end worker (Mode B: new goal merged into TASKS.md; Mode A: "work the TASKS.md file")
 │   ├── coder.md            # code generation subagent
 │   ├── architect.md        # software architecture subagent
 │   ├── research.md         # discovery/parser subagent
@@ -80,7 +80,7 @@ Project-level starter (`templates/AGENTS_TEMPLATES/`) layers on top of this glob
 
 ## Long Horizon Agentic Tasks
 
-This repo wires up the framework for sustained, multi-turn agentic work — from overnight autonomous tasks (`autopilot.md`) through adversarial review (`review.md`) and QA testing (`test.md`) to autonomous skill creation (`self-help`). Each piece is designed to survive beyond a single prompt.
+This repo wires up the framework for sustained, multi-turn agentic work - from fully autonomous end-to-end runs (`autopilot.md`: task breakdown, research, implementation, adversarial review, testing, all through to completion) through adversarial review (`review.md`) and QA testing (`test.md`) to autonomous skill creation (`self-help`). Each piece is designed to survive beyond a single prompt.
 
 ### Process Enforcement for Small Local Models
 
