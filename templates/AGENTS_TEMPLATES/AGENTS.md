@@ -18,8 +18,9 @@ change.
 
 ## 2. Mandatory Task Startup (Checklist)
 
-Before any work: `PROJECT_INDEX.md` → `CURRENT_STATE.md` → `TASKS.md`.
+Before any work: `PROJECT_INDEX.md` → `CURRENT_STATE.md` → `TASKS.md` (thin index, one line per task: `<id> — <one-line> → tasks/<id>.md`).
 Each loop iteration, re-read `CURRENT_STATE.md` + `TASKS.md` (not `RESEARCH.md`, not conversation history) and advance the single unchecked item there.
+Every `TASKS.md` item links to a `tasks/<id>.md` **detail file** — research agent elaborates it (Goal/Research/References/Testing criteria), coder/test fill implementation notes + attempt log, planner appends the review verdict. The detail file is the single reviewable record for that task: when you need to review a ticked task, open only that file.
 If index missing/stale: load `project-index` (and `repo-discovery` if needed), inspect, update/create index first.
 
 For non-trivial tasks (consolidated flow):
@@ -27,13 +28,13 @@ For non-trivial tasks (consolidated flow):
 2. Set acceptance criteria.
 3. Identify affected modules + tests.
 4. Load language/domain skill; plan smallest coherent change.
-5. If the task touches >1 file, changes behaviour/API, or the planner is uncertain: invoke `--agent research` with `templates/subagent-calls/researcher.md` (structured prompt only). Exempt: comment/format-only and single-line trivial changes.
+5. If the task touches >1 file, changes behaviour/API, or the planner is uncertain: invoke `--agent research` with `templates/subagent-calls/research.md` (structured prompt only). The research agent fills the task's `tasks/<id>.md` detail file (findings, references, testing criteria). Exempt: comment/format-only and single-line trivial changes.
 6. Implement (`coder` subagent or direct edit).
 7. GIT commit after edit.
-8. Load `review` subagent (`templates/subagent-calls/review.md`) — adversarial PASS/FAIL (§7.7). Only tick when all 10 axes PASS.
+8. Load `review` subagent (`templates/subagent-calls/review.md`) — adversarial PASS/FAIL (§7.7). Planner appends the verdict to `tasks/<id>.md`. Only tick when all 10 axes PASS.
 9a. Verify (planner): syntax → static analysis → diff review (with observed output).
-9b. Invoke `--agent test` (`templates/subagent-calls/test.md`) — targeted → regression → broader suite, explicit timeouts, PASS/FAIL with evidence. Only proceed past this step on test PASS; failures return to implementer/`review` for classification.
-10. Record in `CURRENT_STATE.md`; tick in `TASKS.md`.
+9b. Invoke `--agent test` (`templates/subagent-calls/test.md`) — targeted → regression → broader suite, explicit timeouts, PASS/FAIL with evidence. Only proceed past this step on test PASS; failures return to implementer/`review` for classification. Record results in `tasks/<id>.md`.
+10. Record in `CURRENT_STATE.md`; set `tasks/<id>.md` `Status:` to `DONE` (all criteria checked, evidence in file); tick in `TASKS.md`.
 
 Never claim a test passed without observed output.
 
@@ -85,7 +86,7 @@ When a failure survives a second correction attempt on a knowledge gap: load `se
 Before ticking any sub-subtask complete:
 1. Load `review` subagent (`--agent review`) with `templates/subagent-calls/review.md`.
 2. The `review` agent performs adversarial review using the structured PASS/FAIL checklist (§7.7) — 10 axes with one-line verdicts per axis.
-3. If any axis fails: do NOT tick. Document failure in `RESEARCH.md` (line refs, evidence, severity, which option was evaluated), fix or split further, retry.
+3. If any axis fails: do NOT tick. Document failure in the task's `tasks/<id>.md` detail file (line refs, evidence, severity) and in `RESEARCH.md` for session-wide tracking, fix or split further, retry.
 4. Only tick when all 10 axes pass AND verification commands ran with observed output.
 5. This applies to ALL sub-subtasks, not just the final milestone — overnight runs must not silently accumulate errors.
 6. After `review` PASS (steps 1–3) and verification evidence (step 4): invoke `--agent test` (targeted → regression) — require test PASS.
@@ -111,7 +112,7 @@ Never retry the same action unchanged after a failure.
 ## 3.6 Subagent Invocation Templates
 
 When invoking a subagent, use the corresponding template from `templates/subagent-calls/`:
-- `researcher.md` — for investigation/discovery tasks (invoke: `--agent research`)
+- `research.md` — for investigation/discovery/decision-research tasks (invoke: `--agent research`)
 - `review.md` — for code review tasks
 - `test.md` — for QA testing tasks (invoke: `--agent test`)
 - `coder.md` — for code generation tasks
@@ -162,7 +163,7 @@ When the operator gives a vague or broad prompt:
 **Step A (Scan)**: Load `repo-discovery`, list top 5 relevant areas/files. Output sub-questions only — no full report.
 **Step B (Decompose)**: Break findings into max 3 specific, answerable questions. Each must map to one file read or command.
 
-Only proceed after Step B. For each sub-question: invoke `--agent research` with `templates/subagent-calls/researcher.md`. Planner synthesizes all results (not sub-researchers).
+Only proceed after Step B. For each sub-question: invoke `--agent research` with `templates/subagent-calls/research.md`. Planner synthesizes all results (not sub-researchers). The research agent elaborates the matching `tasks/<id>.md` detail file, not a chat response.
 
 ## 5. Learning Loop (self-improving)
 
@@ -272,8 +273,8 @@ This forces a verdict per axis rather than prose that may miss issues.
 Research each task in depth before implementing:
 
 1. Read `PROJECT_INDEX.md` first — never start coding without the index.
-2. Break the task into sub-tasks in `TASKS.md` using IDs (`mN-tN-stN-ssN`).
-3. Each sub-task gets its own `memory/learning/tasks/<id>-attempts.jsonl`.
+2. Break the task into sub-tasks in `TASKS.md` using IDs (`mN-tN-stN-ssN`) — one line per task, links to `tasks/<id>.md`.
+3. Each sub-task gets its own `tasks/<id>.md` detail file (research fills it: Goal, scope, findings, references, testing criteria) and its own `memory/learning/tasks/<id>-attempts.jsonl`.
 4. If a sub-task is still too complex (e.g., requires >3 files or >1 hour), break it further into sub-sub-tasks.
 5. Never implement a task that hasn't been decomposed. If you can't decompose it, load `repo-discovery` first.
 
@@ -323,4 +324,5 @@ A task is complete only when:
 - The diff has been reviewed.
 - Required project documentation is updated.
 - Remaining risks and limitations are recorded.
-- `TASKS.md` reflects the actual task status.
+- `TASKS.md` reflects the actual task status (index only).
+- The task's `tasks/<id>.md` detail file is complete (Status: DONE, research/attempts/testing/review verdict filled) — it is the record a reviewer opens.

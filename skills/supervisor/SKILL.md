@@ -1,6 +1,6 @@
 ---
 name: supervisor
-description: Lightweight process supervisor for long-running agentic work. Monitors TASKS.md + CURRENT_STATE.md + PROGRESS.md, detects drift/stalls/self-approval, enforces budgets, and decides continue / replan / escalate / stop. Load on every multi-stage or overnight run.
+description: Lightweight process supervisor for long-running agentic work. Monitors TASKS.md + tasks/<id>.md detail files + CURRENT_STATE.md + PROGRESS.md, detects drift/stalls/self-approval, enforces budgets, and decides continue / replan / escalate / stop. Load on every multi-stage or overnight run.
 license: MIT
 compatibility: opencode
 metadata:
@@ -21,14 +21,14 @@ File-only process judge for multi-subtask, context-reset, or unattended runs. It
 
 ## Required Inputs (in order)
 
-1. `PROJECT_INDEX.md` (if present) → 2. `memory/CURRENT_STATE.md` → 3. `TASKS.md` → 4. `PROGRESS.md` → 5. Original high-level request → 6. Any open LEARNING_BRIEF/blocker notes. Files are authoritative; do not rely on conversation history.
+1. `PROJECT_INDEX.md` (if present) → 2. `memory/CURRENT_STATE.md` → 3. `TASKS.md` (thin index) → 4. `tasks/<id>.md` detail file(s) for open/completed tasks → 5. `PROGRESS.md` → 6. Original high-level request → 7. Any open LEARNING_BRIEF/blocker notes. Files are authoritative; do not rely on conversation history.
 
 ## Core Decision Loop
 
 Answer each with evidence (`file:line` or exact command output):
 
 1. **Goal Alignment** — Active item maps to the original request. FAIL = scope creep, rewritten criteria, abandoned intent.
-2. **Progress** — Verifiable leaf completed since last heartbeat (checkbox flipped + CURRENT_STATE updated + verification evidence). STALL = same item at attempt 3 with no new evidence (template §3.5 budget). REGRESS = completed item now broken.
+2. **Progress** — Verifiable leaf completed since last heartbeat (checkbox flipped in `TASKS.md` **and** the matching `tasks/<id>.md` detail file shows `Status: DONE` with research, testing criteria, attempt log and review verdict filled + CURRENT_STATE updated + verification evidence). STALL = same item at attempt 3 with no new evidence (template §3.5 budget). REGRESS = completed item now broken. A tick without a completed detail file is a FAIL.
 3. **Verification Integrity** — Concrete commands + observed output required. FAIL = natural-language self-approval, "should work", skipped tests.
 4. **Budget** — Per-sub-subtask 3-strike attempts (template §3.5) is the sole budget; per-run `max-new-skills-per-run: 3`. Crossing → forced review or escalate. No round counters.
 5. **Drift Signals** — Invented APIs, weakened criteria, unevidenced claims, repeated identical failure without LEARNING_BRIEF, raw tool output still unspilled in context.
@@ -58,7 +58,7 @@ In autopilot/overnight runs supervisor decisions are final — never pause for a
 
 After each sub-subtask decision, append one line to `PROGRESS.md` (never `metrics.jsonl` — its one-line-per-sub-subtask invariant on resolution is unchanged):
 
-`[<ISO-8601 timestamp>] task_id=<mN-tN-stN-ssN> decision=<CONTINUE|REPLAN|ESCALATE|STOP-SUCCESS|STOP-FAILURE> evidence=<file:line|exact command>`
+`[<ISO-8601 timestamp>] task_id=<mN-tN-stN-ssN> decision=<CONTINUE|REPLAN|ESCALATE|STOP-SUCCESS|STOP-FAILURE> evidence=<file:line|tasks/<id>.md|exact command>`
 
 ## Guardrails
 

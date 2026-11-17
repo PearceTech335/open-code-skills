@@ -17,7 +17,7 @@ Use this skill for autonomous, unattended, multi-stage, or long-running tasks sp
 1. **State & Constraints**: Read `AGENTS.md`, `TASKS.md`, `PROGRESS.md`, and `memory/*.md` before editing. Identify protected paths. Never copy secrets into notes. Continue reversible work without asking questions.
 2. **Persistent Notes**: Maintain `RESEARCH.md`, `INDEX.md`, `subsystem-*.md`, and `PROGRESS.md`. Read large files in ~300-line chunks. Document high-level purpose, boundaries, and verified tests immediately rather than relying on KV cache memory.
 3. **Incremental Documentation**: Document findings as you go. Follow call chains far enough to explain behaviour before moving on.
-4. **State Separation**: Use `TASKS.md` for checklists, `PROGRESS.md` for execution status, and `RESEARCH.md` for architecture and decisions.
+4. **State Separation**: Use `TASKS.md` as the thin one-line index, `tasks/<id>.md` for each task's full record (research, scope, references, testing criteria, pass/fail), `PROGRESS.md` for execution status, and `RESEARCH.md` for architecture and decisions.
 5. **Resumable Retrieval**: At session start, read state files and load only notes relevant to the next action. Source code and test outputs remain authoritative.
 6. **Reproducibility**: Record exact commands, configs, and versions. Preserve successful and failed trials. Never claim an unverified test ran.
 7. **Safe Refactoring**: Make the smallest reversible change. Preserve public interfaces. Inspect diffs and run verification checks.

@@ -9,7 +9,11 @@ permission:
 
 ## 1. Read TASKS.md — not the full repo
 
-Start with `memory/CURRENT_STATE.md` + `TASKS.md`. Identify active milestone, dependencies, and the single task to advance. Do not read the entire repository.
+Start with `memory/CURRENT_STATE.md` + `TASKS.md` (thin index — one line per task). Identify the active milestone, dependencies, and the single task to advance. Do not read the entire repository.
+
+## 1.5 Read the task's detail file
+
+For the unchecked item you advance, read its `tasks/<id>.md` detail file (Goal → Acceptance criteria → Scope). If it does not exist, create it from `templates/AGENTS_TEMPLATES/tasks/TEMPLATE.md` with Goal + Acceptance criteria filled in — never start work on a bare index line. The detail file is the single reviewable record of the task: research, scope, references, testing criteria, attempts, pass/fail evidence and review verdict all accumulate there.
 
 ## 2. Load relevant skills
 
@@ -54,12 +58,13 @@ This prevents the planner from giving vague prompts that produce unverified repo
 
 ## 3. Loop protocol (read → inspect → document → edit → verify → tick)
 
-- Read target file / index entry.
-- Document observations in `RESEARCH.md` (line refs, assumptions labeled `verified`/`probable`).
+- Read the task's `tasks/<id>.md` detail file (and the target file / index entry it points to).
+- Research fills the detail file: `## Research` section gets findings with line refs, references, labels (`verified`/`probable`/`preliminary`), and anything unverifiable.
 - Plan smallest coherent change (≤5 files; split >5).
 - Implement with `coder` subagent when complex; use `edit` only when verified.
 - Verify: syntax → targeted test → regression → diff review.
-- Tick task in `TASKS.md`; write update to `memory/CURRENT_STATE.md`.
+- Append implementation notes, testing criteria results, and attempt lines to the detail file.
+- Tick the task in `TASKS.md`; write update to `memory/CURRENT_STATE.md`; set the detail file `Status:` to `DONE`.
 - Stop conditions: all tasks complete → write `PROGRESS.md`; blocked >30 min → escalate with blocker + evidence.
 
 ## 4. Overnight safety rules

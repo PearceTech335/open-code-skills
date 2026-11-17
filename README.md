@@ -29,7 +29,7 @@ A curated collection of production-grade, highly compressed, Power-of-10-inspire
 - **`security`**, **`penetration-tester`**, **`networking`**, **`ot-networking`**, **`packet-analysis`**: Evidence-first domain investigation and security review standards.
 
 ### Custom Commands (`commands/`)
-- **`/overnight`**: Turns any prompt into a `TASKS.md` checklist and runs an unattended autonomous worker.
+- **`/overnight`**: Turns any prompt into a thin `TASKS.md` index plus one `tasks/<id>.md` detail file per task, then runs an unattended autonomous worker.
 - **`/research`**: Fast file parsing and information extraction via specialized subagents.
 - **`/improve`**: Triggers the `self-help` skill workflow to research and draft new skills.
 - **`/review`**: Evidence-first code review command.
@@ -49,7 +49,6 @@ Your directory structure should include:
 │   ├── autopilot.md        # overnight autonomous worker
 │   ├── coder.md            # code generation subagent
 │   ├── architect.md        # software architecture subagent
-│   ├── network-engineer.md # OT/network troubleshooting
 │   ├── research.md         # discovery/parser subagent
 │   ├── review.md           # adversarial review + LEARNING_BRIEF emitter
 │   └── test.md             # QA testing — runs test suite, PASS/FAIL with evidence
@@ -67,8 +66,8 @@ Your directory structure should include:
 ├── skills/self-help/templates/
 │   ├── learning-brief.md
 │   └── skill-template.md
-├── templates/AGENTS_TEMPLATES/    # copy/paste starter (AGENTS.md + MISSION.md + TASKS.md + memory/ + .opencode/skills/)
-├── templates/subagent-calls/      # invocation templates (research.md, researcher.md, review.md, test.md, coder.md, autopilot.md)
+├── templates/AGENTS_TEMPLATES/    # copy/paste starter (AGENTS.md + MISSION.md + TASKS.md + tasks/TEMPLATE.md + memory/ + .opencode/skills/)
+├── templates/subagent-calls/      # invocation templates (research.md, review.md, test.md, coder.md, autopilot.md)
 ├── AGENTS.md                     # global agent config (engineering standards, skill hierarchy, verification, Behaviour + Test Agent protocol)
 ├── opencode.json                  # local-only (gitignored) — endpoint config; agent block removed; subagents inherit `model`
 ├── .gitignore                     # excludes opencode.json; tracks skills/, agents/, commands/, README.md, templates/
@@ -112,7 +111,7 @@ Every agent spec is a `.md` file (`agents/*.md` + `commands/*.md`), not a JSON b
 Architectural escalation: when a task introduces or exposes significant architectural complexity, the `agent-core` routes to the `architect` sub-agent (`agents/architect.md`) via the Architectural Governance in the global `AGENTS.md` — routine fixes and isolated changes do not invoke it.
 
 ### Persistent Memory & Task Lifecycle
-Memory is file-first, not context-window-first. Before any multi-turn task, load `memory/PROJECT_INDEX.md`, `memory/CURRENT_STATE.md`, `memory/ARCHITECTURE.md`, and `memory/DECISIONS.md`. `TASKS.md` splits work into milestones; `RESEARCH.md` logs findings with verified/probable/preliminary labels; `PROGRESS.md` writes status. This keeps any single-turn context small — the framework fills what the model sees from persistent files, not from a growing prompt.
+Memory is file-first, not context-window-first. Before any multi-turn task, load `memory/PROJECT_INDEX.md`, `memory/CURRENT_STATE.md`, `memory/ARCHITECTURE.md`, and `memory/DECISIONS.md`. `TASKS.md` stays a thin one-line index (may hold hundreds of tasks); each line links to a `tasks/<id>.md` detail file where the research/review agents put the full record — research, scope, references, testing criteria, attempts, pass/fail evidence. `RESEARCH.md` logs session-wide findings with verified/probable/preliminary labels; `PROGRESS.md` writes status. This keeps any single-turn context small — the framework fills what the model sees from persistent files, not from a growing prompt.
 
 ### Self-Improving Loop (Autonomous Skill Generation)
 When a failure survives a second correction attempt on a **knowledge-gap** root cause (`ALGORITHM_UNDERSTANDING_GAP`, `API_OR_LIBRARY_MISUSE`, `DATA_OR_SCHEMA_CONVENTION_GAP`, etc. — never a trivial `IMPLEMENTATION_DEFECT`), `review.md` emits an `LEARNING_BRIEF` block. From there:
@@ -130,10 +129,10 @@ When a failure survives a second correction attempt on a **knowledge-gap** root 
 Auto-approved skills are provisional — audit `.opencode/skills/` and `metrics.jsonl`. Cap: `max-new-skills-per-run: 3`; exceed → stop/escalate. Routing prefers existing skills (update before create); drafted skills target ~60 lines (soft limit).
 
 ### Skill Policy & Lightweight Design
-`AGENTS.md` §6 declares `auto-approve: project-skills` and the cap above; set policy to `off` for full human gate. Skills live in `skills/` (global) and `.opencode/skills/` (project); agent specs live in `agents/*.md` + `commands/*.md`. `templates/AGENTS_TEMPLATES/` is the copy/paste starter (includes `AGENTS.md`, `MISSION.md`, `TASKS.md`, `memory/`, `.opencode/skills/`). No JSON `agent` block — managing agents is add/remove one `.md` file.
+`AGENTS.md` §6 declares `auto-approve: project-skills` and the cap above; set policy to `off` for full human gate. Skills live in `skills/` (global) and `.opencode/skills/` (project); agent specs live in `agents/*.md` + `commands/*.md`. `templates/AGENTS_TEMPLATES/` is the copy/paste starter (includes `AGENTS.md`, `MISSION.md`, `TASKS.md`, `tasks/TEMPLATE.md`, `memory/`, `.opencode/skills/`). No JSON `agent` block — managing agents is add/remove one `.md` file.
 
 ### Failure Budget (3-Strike Gate)
-Every sub-subtask (`TASKS.md` ID) gets its own `memory/learning/tasks/<id>-attempts.jsonl`; after resolution (success/final failure/workaround) summarize one line to `memory/learning/metrics.jsonl` and delete the per-task file — no unbounded growth. Tool/execution failures (repeated edit mismatches, exact-match errors) stay local (RCA by `review`, workaround, no global `self-help`) unless `review` classifies a recurring structural gap (`ALGORITHM_UNDERSTANDING_GAP`, etc.), which then triggers §5.
+Every sub-subtask (`TASKS.md` ID) gets its own `tasks/<id>.md` detail file (the full per-task record) plus `memory/learning/tasks/<id>-attempts.jsonl`; after resolution (success/final failure/workaround) summarize one line to `memory/learning/metrics.jsonl` and delete the per-task attempts file — no unbounded growth. Tool/execution failures (repeated edit mismatches, exact-match errors) stay local (RCA by `review`, workaround, no global `self-help`) unless `review` classifies a recurring structural gap (`ALGORITHM_UNDERSTANDING_GAP`, etc.), which then triggers §5.
 
 ### Project-Level Starter
 `templates/AGENTS_TEMPLATES/` is the full starter scaffold (not snippets). Copy it into a new project root to implement locally:
@@ -142,7 +141,9 @@ Every sub-subtask (`TASKS.md` ID) gets its own `memory/learning/tasks/<id>-attem
 <project-root>/
 ├── AGENTS.md              # §2 checklist (steps 5/9a/9b) + §3.5 failure budget (steps 6-7: test PASS + supervisor gate)
 ├── MISSION.md             # mission brief (separate from AGENTS.md §1; edit when mission changes)
-├── TASKS.md               # milestone / sub-subtask IDs (mN-tN-stN-ssN)
+├── TASKS.md               # thin index: one line per task → tasks/<id>.md
+├── tasks/                 # per-task detail files (research, scope, references, testing, pass/fail)
+│   └── <id>.md            # created from tasks/TEMPLATE.md; the single reviewable record
 ├── memory/
 │   ├── CURRENT_STATE.md   # active milestone + open sub-subtasks
 │   ├── PROJECT_INDEX.md   # repo navigation
@@ -161,10 +162,10 @@ The starter implements `AGENTS.md` rules (§3, §3.5, §5, §6) at project level
 When a subagent returns a report, the planner must verify key claims before using them: (1) mandatory answer to the mission question stated, (2) every factual claim has attached evidence (command/file reference), (3) no empty sections, (4) cross-check with at least two independent sources. Small models produce reports that "have the shape of an answer" but may contain unverified specifics — the planner is the quality gate.
 
 ### Subagent Invocation Templates
-Standardized prompt templates in `templates/subagent-calls/` (`research.md`, `researcher.md`, `review.md`, `test.md`, `coder.md`, `autopilot.md`). When invoking a subagent, use the corresponding template and fill in the bracketed sections. If no template exists, create one via the self-help process before invoking. Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
+Standardized prompt templates in `templates/subagent-calls/` (`research.md`, `review.md`, `test.md`, `coder.md`, `autopilot.md`). When invoking a subagent, use the corresponding template and fill in the bracketed sections. If no template exists, create one via the self-help process before invoking. Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
 
 ### Research Decomposition (Vague Prompts)
-When given a vague or broad research prompt, do not attempt to answer in one pass: (1) broad-brush scan to identify major areas and sub-questions, (2) decompose into 3-5 specific targeted sub-questions, (3) invoke researcher for each sub-question with a focused prompt, (4) synthesize findings into the final report. This ensures each researcher call is focused and verifiable.
+When given a vague or broad research prompt, do not attempt to answer in one pass: (1) broad-brush scan to identify major areas and sub-questions, (2) decompose into 3-5 specific targeted sub-questions, (3) invoke the research agent for each sub-question with a focused prompt, (4) synthesize findings into the final report. This ensures each call is focused and verifiable. Research elaborates the matching `tasks/<id>.md` detail file.
 
 ### Planner vs Execution Model Divergence
 The planner (top-level `model` in `opencode.json`) runs on the cloud endpoint for planning, root-cause classification, `LEARNING_BRIEF` emission, and approval. Subagent execution (`coder`, `research`, `review`, `test`, `autopilot`) routes through the local endpoint for all writes, reads, edits, tests. This protects the planner's token budget (daily allowance) while keeping execution unbounded (local GPU).

@@ -24,7 +24,7 @@ Do **not** auto-load on trivial/comment/format-only changes. Counts toward the `
 
 ## Inputs (file-first)
 1. `PROJECT_INDEX.md` / `ARCHITECTURE.md` / `DECISIONS.md`
-2. `memory/CURRENT_STATE.md` / `TASKS.md` / `PROGRESS.md`
+2. `memory/CURRENT_STATE.md` / `TASKS.md` / `PROGRESS.md` / `tasks/<id>.md` (detail file for affected task)
 3. `KNOWN_ISSUES.md` (reuse existing; do **not** require a new debt log)
 4. Original request / relevant `RESEARCH.md`
 

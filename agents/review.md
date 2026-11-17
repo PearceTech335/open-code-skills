@@ -64,7 +64,7 @@ When a knowledge-gap or `UNKNOWN` classification applies, append this block to y
 
 ```
 LEARNING_BRIEF
-task_id: <from TASKS.md or context>
+task_id: <mN-tN(-stN-ssN) — from TASKS.md / the task detail file tasks/<id>.md>
 root_cause: <classification>
 evidence: <exact test output / code observation supporting the classification>
 learning_objective: <reusable capability that must improve — not a line-level fix>
@@ -105,3 +105,11 @@ Use a structured pass/fail checklist for each axis, committing to a verdict and 
 `
 
 This forces a verdict per axis rather than prose that may miss issues. Use the compact Learning Brief (4-field) when emitting LEARNING_BRIEF.
+
+## Output Routing — task detail file
+
+You cannot write files. The planner/primary agent appends your verdict to the
+`## Review verdict` section of `tasks/<id>.md` (the detail file for the task
+under review). Your checklist + evidence goes there verbatim, so the operator
+reviewing that one file sees the full record: research → implementation →
+testing → review verdict.

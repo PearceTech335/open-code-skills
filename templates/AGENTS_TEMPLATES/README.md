@@ -1,11 +1,12 @@
 # AGENTS_TEMPLATES — Project Starter + Autonomous Learning Loop
 
-This folder is the **copy/paste starter template** for new OpenCode projects. Copypaste its contents (`AGENTS.md`, `MISSION.md`, `TASKS.md`, `memory/`, `.opencode/skills/`) to a new project root. It does **not** replace your global config (`~/.config/opencode/AGENTS.md` + global skills); it layers project-specific rules, the self-improving Learning Loop, and the Skill Policy on top.
+This folder is the **copy/paste starter template** for new OpenCode projects. Copypaste its contents (`AGENTS.md`, `MISSION.md`, `TASKS.md`, `tasks/TEMPLATE.md`, `memory/`, `.opencode/skills/`) to a new project root. It does **not** replace your global config (`~/.config/opencode/AGENTS.md` + global skills); it layers project-specific rules, the self-improving Learning Loop, and the Skill Policy on top.
 
 ## What this folder is for
 
 - **Project mission brief** (`MISSION.md`) — what the project is, its source of truth, execution host, sync discipline, credentials, and priorities. Kept separate from `AGENTS.md` so the workflow file can be re-aligned with the global template without losing project context (`AGENTS.md` §1 points here).
 - **Project-level agent instructions** (`AGENTS.md`) — startup rules (§2 checklist), execution protocol (§3), evidence/correctness standards (§8 Verification Standard: VERIFIED claims cite independent source; PRELIMINARY states limitation), and the Learning Loop (§5) + Skill Policy (§6). Behaviour (§3.5/§2.6): uncertain conditions trigger structured `research.md`/`review.md` subagent calls, not open-ended prose. `supervisor` gates ticks on multi-subtask runs (§3.5 step 7; heartbeat to `PROGRESS.md`).
+- **Task index + detail files** (`TASKS.md` + `tasks/<id>.md`) — `TASKS.md` is a thin one-line-per-task index (may grow to hundreds of lines); each line links to `tasks/<id>.md`, the detail file the research/coder/review agents fill with research, scope, references, testing criteria, attempts and pass/fail evidence. One file per task = one reviewable record.
 - **Self-improving skills** (`.opencode/skills/`) — where project-specific skills live; the `self-help` skill drafts them, the Learning Gate validates them, and the Skill Policy controls approval.
 - **Project knowledge scaffold** (`memory/`) — persistent index, state, architecture, decisions, known issues, milestones, and the `learning/` sink (`briefs/` + `metrics.jsonl`).
 - **Copy/paste starter** — new repo? Drop this folder's contents at root and fill in `MISSION.md` and `memory/PROJECT_INDEX.md` from the real repo.
@@ -14,7 +15,7 @@ Global rules (`agent-core`, `readable-code`, `repo-discovery`, `quality-gate`, `
 
 ## Process enforcement for small local models
 
-This starter targets sustained agentic coding on small local models (e.g. Qwen3.5-4B-class models at small configured contexts — see `opencode.json`) by enforcing a frontier-model-style process per task: file-first state (`PROJECT_INDEX`/`CURRENT_STATE`/`TASKS`), research before implementation for non-trivial changes, adversarial `review`, execution-based `test`, and `supervisor` gating before any tick (§2 steps 5/9b, §3.5 steps 6–7). Checklists, templates, and the 3-strike failure budget externalise process discipline so it does not depend on model scale — at the cost of per-task subagent latency, which the file-first design contains. `AGENTS.md` stays lean: it only points at the skill/agent/template files that carry the detail.
+This starter targets sustained agentic coding on small local models (e.g. Qwen3.5-4B-class models at small configured contexts — see `opencode.json`) by enforcing a frontier-model-style process per task: file-first state (`PROJECT_INDEX`/`CURRENT_STATE`/`TASKS` index + `tasks/<id>.md` detail files), research before implementation for non-trivial changes, adversarial `review`, execution-based `test`, and `supervisor` gating before any tick (§2 steps 5/9b, §3.5 steps 6–7). Checklists, templates, per-task detail files and the 3-strike failure budget externalise process discipline so it does not depend on model scale — at the cost of per-task subagent latency, which the file-first design contains. `AGENTS.md` stays lean: it only points at the skill/agent/template files that carry the detail.
 
 ## How the autonomous Learning Loop works
 
@@ -103,8 +104,7 @@ Standardized prompt templates for invoking subagents. Use the corresponding temp
 
 | Template | Purpose |
 |----------|---------|
-| `researcher.md` | Investigation/discovery tasks |
-| `research.md` | Structured multi-path decision protocol (autopilot multi-path) |
+| `research.md` | Unified research template (investigation, decision research, task detail-file elaboration) |
 | `review.md` | Code review tasks |
 | `test.md` | QA testing tasks (runs test suite, PASS/FAIL with evidence) |
 | `coder.md` | Code generation tasks |
@@ -118,7 +118,7 @@ Every sub-subtask (`TASKS.md` ID) gets its own `memory/learning/tasks/<id>-attem
 
 ## Research Decomposition (§3.9 of AGENTS.md)
 
-When given a vague or broad research prompt, do not attempt to answer in one pass: (1) broad-brush scan to identify major areas and sub-questions, (2) decompose into 3-5 specific targeted sub-questions, (3) invoke researcher for each sub-question with a focused prompt, (4) synthesize findings into the final report.
+When given a vague or broad research prompt, do not attempt to answer in one pass: (1) broad-brush scan to identify major areas and sub-questions, (2) decompose into 3-5 specific targeted sub-questions, (3) invoke the research agent for each sub-question with a focused prompt, (4) synthesize findings into the final report. The research agent elaborates the matching `tasks/<id>.md` detail file.
 
 ## Subagent Output Verification (§3.8 of AGENTS.md)
 
@@ -129,11 +129,12 @@ When a subagent returns a report, the planner must verify key claims before usin
 - [ ] `MISSION.md` filled (mission brief, source of truth, execution host, priorities); `AGENTS.md` §5 (Learning Loop) and §6 (Skill Policy) intact.
 - [ ] §2 steps 5/9a/9b and §3.5 steps 6-7 (test PASS + supervisor gate) intact; §3.5 (Failure Budget), §3.6 (Subagent Templates, incl. `test.md`), §3.7 (Planner vs Execution, incl. `test`), §3.8 (Output Verification), §3.9 (Research Decomposition) intact.
 - [ ] §7.5-§7.9 intact (Template Management, Self-Help Two-Phase, Reviewer Checklist, Deep Research, Compact Learning Brief).
-- [ ] `TASKS.md` reflects actual milestone/task status with sub-subtask IDs (`mN-tN-stN-ssN`).
+- [ ] `TASKS.md` reflects actual milestone/task status with sub-subtask IDs (`mN-tN-stN-ssN`); each item links to a `tasks/<id>.md` detail file.
+- [ ] `tasks/TEMPLATE.md` exists (copied from template); detail files are the per-task reviewable records.
 - [ ] `memory/PROJECT_INDEX.md` verified against repo; paths exist, not invented.
 - [ ] `.opencode/skills/` exists with `.gitkeep`; first skill draft placed when loop triggers.
 - [ ] `memory/learning/briefs/` + `metrics.jsonl` + `tasks/` present (zero-byte sink ready).
-- [ ] `templates/subagent-calls/` contains invocation templates (research.md, researcher, review, test, coder, autopilot).
+- [ ] `templates/subagent-calls/` contains invocation templates (research.md, review, test, coder, autopilot).
 - [ ] Evidence for any skill creation: source URLs, cross-check ≥2, counterexample, reproduction, Learning Gate checks.
 
 

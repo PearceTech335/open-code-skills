@@ -18,6 +18,7 @@ Load the `research-method` skill first (evidence-first, self-critique, cross-che
 - Repo state: [branch/commit or notes]
 - Relevant files/patterns: [paths or notes]
 - Constraints/requirements: [from TASKS.md/AGENTS.md]
+- Task detail file to elaborate: [tasks/<id>.md path — write findings here]
 - Policy notes: [any web research allowed? follow AGENTS.md WebFetch Policy strictly]
 
 ## ENVIRONMENT (verified facts)
