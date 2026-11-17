@@ -66,6 +66,29 @@ If uncertain: do NOT guess. Use structured subagent calls:
 
 Always: inspect repository (`repo-discovery`) before changing; test safe assumptions (single command/file read); protect uncommitted changes (`git status`, `git diff --check`); surface conflicts with architecture rather than inventing fixes.
 
+## Documentation Style (STE-inspired)
+
+Applies to human-facing documentation prose (READMEs, `docs/`, project
+`AGENTS.md` prose, PR notes, runbooks) — not to code, comments, commit
+messages, chat, or creative/marketing text.
+
+- Write STE-inspired: short sentences (aim ≤20 words per instruction, ≤25
+  descriptive), imperative mood for steps, one instruction per sentence, one
+  topic per paragraph, active voice (passive only when the actor is
+  unknown), conditions before actions, no omitted sentence parts, vertical
+  lists, one word = one meaning, no noun clusters over three words.
+- Do NOT claim "STE compliant" or "ASD-STE100 certified" anywhere — full
+  conformance needs the official standard (Issue 9, free PDF at
+  asd-ste100.org) and its approved dictionary, applied with professional
+  review. Say "STE-inspired" instead.
+- Do NOT inline the standard's dictionary or rule text (copyright; CC
+  BY-NC-ND 4.0).
+- Full ASD-STE100 conformance is opt-in per project: a project that needs
+  it must declare it in its own `AGENTS.md`/`MISSION.md` and obtain the
+  official standard. The global config never claims conformance.
+- Detail + checklist: `skills/ste-writing/SKILL.md` (load on doc tasks;
+  counts toward the 2-additional-skill cap).
+
 ## Test Agent
 
 The `test` agent performs QA testing of code changes — dynamic verification by execution, complementing `research` (discovery) and `review` (static adversarial review):
@@ -88,7 +111,7 @@ Skills are organized in a hierarchy — load the ones relevant to the task. **Ca
 7. **`strategic-engineering`** — read-only advisor skill for trajectory/debt/systemic issues at plan/milestone/recurrent-debt points. Load sparingly (counts toward the 2 additional skills cap).
 8. **`long-running-task-research`** — persistent notes, resumable state, overnight-safe verification. Load for multi-stage/research/overnight work.
 
-Supporting skills: `template-library`, `readme-authoring`, `git-practices`, `auto-memory`, `research-method`, `self-help`, `supervisor`, `test-engineering`, `root-cause-analysis`, `interface-design`, `production-readiness`, `network-engineer`. Skills load on demand via the `skill` tool. Topic memory is wired via `opencode.json: instructions[]`. For heavy analysis, prefer subagents (`research`, `review`, `architect`) over loading extra skills.
+Supporting skills: `template-library`, `readme-authoring`, `git-practices`, `auto-memory`, `research-method`, `self-help`, `supervisor`, `test-engineering`, `root-cause-analysis`, `interface-design`, `production-readiness`, `network-engineer`, `ste-writing`. Skills load on demand via the `skill` tool. Topic memory is wired via `opencode.json: instructions[]`. For heavy analysis, prefer subagents (`research`, `review`, `architect`) over loading extra skills.
 
 **Framework-level (not task skills):** `agent-evaluation` (independent benchmarks, run separately) and `framework-validator` (automated checks for refs/agents/skills/frontmatter/conflicts) — not loaded per coding task; run as separate processes.
 

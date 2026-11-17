@@ -9,19 +9,30 @@ A curated collection of production-grade, highly compressed, Power-of-10-inspire
 ## What’s Inside?
 
 ### Core & Meta Skills
-- **`agent-core`**: Tool call discipline, four-phase protocol (Explore, Plan, Execute, Verify), and course-correction rules.
+- **`agent-core`**: Tool call discipline, four-phase protocol (Explore, Plan, Execute, Verify) with an always-on requirements micro-checklist (goal/acceptance, existing behavior, API/contracts impact, architecture alignment, escalation triggers), the **2 additional skills per task cap beyond the mandatory base** (heavy analysis delegated to subagents/templates/checklists), and course-correction rules.
 - **`self-help`**: Autonomous skill generation for systemic gaps with strict safety guardrails.
 - **`auto-memory`**: Session learning journal to persist non-obvious insights across sessions without RAG.
 - **`template-library`**: Reusable code patterns and snippet management.
-- **`supervisor`**: Lightweight process judge for multi-subtask/overnight runs (CONTINUE/REPLAN/ESCALATE/STOP; see `skills/supervisor/SKILL.md`).
-- **`long-running-task-research`**, **`git-practices`**, **`readme-authoring`**, **`research-method`**: persistent multi-stage research, Git workflow, README authoring, and research-method guardrails.
+- **`supervisor`**: Lightweight process judge for multi-subtask/autopilot runs (CONTINUE/REPLAN/ESCALATE/STOP; see `skills/supervisor/SKILL.md`).
+- **`long-running-task-research`**, **`git-practices`**, **`readme-authoring`**, **`research-method`**, **`ste-writing`**: persistent multi-stage research, Git workflow, README authoring, research-method guardrails, and ASD-STE100-inspired documentation style (short sentences, one instruction per sentence, active voice — never claims STE compliance; see `skills/ste-writing/SKILL.md`).
 
 ### Design & Quality Skills
 - **`readable-code`**: Cross-language coding standards for human-maintainable code (intent-obvious naming, simple solutions, robust error handling).
-- **`designer`**: Enforces solid project design methods (Single Responsibility, Separation of Concerns, Dependency Direction, Minimal Abstraction).
+- **`designer`**: Enforces solid project design methods (Single Responsibility, Separation of Concerns, Dependency Direction, Minimal Abstraction) — micro/mid-level component/interface design and review.
 - **`quality-gate`**: Final multi-dimensional review checklist (correctness, readability, architecture, security, performance).
 - **`repo-discovery`**: Architecture exploration before changing code (entry points, dependency mapping, call-chain tracing).
 - **`project-index`**: Maintains the standardised `PROJECT_INDEX.md` repository map; load it when project context is missing or stale (pair with `repo-discovery` when exploring before changes).
+
+### Engineering Stewardship & Lifecycle Skills
+- **`strategic-engineering`**: Read-only advisor for trajectory, technical debt and systemic issues at plan/milestone points — flags deterioration, recommends ADRs. Advisory only; never implements, gates, or approves skills.
+- **`test-engineering`**: Test design strategy (unit/integration/contract/boundary/failure/property/regression) — tests verify intended behavior, not the current implementation.
+- **`root-cause-analysis`**: Systematic debugging loop (reproduce → observe → isolate → hypothesize → verify → correct → prevent); distinguishes root cause / contributing factor / trigger / symptom.
+- **`interface-design`**: API and data-contract design — stable interfaces, validation, error contracts, versioning/backward compatibility, module boundaries.
+- **`production-readiness`**: Operational resilience — structured logging, metrics, timeouts, retries with backoff, idempotency, graceful degradation, config validation, health checks.
+- **`network-engineer`**: Evidence-first L1–L7/OT troubleshooting (symptom → baseline → evidence → hypothesis → test → remediation → validation).
+- **`html-js-graphics-3d`**: Canvas API / WebGL / Three.js for interactive 2D/3D graphics and data visualization.
+
+**Framework-level (not per-task skills):** `agent-evaluation` (independent benchmark harness) and `framework-validator` (automated checks for refs/agents/skills/frontmatter/conflicts) run as separate processes, not loaded per coding task.
 
 ### Language & Domain Skills
 - **`python-code`**, **`go-code`**, **`typescript-code`**: Production coding standards inspired by the NASA/JPL Power of 10 rules (short functions, strict type hints, path operations via `pathlib`, specific exception handling).
@@ -84,7 +95,7 @@ This repo wires up the framework for sustained, multi-turn agentic work - from f
 
 ### Process Enforcement for Small Local Models
 
-This framework targets sustained agentic coding on small local models (e.g. Qwen3.5-4B-class models at small configured contexts — see `opencode.json`) by enforcing a frontier-model-style process per task: file-first state (`PROJECT_INDEX`/`CURRENT_STATE`/`TASKS`), research before implementation for non-trivial changes, adversarial `review`, execution-based `test`, and `supervisor` gating before any tick. Checklists, templates, and the 3-strike failure budget externalise process discipline so it does not depend on model scale — at the cost of per-task subagent latency, which the file-first design contains.
+This framework targets sustained agentic coding on small local models (e.g. Qwen3.5-4B-class models at small configured contexts — see `opencode.json`) by enforcing a frontier-model-style process per task: file-first state (`PROJECT_INDEX`/`CURRENT_STATE`/`TASKS` index + `tasks/<id>.md` detail files), research before implementation for non-trivial changes, adversarial `review`, execution-based `test`, and `supervisor` gating before any tick. Checklists, templates, and the 3-strike failure budget externalise process discipline so it does not depend on model scale — at the cost of per-task subagent latency, which the file-first design contains.
 
 The `templates/` directory is the operational side of this: a copy/paste project scaffold (`templates/AGENTS_TEMPLATES/`) plus per-agent invocation templates (`templates/subagent-calls/`) that run a project and enforce this behaviour deterministically. For small locally hosted models it supplies the planning, verification, and recovery discipline the model cannot be trusted to generate itself; for frontier models it acts as an aid — a consistent, auditable harness that keeps long runs on-goal and makes every step's evidence inspectable, rather than relying on the model's own unprompted rigour. The result is that behaviour between local models and frontier models is more consistent: the same external process governs every task regardless of which model executes it.
 
@@ -129,7 +140,7 @@ When a failure survives a second correction attempt on a **knowledge-gap** root 
 Auto-approved skills are provisional — audit `.opencode/skills/` and `metrics.jsonl`. Cap: `max-new-skills-per-run: 3`; exceed → stop/escalate. Routing prefers existing skills (update before create); drafted skills target ~60 lines (soft limit).
 
 ### Skill Policy & Lightweight Design
-`AGENTS.md` §6 declares `auto-approve: project-skills` and the cap above; set policy to `off` for full human gate. Skills live in `skills/` (global) and `.opencode/skills/` (project); agent specs live in `agents/*.md` + `commands/*.md`. `templates/AGENTS_TEMPLATES/` is the copy/paste starter (includes `AGENTS.md`, `MISSION.md`, `TASKS.md`, `tasks/TEMPLATE.md`, `memory/`, `.opencode/skills/`). No JSON `agent` block — managing agents is add/remove one `.md` file.
+`AGENTS.md` §6 declares `auto-approve: project-skills` and the new-skill-per-run cap above; set policy to `off` for full human gate. Per-task skill loading is capped separately (2 additional skills beyond mandatory `agent-core`; see the global `AGENTS.md` skill hierarchy). Skills live in `skills/` (global) and `.opencode/skills/` (project); agent specs live in `agents/*.md` + `commands/*.md`. `templates/AGENTS_TEMPLATES/` is the copy/paste starter (includes `AGENTS.md`, `MISSION.md`, `TASKS.md`, `tasks/TEMPLATE.md`, `memory/`, `.opencode/skills/`). No JSON `agent` block — managing agents is add/remove one `.md` file.
 
 ### Failure Budget (3-Strike Gate)
 Every sub-subtask (`TASKS.md` ID) gets its own `tasks/<id>.md` detail file (the full per-task record) plus `memory/learning/tasks/<id>-attempts.jsonl`; after resolution (success/final failure/workaround) summarize one line to `memory/learning/metrics.jsonl` and delete the per-task attempts file — no unbounded growth. Tool/execution failures (repeated edit mismatches, exact-match errors) stay local (RCA by `review`, workaround, no global `self-help`) unless `review` classifies a recurring structural gap (`ALGORITHM_UNDERSTANDING_GAP`, etc.), which then triggers §5.

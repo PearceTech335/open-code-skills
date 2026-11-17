@@ -16,6 +16,12 @@ be re-aligned with the global template without losing project context. Edit
 `MISSION.md` when the mission changes; edit this file when the workflow/rules
 change.
 
+Documentation style: the global config applies ASD-STE100-inspired principles
+to human-facing docs. A project that needs full ASD-STE100 conformance must
+declare it here or in `MISSION.md`, obtain the official standard (Issue 9,
+free at asd-ste100.org), and review against it — the global config never
+claims conformance.
+
 ## 2. Mandatory Task Startup (Checklist)
 
 Before any work: `PROJECT_INDEX.md` → `CURRENT_STATE.md` → `TASKS.md` (thin index, one line per task: `<id> — <one-line> → tasks/<id>.md`).

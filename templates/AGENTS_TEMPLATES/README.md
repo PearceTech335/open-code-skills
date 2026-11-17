@@ -69,7 +69,7 @@ Audit provisional skills in .opencode/skills/ + metrics.jsonl
 
 | Scope | Path | How it's used |
 |---|---|---|
-| **Global skills** (engineering practices, templates) | `~/.config/opencode/skills/` | Load on demand by agent; include `self-help`, `agent-core`, `readable-code`, `repo-discovery`, `quality-gate`, `long-running-task-research`, `git-practices`, `supervisor`, `readme-authoring`, `research-method`, `auto-memory`, etc. |
+| **Global skills** (engineering practices, templates) | `~/.config/opencode/skills/` | Load on demand by agent; include `self-help`, `agent-core`, `readable-code`, `repo-discovery`, `quality-gate`, `long-running-task-research`, `git-practices`, `supervisor`, `readme-authoring`, `research-method`, `ste-writing`, `auto-memory`, etc. |
 | **Project skills** (project-specific patterns, new capabilities) | `.opencode/skills/` (inside this folder / project root) | Drafted by `self-help`; validated by Learning Gate; approved via §6; kept separate from global to avoid pollution |
 | **Project agents / subagent specs** | `agents/*.md`, `commands/*.md` | Define roles (`review`, `coder`, etc.) with `description`, `mode`, `prompt`, optional `model:` override (omit to inherit global `model`) |
 | **Self-help templates** | `~/.config/opencode/skills/self-help/templates/` | `skill-template.md`, `learning-brief.md` — starter formats for new skills/briefs |
