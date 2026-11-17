@@ -93,7 +93,7 @@ Audit trail lives in `.opencode/skills/` + `memory/learning/metrics.jsonl` (one 
 This directory (`C:\Users\pearc\.config\opencode\templates/AGENTS_TEMPLATES/`) holds the **master starter scaffold** — the same contents you copy into a new project root. It's kept separate from global `AGENTS.md` so that:
 
 - Global config (`~/.config/opencode/AGENTS.md`) stays stable across all projects.
-- Each project gets its own `AGENTS.md`, `MISSION.md`, `TASKS.md`, `memory/`, `.opencode/skills/` without overriding globals.
+- Each project gets its own `AGENTS.md`, `MISSION.md`, `TASKS.md`, `tasks/` (with `TEMPLATE.md`), `memory/`, `.opencode/skills/` without overriding globals.
 - The template is version-controlled (git) and reusable; changes to the starter propagate by copying fresh.
 
 When creating a new project: copy the contents of `/templates/AGENTS_TEMPLATES/` (not the folder envelope) into the new repo root, then fill in `MISSION.md` and `memory/PROJECT_INDEX.md` from the real repo.
@@ -108,7 +108,7 @@ Standardized prompt templates for invoking subagents. Use the corresponding temp
 | `review.md` | Code review tasks |
 | `test.md` | QA testing tasks (runs test suite, PASS/FAIL with evidence) |
 | `coder.md` | Code generation tasks |
-| `autopilot.md` | Overnight/unattended runs |
+| `autopilot.md` | Autonomous end-to-end worker (Mode A resume existing TASKS.md / Mode B merge new goal as new milestone); loops until all root tasks complete |
 
 If no template exists for the task type, create one via the self-help process (§7.5) before invoking. Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
 

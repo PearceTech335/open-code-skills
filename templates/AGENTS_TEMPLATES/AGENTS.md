@@ -21,6 +21,7 @@ change.
 Before any work: `PROJECT_INDEX.md` → `CURRENT_STATE.md` → `TASKS.md` (thin index, one line per task: `<id> — <one-line> → tasks/<id>.md`).
 Each loop iteration, re-read `CURRENT_STATE.md` + `TASKS.md` (not `RESEARCH.md`, not conversation history) and advance the single unchecked item there.
 Every `TASKS.md` item links to a `tasks/<id>.md` **detail file** — research agent elaborates it (Goal/Research/References/Testing criteria), coder/test fill implementation notes + attempt log, planner appends the review verdict. The detail file is the single reviewable record for that task: when you need to review a ticked task, open only that file.
+Autopilot bootstrap (when the operator invokes the `autopilot` agent): **Mode A** — request refers to TASKS.md/continue/resume → do not create a new list; resume the first unchecked item and work through every unchecked root item. **Mode B** — new goal assigned → merge into the existing `TASKS.md` as a new milestone (never rewrite the list); create the detail files; run the full loop. Backlog items are untouched unless explicitly asked. Full loop lives in `agents/autopilot.md` (§0).
 If index missing/stale: load `project-index` (and `repo-discovery` if needed), inspect, update/create index first.
 
 For non-trivial tasks (consolidated flow):
@@ -102,7 +103,7 @@ Rules:
 - Write each attempt line to `memory/learning/tasks/<task-id>-attempts.jsonl` (not a global file).
 - **Attempt 1 (fail)**: retry with a different approach — inspect file bytes exactly (`read`), verify whitespace/indentation, confirm exact oldString.
 - **Attempt 2 (fail)**: load `review` or `research` subagent to diagnose root cause. Write diagnosis to `memory/learning/briefs/<task-id>-attempt2.md`. Classify: if root cause is a tool/execution failure (e.g., edit oldString mismatch, exact-match requirement, environment) → stay local; do not emit `LEARNING_BRIEF` or load global `self-help`. Only if the root cause is a recurring structural knowledge gap (`ALGORITHM_UNDERSTANDING_GAP`, `API_OR_LIBRARY_MISUSE`, `DATA_OR_SCHEMA_CONVENTION_GAP`, etc.) emit a `LEARNING_BRIEF` block for §5. Do NOT retry blindly.
-- **Attempt 3 (fail)**: stop retrying this sub-subtask. Write proposed workaround to `memory/CURRENT_STATE.md`, load `autopilot.md` or split further in `TASKS.md`. Then summarize one line (`{task_id,subtask,attempts,status,root_cause,workaround}`) to `memory/learning/metrics.jsonl` and delete `memory/learning/tasks/<task-id>-attempts.jsonl`.
+- **Attempt 3 (fail)**: stop retrying this sub-subtask. Write proposed workaround to `memory/CURRENT_STATE.md`, load `autopilot.md` (§0 Mode A: work the existing list) or split further in `TASKS.md`. Then summarize one line (`{task_id,subtask,attempts,status,root_cause,workaround}`) to `memory/learning/metrics.jsonl` and delete `memory/learning/tasks/<task-id>-attempts.jsonl`.
 - **Breakdown format**: `TASKS.md` uses IDs (`mN-tN-stN-ssN`) so each sub-subtask can have its own `memory/learning/tasks/<id>-attempts.jsonl`; never share a budget across unrelated subtasks.
 
 Example (your evaluation.py failure): attempt 1 failed due to context mismatch; attempt 2 should read the exact block from the file, confirm indentation; attempt 3 triggers `review` → RCA = "edit tool requires exact match" → workaround = construct exact string from `read` output, edit once; if that also fails, split into sub-subtask (`read` verification → `edit` application → `test`) rather than repeating the same edit attempt.
@@ -116,7 +117,7 @@ When invoking a subagent, use the corresponding template from `templates/subagen
 - `review.md` — for code review tasks
 - `test.md` — for QA testing tasks (invoke: `--agent test`)
 - `coder.md` — for code generation tasks
-- `autopilot.md` — for overnight/unattended runs
+- `autopilot.md` — autonomous end-to-end worker: bootstrap (Mode A resume existing TASKS.md / Mode B merge new goal as new milestone), research, implement, review, test, loop until all root tasks complete
 
 Fill in the bracketed sections. If no template exists for the task type, create one via the self-help process (§7.5) before invoking the subagent. Templates ensure a structured, complete prompt rather than an ad-hoc one.
 

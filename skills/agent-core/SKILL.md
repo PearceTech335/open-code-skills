@@ -101,7 +101,7 @@ When invoking a subagent, use the corresponding template from templates/subagent
 - research.md -- investigation/discovery/decision research (unified template: evidence-first, adversarial review, references)
 - review.md -- code review tasks
 - coder.md -- code generation tasks
-- autopilot.md -- overnight/unattended runs
+- autopilot.md -- autonomous end-to-end run (resume existing TASKS.md or merge new goal as milestone; loop until all root tasks complete)
 
 Fill in the bracketed sections. If no template exists, create one via self-help (section 7.5) before invoking.
 Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
