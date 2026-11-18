@@ -60,6 +60,8 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
    cd ~/.config/opencode
    ```
 
+   *Optional: sanity-check the install with `node scripts/verify.js` (config parses; referenced files resolve). It is not required to proceed.*
+
 2. **Scaffold a project for a long run:**
 
    ```bash
