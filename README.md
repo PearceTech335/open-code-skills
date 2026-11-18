@@ -11,7 +11,7 @@ A version-controlled global configuration for [OpenCode](https://opencode.ai) �
 This repo is an OpenCode setup aimed at improving agentic code generation:
 
 - **`AGENTS.md`** — the global base document. Every project loads it. It contains the engineering standards: workflow, verification, principles, behaviour rules, the skill hierarchy, testing protocol, documentation style (ASD-STE100-inspired).
-- **`skills/`** — 33 loadable on-demand skills (see below).
+- **`skills/`** — on-demand skills (see below).
 - **`agents/` + `commands/`** — specialist agents (`coder`, `research`, `review`, `test`, `architect`, `autopilot`) and slash commands.
 - **`templates/AGENTS_TEMPLATES/`** — a copy/paste project scaffold. Customize only its header and `MISSION.md`; everything else stays aligned with the global config.
 - **`templates/subagent-calls/`** — completion templates for invoking the specialist agents deterministically.
@@ -92,11 +92,11 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
 
 ## What’s inside
 
-**Core (10):** `agent-core` (tool discipline + always-on requirements micro-checklist + the **2 additional skills per task** cap), `self-help`, `auto-memory`, `template-library`, `supervisor`, `long-running-task-research`, `research-method`, `git-practices`, `readme-authoring`, `ste-writing`.
+**Core:** `agent-core` (tool discipline + always-on requirements micro-checklist + the **2 additional skills per task** cap), `self-help`, `auto-memory`, `template-library`, `supervisor`, `long-running-task-research`, `research-method`, `git-practices`, `readme-authoring`, `ste-writing`.
 
-**Design, quality & process (12):** `readable-code`, `repo-discovery`, `project-index`, `quality-gate`, `designer`, `strategic-engineering`, `test-engineering`, `root-cause-analysis`, `interface-design`, `production-readiness`, `html-js-graphics-3d`, `network-engineer`.
+**Design, quality & process:** `readable-code`, `repo-discovery`, `project-index`, `quality-gate`, `designer`, `strategic-engineering`, `test-engineering`, `root-cause-analysis`, `interface-design`, `production-readiness`, `html-js-graphics-3d`, `network-engineer`.
 
-**Language & domain (11):** `python-code`, `go-code`, `typescript-code`, `bash-skill`, `powershell-skill`, `ansible-code`, `security`, `penetration-tester`, `networking`, `ot-networking`, `packet-analysis`.
+**Language & domain:** `python-code`, `go-code`, `typescript-code`, `bash-skill`, `powershell-skill`, `ansible-code`, `security`, `penetration-tester`, `networking`, `ot-networking`, `packet-analysis`.
 
 **Agents:** `autopilot` (engineering orchestrator/QC; Mode A resume list / Mode B new goal merged as milestone), `coder`, `research`, `review`, `test`, `architect`.
 
