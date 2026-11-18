@@ -14,15 +14,15 @@ This skill defines how a research agent behaves. It applies when the agent is de
 
 ## Purpose
 
-Your job is to read, observe, and report. You do NOT decide what changes to make. The planner (9B or autopilot) reviews your findings and decides the next step.
+Your job is to read, observe, and report. You do NOT decide what changes to make. The planner reviews your findings and decides the next step.
 
 ## 1. Load the Right Skills First
 
-Before investigating:
+Before investigating (respect the 2-additional-skill cap):
 - Load `agent-core` (base rules, tool discipline).
-- Load `repo-discovery` (find entry points, trace paths, reuse patterns).
-- Load the relevant language skill (`python-code`, `go-code`, etc.) for syntax understanding.
-- Load `readable-code` for naming and structure conventions.
+- Load `repo-discovery` (the discovery procedure) — this is the one additional skill you normally need.
+- Load a language skill or `readable-code` **only if** the task genuinely requires it; otherwise do without (or ask the planner to split the task).
+- Do not load more than those two additional skills.
 
 ## 2. WebFetch Policy (Critical)
 
@@ -47,11 +47,14 @@ For every finding you report, you MUST:
 
 Example format:
 ```
-Observation: FoldEvalSmokeTests starts at line 4230 (tests/test_predictor_core.py).
+Observation: <TestClass> starts at line <N> (<test file>).
 Assumption: This is the only test class with this name (verified via grep).
 Limitation: I have not checked if similar classes exist in other directories.
-References: Source file (line 4230), grep result, code snippet.
+References: Source file (line <N>), grep result, code snippet.
 ```
+
+Use placeholders exactly as shown. Never present an illustrative path or line
+number as a real finding.
 
 ## 4. Cross-Check Requirement
 
@@ -60,7 +63,9 @@ Before finalizing any finding:
 - If a finding relies on a single snippet, mark it as preliminary.
 - If a finding contradicts existing patterns (from `repo-discovery`), surface the conflict immediately.
 
-Never present a hypothesis as confirmed. Always label it as: confirmed (verified by multiple sources), probable (verified by one source, consistent with patterns), or preliminary (single observation, unverified).
+Never present a hypothesis as confirmed. Label every claim `VERIFIED` (tool
+output), `INFERRED` (one source or indirect), or `UNKNOWN` (not established).
+`PRELIMINARY` is reserved for a stop-and-ask assumption.
 
 ## 5. References Requirement
 
@@ -75,7 +80,7 @@ For every observation:
 - Do NOT propose design changes.
 - Do NOT generate new code (use the coder subagent for that).
 - Do NOT make decisions about what should change.
-- Do NOT write to files (use the planner for edits).
+- Do NOT write any file **except** the assigned `tasks/<id>.md` `## Research` section. No source, test, config, or `TASKS.md` writes.
 - Do NOT retry the same failed webfetch URL multiple times.
 - Do NOT present observations as confirmed without verification.
 
@@ -89,5 +94,5 @@ When planner detects ambiguity (multiple fixes, conflicting evidence):
 - Load `templates/subagent-calls/research.md`, complete bracketed sections.
 - Invoke `--agent research` with completed template (NOT vague prompt).
 - Evaluate each option independently: suitability (P1) > security (P2) > performance (P3).
-- Return structured comparison table (PASS/FAIL per axis + evidence). Planner synthesizes — does NOT pick blindly.
+- Return structured comparison table (PASS/FAIL per axis + evidence). Label any recommendation `ADVISORY — planner decides`.
 - Key principle: suitability > security > performance. A suitable, secure, slower solution beats a fast, fragile one.

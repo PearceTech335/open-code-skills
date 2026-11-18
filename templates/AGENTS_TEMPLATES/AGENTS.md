@@ -24,9 +24,9 @@ claims conformance.
 
 ## 2. Mandatory Task Startup (Checklist)
 
-Before any work: `PROJECT_INDEX.md` → `CURRENT_STATE.md` → `TASKS.md` (thin index, one line per task: `<id> — <one-line> → tasks/<id>.md`).
+Before any work: `memory/PROJECT_INDEX.md` → `memory/CURRENT_STATE.md` → `TASKS.md` (thin index, one line per task: `<id> — <one-line> → tasks/<id>.md`).
 Each loop iteration, re-read `CURRENT_STATE.md` + `TASKS.md` (not `RESEARCH.md`, not conversation history) and advance the single unchecked item there.
-Every `TASKS.md` item links to a `tasks/<id>.md` **detail file** — research agent elaborates it (Goal/Research/References/Testing criteria), coder/test fill implementation notes + attempt log, planner appends the review verdict. The detail file is the single reviewable record for that task: when you need to review a ticked task, open only that file.
+Every `TASKS.md` item links to a `tasks/<id>.md` **detail file** — the research agent writes the `## Research` section; the planner writes implementation notes, the attempt log, the review verdict and `Status:`. `review` and `test` are read-only; they return text and the planner appends it verbatim. The detail file is the single reviewable record for that task: when you need to review a ticked task, open only that file.
 Autopilot bootstrap (when the operator invokes the `autopilot` agent): **Mode A** — request refers to TASKS.md/continue/resume → do not create a new list; resume the first unchecked item and work through every unchecked root item. **Mode B** — new goal assigned → merge into the existing `TASKS.md` as a new milestone (never rewrite the list); create the detail files; run the full loop. Backlog items are untouched unless explicitly asked. Full loop lives in `agents/autopilot.md` (§0).
 If index missing/stale: load `project-index` (and `repo-discovery` if needed), inspect, update/create index first.
 
@@ -37,11 +37,11 @@ For non-trivial tasks (consolidated flow):
 4. Load language/domain skill; plan smallest coherent change.
 5. If the task touches >1 file, changes behaviour/API, or the planner is uncertain: invoke `--agent research` with `templates/subagent-calls/research.md` (structured prompt only). The research agent fills the task's `tasks/<id>.md` detail file (findings, references, testing criteria). Exempt: comment/format-only and single-line trivial changes.
 6. Implement (`coder` subagent or direct edit).
-7. GIT commit after edit.
-8. Load `review` subagent (`templates/subagent-calls/review.md`) — adversarial PASS/FAIL (§7.7). Planner appends the verdict to `tasks/<id>.md`. Only tick when all 10 axes PASS.
-9a. Verify (planner): syntax → static analysis → diff review (with observed output).
-9b. Invoke `--agent test` (`templates/subagent-calls/test.md`) — targeted → regression → broader suite, explicit timeouts, PASS/FAIL with evidence. Only proceed past this step on test PASS; failures return to implementer/`review` for classification. Record results in `tasks/<id>.md`.
-10. Record in `CURRENT_STATE.md`; set `tasks/<id>.md` `Status:` to `DONE` (all criteria checked, evidence in file); tick in `TASKS.md`.
+7. Load `review` subagent (`templates/subagent-calls/review.md`) — adversarial PASS/FAIL (§7.7). The review agent is read-only; the planner appends its verdict to `tasks/<id>.md`. Only proceed when all 10 axes PASS.
+8a. Verify (planner): syntax → static analysis → diff review (with observed output).
+8b. Invoke `--agent test` (`templates/subagent-calls/test.md`) — targeted → regression → broader suite, explicit timeouts, PASS/FAIL with evidence. Only proceed past this step on test PASS; failures return to implementer/`review` for classification. The test agent is read-only; the planner appends results to `tasks/<id>.md`.
+9. Record in `CURRENT_STATE.md`; set `tasks/<id>.md` `Status:` to `DONE` (all criteria checked, evidence in file); tick in `TASKS.md`.
+10. GIT commit only after steps 7 and 8b pass. Never commit before review/test pass.
 
 Never claim a test passed without observed output.
 
@@ -93,7 +93,7 @@ When a failure survives a second correction attempt on a knowledge gap: load `se
 Before ticking any sub-subtask complete:
 1. Load `review` subagent (`--agent review`) with `templates/subagent-calls/review.md`.
 2. The `review` agent performs adversarial review using the structured PASS/FAIL checklist (§7.7) — 10 axes with one-line verdicts per axis.
-3. If any axis fails: do NOT tick. Document failure in the task's `tasks/<id>.md` detail file (line refs, evidence, severity) and in `RESEARCH.md` for session-wide tracking, fix or split further, retry.
+3. If any axis fails: do NOT tick. The review agent returns the analysis; the planner appends it to the task's `tasks/<id>.md` detail file (line refs, evidence, severity) and, for session-wide tracking, to `RESEARCH.md`. Fix or split further, then retry.
 4. Only tick when all 10 axes pass AND verification commands ran with observed output.
 5. This applies to ALL sub-subtasks, not just the final milestone — overnight runs must not silently accumulate errors.
 6. After `review` PASS (steps 1–3) and verification evidence (step 4): invoke `--agent test` (targeted → regression) — require test PASS.
@@ -109,7 +109,7 @@ Rules:
 - Write each attempt line to `memory/learning/tasks/<task-id>-attempts.jsonl` (not a global file).
 - **Attempt 1 (fail)**: retry with a different approach — inspect file bytes exactly (`read`), verify whitespace/indentation, confirm exact oldString.
 - **Attempt 2 (fail)**: load `review` or `research` subagent to diagnose root cause. Write diagnosis to `memory/learning/briefs/<task-id>-attempt2.md`. Classify: if root cause is a tool/execution failure (e.g., edit oldString mismatch, exact-match requirement, environment) → stay local; do not emit `LEARNING_BRIEF` or load global `self-help`. Only if the root cause is a recurring structural knowledge gap (`ALGORITHM_UNDERSTANDING_GAP`, `API_OR_LIBRARY_MISUSE`, `DATA_OR_SCHEMA_CONVENTION_GAP`, etc.) emit a `LEARNING_BRIEF` block for §5. Do NOT retry blindly.
-- **Attempt 3 (fail)**: stop retrying this sub-subtask. Write proposed workaround to `memory/CURRENT_STATE.md`, load `autopilot.md` (§0 Mode A: work the existing list) or split further in `TASKS.md`. Then summarize one line (`{task_id,subtask,attempts,status,root_cause,workaround}`) to `memory/learning/metrics.jsonl` and delete `memory/learning/tasks/<task-id>-attempts.jsonl`.
+- **Attempt 3 (fail)**: stop retrying this sub-subtask. Write proposed workaround to `memory/CURRENT_STATE.md`, load the autopilot agent (§0 Mode A: work the existing list) or split further in `TASKS.md`. Then summarize one line (`{task_id,subtask,attempts,status,root_cause,workaround}`) to `memory/learning/metrics.jsonl` and delete `memory/learning/tasks/<task-id>-attempts.jsonl`.
 - **Breakdown format**: `TASKS.md` uses IDs (`mN-tN-stN-ssN`) so each sub-subtask can have its own `memory/learning/tasks/<id>-attempts.jsonl`; never share a budget across unrelated subtasks.
 
 Example (your evaluation.py failure): attempt 1 failed due to context mismatch; attempt 2 should read the exact block from the file, confirm indentation; attempt 3 triggers `review` → RCA = "edit tool requires exact match" → workaround = construct exact string from `read` output, edit once; if that also fails, split into sub-subtask (`read` verification → `edit` application → `test`) rather than repeating the same edit attempt.
@@ -119,20 +119,20 @@ Never retry the same action unchanged after a failure.
 ## 3.6 Subagent Invocation Templates
 
 When invoking a subagent, use the corresponding template from `templates/subagent-calls/`:
-- `research.md` — for investigation/discovery/decision-research tasks (invoke: `--agent research`)
-- `review.md` — for code review tasks
-- `test.md` — for QA testing tasks (invoke: `--agent test`)
-- `coder.md` — for code generation tasks
-- `autopilot.md` — autonomous end-to-end worker: bootstrap (Mode A resume existing TASKS.md / Mode B merge new goal as new milestone), research, implement, review, test, loop until all root tasks complete
+- `templates/subagent-calls/research.md` — for investigation/discovery/decision-research tasks (invoke: `--agent research`)
+- `templates/subagent-calls/review.md` — for code review tasks (invoke: `--agent review`)
+- `templates/subagent-calls/test.md` — for QA testing tasks (invoke: `--agent test`)
+- `templates/subagent-calls/coder.md` — for code generation tasks (invoke: `--agent coder`)
+- `templates/subagent-calls/autopilot.md` — autonomous end-to-end worker: bootstrap (Mode A resume existing TASKS.md / Mode B merge new goal as new milestone), research, implement, review, test, loop until all root tasks complete (invoke: `--agent autopilot`)
 
 Fill in the bracketed sections. If no template exists for the task type, create one via the self-help process (§7.5) before invoking the subagent. Templates ensure a structured, complete prompt rather than an ad-hoc one.
 
-## 3.7 Planner vs Execution Model Divergence
+## 3.7 Model Routing
 
-- All planning, root-cause classification, `LEARNING_BRIEF` emission, and approval decisions use the planner endpoint (declared in `opencode.json` as `model`).
-- Subagent execution (`coder`, `research`, `review`, `test`, `autopilot`) must route through the local endpoint (declared in `opencode.json` as the local provider) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
-- Rationale: planner token budget is limited (daily allowance); execution token budget is unbounded (local GPU). Enforce this split at every subagent invocation to protect the planner's cap and avoid burning free tokens on code-generation loops.
-- If subagent execution needs a different model for a specific task, declare it in the subagent spec (`execution_model`) rather than overriding the planner's `model`.
+- `opencode.json` declares a single `model`; all agents inherit it. An agent that needs a different model sets `model: <provider/model>` in its own frontmatter — that is the only supported per-agent mechanism.
+- If the deployment does split planner and execution endpoints, declare the split explicitly in `opencode.json` and state it in the project mission/README; do not rely on undocumented keys.
+- `execution_model` is not a supported agent field; do not use it.
+- Subagents cannot delegate further (`subagent_depth: 1`); they report capability gaps to the planner.
 
 ## 3.8 Planner Verification of Subagent Output
 
@@ -198,13 +198,10 @@ original acceptance criteria to make a retry pass.
 
 Controls whether new project skills need human approval before activating.
 
-    auto-approve: project-skills
+    auto-approve: off
     max-new-skills-per-run: 3
 
-- `auto-approve: project-skills` — skips the human pause for PROJECT-scoped
-  skills only (global promotion always requires review). The Learning Gate
-  still runs on every skill. Remove this line (or set to `off`) to require
-  human approval for every new skill.
+- `auto-approve: off` — all new skills pause for human approval (the Learning Gate still runs on every skill). Set to `project-skills` to skip the human pause for PROJECT-scoped skills only (global promotion always requires review). The Learning Gate still runs on every skill. The starter ships fail-closed; enabling auto-approve is an explicit, reviewable decision.
 - `max-new-skills-per-run` — cap per autonomous run; when exceeded, stop and
   escalate rather than generating more.
 - Every auto-approved skill is PROVISIONAL (`Status: auto-approved-provisional`)
@@ -246,7 +243,7 @@ When a knowledge-gap failure triggers `self-help` (§5), split the pipeline into
 **Phase A — Research + Draft (planner):**
 1. Load `self-help` and read the Learning Brief.
 2. Research: websearch → cross-check (≥2 sources) → adversarial critique → reproducible example.
-3. Draft the skill using `.opencode/skills/self-help/templates/skill-template.md`.
+3. Draft the skill using `~/.config/opencode/skills/self-help/templates/skill-template.md` (global template; see §7.5).
 4. Output: draft skill + sources + evidence labels.
 
 **Phase B — Learning Gate (review):**
@@ -279,7 +276,7 @@ This forces a verdict per axis rather than prose that may miss issues.
 
 Research each task in depth before implementing:
 
-1. Read `PROJECT_INDEX.md` first — never start coding without the index.
+1. Read `memory/PROJECT_INDEX.md` first — never start coding without the index (canonical location; fall back to a root `PROJECT_INDEX.md` only for legacy projects).
 2. Break the task into sub-tasks in `TASKS.md` using IDs (`mN-tN-stN-ssN`) — one line per task, links to `tasks/<id>.md`.
 3. Each sub-task gets its own `tasks/<id>.md` detail file (research fills it: Goal, scope, findings, references, testing criteria) and its own `memory/learning/tasks/<id>-attempts.jsonl`.
 4. If a sub-task is still too complex (e.g., requires >3 files or >1 hour), break it further into sub-sub-tasks.

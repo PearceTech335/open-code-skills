@@ -21,12 +21,13 @@ A good index answers "where is everything, and how does it fit together?" A quic
 1. **Inspect before documenting**. Never document functionality, interfaces, or architecture without first inspecting the actual implementation, configuration, or existing documentation.
 2. **Never invent**. Do not fabricate files, modules, dependencies, interfaces, or behavior. If information cannot be verified, label it as `UNKNOWN` or omit it.
 3. **Use repository-relative paths**. All references to files and directories must use paths relative to the repository root.
-4. **Maintain a single authoritative index**. Ensure `PROJECT_INDEX.md` exists at the repository root. If an existing index is found elsewhere, inspect it for authority before creating a new one.
+4. **Maintain a single authoritative index**. Ensure `PROJECT_INDEX.md` exists at `memory/PROJECT_INDEX.md` (the starter scaffold ships it there). If an existing index is found elsewhere (e.g. repository root), inspect it for authority before creating a new one — never create a competing `PROJECT_INDEX.md` at a different path.
 5. **Update incrementally**. Modify only the sections affected by changes. Do not regenerate the entire index for minor updates unless explicitly requested.
 6. **Verify all changes**. Before reporting completion, validate that referenced paths exist, descriptions match implementation, and no contradictory information has been introduced.
 7. **Integrate with existing discovery**. Use this skill alongside `repo-discovery` and other architectural analysis tools. Do not duplicate detailed documentation already maintained in `README.md`, `docs/`, or `AGENTS.md`.
-8. **Separate architecture from operational state**. The index documents stable structure (components, entry points, dependencies). Frequently changing facts — experiment progress, batch counts, run statistics, current incidents — belong in `PROJECT_STATUS.md` or existing tracking docs, never in `PROJECT_INDEX.md`.
+8. **Separate architecture from operational state**. The index documents stable structure (components, entry points, dependencies). Frequently changing facts — experiment progress, batch counts, run statistics, current incidents — belong in `memory/CURRENT_STATE.md` or `memory/KNOWN_ISSUES.md`, never in `PROJECT_INDEX.md`.
 9. **No line numbers**. Do not record source line numbers in the index unless they are automatically maintained. Source code moves; component responsibilities are stable.
+10. **Use the shipped template**. Copy `skills/project-index/templates/PROJECT_INDEX.md` for the section layout; fill sections; do not add new top-level sections.
 
 ## Minimum Discovery Requirements
 
@@ -37,7 +38,7 @@ Before generating or materially updating PROJECT_INDEX.md, the agent MUST inspec
 3. Application entry points and execution commands (scripts, `__main__`, CLI definitions, process managers).
 4. All primary application modules.
 5. Imports and dependencies between primary modules.
-6. Configuration and environment handling (config files, env vars, secrets).
+6. Configuration and environment handling (config files, env vars, secrets) — record config **keys, sources and loading logic only, never values**. If a value is a credential, write `<redacted>` and continue.
 7. Data storage and persistence mechanisms (databases, files, caches — including who writes and who reads each store).
 8. Testing infrastructure and validation commands.
 9. External services and integrations (APIs, brokers, message queues).
@@ -104,12 +105,12 @@ This distinguishes documentation quality from documentation completeness and sho
 
 To confirm output complies with this skill:
 
-1. Check that `PROJECT_INDEX.md` exists at the repository root.
+1. Check that `PROJECT_INDEX.md` exists at `memory/PROJECT_INDEX.md`.
 2. Verify that all file paths referenced in the index actually exist.
 3. Confirm that every component relationship is labelled `VERIFIED`, `INFERRED`, or `UNKNOWN`.
 4. Confirm the Discovery Completeness report lists what was inspected and what remains unresolved.
 5. Ensure the "Change Impact Map" reflects current architectural relationships.
-6. Confirm no operational-state content has crept into the index (it belongs in `PROJECT_STATUS.md`).
+6. Confirm no operational-state content has crept into the index (it belongs in `memory/CURRENT_STATE.md` or `memory/KNOWN_ISSUES.md`).
 7. Run a targeted search (e.g., using `grep` or `glob`) to confirm a component described in the index can be located in the source tree.
 
 ## Provenance
@@ -120,15 +121,15 @@ To confirm output complies with this skill:
   - `superclaude_framework` (GitHub) — Comprehensive example of a standardized `PROJECT_INDEX.md` structure.
   - Frontier-model review of a generated index (2026-11-05, scored 6/10) — Source of the Minimum Discovery, Architecture Mapping, and Discovery Completeness requirements; identified missing repository tree, shallow component relationships, absent entry-point/testing/config documentation, no change-impact emphasis, and operational-state contamination.
 - Verified claims:
-  - `PROJECT_INDEX.md` at the repository root is a common pattern for AI agent navigation. (Verified: 2+ sources)
+  - `PROJECT_INDEX.md` under `memory/` is the canonical location in projects scaffolded from this repo (starter ships it there). (Verified: this repo)
   - Standardized sections improve consistency across projects. (Probable: Based on observed examples)
   - Incremental updates are more sustainable than full regeneration. (Probable: Common practice in documentation systems)
   - Discovery requirements catch omissions that template sections alone do not. (Probable: Based on the 6/10 review findings)
 - Repro example:
-  - Command: `ls PROJECT_INDEX.md`
+  - Command: `ls memory/PROJECT_INDEX.md`
   - Observed result: File exists at repository root.
 - Known limitations:
-  - This skill focuses on the root-level `PROJECT_INDEX.md`. For very large monorepos, a multi-level approach (e.g., folder-level indexes) may be more appropriate, but that is outside the scope of this skill.
+  - This skill focuses on `memory/PROJECT_INDEX.md`. For very large monorepos, a multi-level approach (e.g., folder-level indexes) may be more appropriate, but that is outside the scope of this skill.
   - The "Change Impact Map" requires manual maintenance and may become stale if not updated during architectural changes.
   - Minimum Discovery adds inspection cost on large repositories; scale depth of module inspection to repository size but never skip manifests, entry points, and testing infrastructure.
 - Status: human-approved

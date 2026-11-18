@@ -49,7 +49,13 @@ Rules:
 - An IMPLEMENTATION_DEFECT needs no brief — suggest the fix directly.
 - A REQUIREMENTS_AMBIGUITY brief must escalate to a human.
 
-When a knowledge-gap or UNKNOWN classification applies, append the LEARNING_BRIEF block to your review response.
+When a knowledge-gap or UNKNOWN classification applies, append this block to your review response:
+
+LEARNING_BRIEF (compact — 4 fields)
+task_id: <mN-tN-stN-ssN>
+root_cause: <classification>
+evidence: <one-line>
+learning_objective: <one sentence — reusable capability that must improve>
 
 # CONSTRAINTS
 - Do not modify files.

@@ -32,7 +32,7 @@ A curated collection of production-grade, highly compressed, Power-of-10-inspire
 - **`network-engineer`**: Evidence-first L1–L7/OT troubleshooting (symptom → baseline → evidence → hypothesis → test → remediation → validation).
 - **`html-js-graphics-3d`**: Canvas API / WebGL / Three.js for interactive 2D/3D graphics and data visualization.
 
-**Framework-level (not per-task skills):** `agent-evaluation` (independent benchmark harness) and `framework-validator` (automated checks for refs/agents/skills/frontmatter/conflicts) run as separate processes, not loaded per coding task.
+**Framework-level tooling (not per-task skills):** static checks shipped in this repo — `node scripts/validate_skills.js` (skill frontmatter) and `node scripts/verify.js` (config parse + path references) — are the available validation entry points. There is no separate `agent-evaluation`/`framework-validator` package; the README previously listed them in error.
 
 ### Language & Domain Skills
 - **`python-code`**, **`go-code`**, **`typescript-code`**: Production coding standards inspired by the NASA/JPL Power of 10 rules (short functions, strict type hints, path operations via `pathlib`, specific exception handling).
@@ -150,7 +150,7 @@ Every sub-subtask (`TASKS.md` ID) gets its own `tasks/<id>.md` detail file (the 
 
 ```text
 <project-root>/
-├── AGENTS.md              # §2 checklist (steps 5/9a/9b) + §3.5 failure budget (steps 6-7: test PASS + supervisor gate)
+├── AGENTS.md              # §2 checklist (steps 5/7/8a/8b) + §3.5 failure budget (steps 6-7: test PASS + supervisor gate)
 ├── MISSION.md             # mission brief (separate from AGENTS.md §1; edit when mission changes)
 ├── TASKS.md               # thin index: one line per task → tasks/<id>.md
 ├── tasks/                 # per-task detail files (research, scope, references, testing, pass/fail)
@@ -178,11 +178,8 @@ Standardized prompt templates in `templates/subagent-calls/` (`research.md`, `re
 ### Research Decomposition (Vague Prompts)
 When given a vague or broad research prompt, do not attempt to answer in one pass: (1) broad-brush scan to identify major areas and sub-questions, (2) decompose into 3-5 specific targeted sub-questions, (3) invoke the research agent for each sub-question with a focused prompt, (4) synthesize findings into the final report. This ensures each call is focused and verifiable. Research elaborates the matching `tasks/<id>.md` detail file.
 
-### Planner vs Execution Model Divergence
-The planner (top-level `model` in `opencode.json`) runs on the cloud endpoint for planning, root-cause classification, `LEARNING_BRIEF` emission, and approval. Subagent execution (`coder`, `research`, `review`, `test`, `autopilot`) routes through the local endpoint for all writes, reads, edits, tests. This protects the planner's token budget (daily allowance) while keeping execution unbounded (local GPU).
-
-### Endpoint & Model Configuration
-`opencode.json` is local-only (gitignored) and declares endpoint providers plus a single `model`; all subagents inherit that one path — no cross-endpoint routing divergence. The framework is endpoint-agnostic: the same `.md` specs and skills work regardless of which local server is active, as long as the declared `model` supports tool calls. Where a separate planner model is configured, the planner/execution split in `AGENTS.md` applies.
+### Model Routing
+`opencode.json` declares an endpoint via `provider` plus a single `model`; all subagents inherit that path — no cross-endpoint routing divergence. `opencode.json` is local-only (gitignored). An agent that needs a different model sets `model: <provider/model>` in its frontmatter — the only supported per-agent override. The framework is endpoint-agnostic: the same `.md` specs and skills work regardless of which local server is active, as long as the declared `model` supports tool calls.
 
 ---
 

@@ -4,7 +4,7 @@
 > `TASKS.md` as the one-line index; this file holds all depth. When the
 > operator reviews a ticked task, THIS is the only file they need to open.
 
-Status: NOT_STARTED | IN_PROGRESS | BLOCKED | DONE
+Status: <NOT_STARTED | IN_PROGRESS | BLOCKED | DONE>
 TASKS.md line: <exact one-liner from TASKS.md>
 Attempts: memory/learning/tasks/<id>-attempts.jsonl (deleted on resolution)
 
@@ -21,7 +21,7 @@ Attempts: memory/learning/tasks/<id>-attempts.jsonl (deleted on resolution)
 
 ## Research (research agent fills before implementation)
 ### Findings
-- <claim> — evidence: <file:line | command output> — label VERIFIED/PROBABLE/PRELIMINARY
+- <claim> — evidence: <file:line | command output> — label VERIFIED/INFERRED/UNKNOWN
 
 ### References
 - <file:line, docs URL + access date, command run>

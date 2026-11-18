@@ -29,7 +29,7 @@ Never invent APIs, filenames, or module structures. Before writing code:
 
 ## 4. Document before finishing
 
-- Write observations to `RESEARCH.md` for large/critical edits (line refs, snippets, assumptions, limitations, verified/probable/preliminary labels).
+- Write observations to `RESEARCH.md` for large/critical edits (line refs, snippets, assumptions, limitations, VERIFIED/INFERRED/UNKNOWN labels).
 - If the change is unusual, document why in `DECISIONS.md`.
 
 ## 5. Verify before claiming done
@@ -44,7 +44,7 @@ Never invent APIs, filenames, or module structures. Before writing code:
 - Can a malicious input break this?
 - Does the change leak data or weaken security?
 - Would this pass review by `review` (see `agents/review.md`)?
-- Is any assumption unverified? Label it `probable` or `preliminary`.
+- Is any assumption unverified? Label it `INFERRED` or `PRELIMINARY`.
 
 ## 7. Tool and model discipline
 
@@ -55,10 +55,9 @@ Never invent APIs, filenames, or module structures. Before writing code:
 ## 8. Subagent delegation rules
 
 - Load `agent-core` on any coding task.
-- Load `readable-code` when writing new modules.
-- Load `designer` for architecture-level changes.
-- Load `long-running-task-research` for large-file edits.
-- Load `self-help` only when a second correction attempt fails on a knowledge gap (see `AGENTS.md` §5).
+- Load at most one language/domain skill plus at most one workflow/meta skill (typically `readable-code`, `designer`, `quality-gate`, or `long-running-task-research`) — the 2 additional skills cap in agent-core applies.
+- Load `self-help` only when a second correction attempt fails on a knowledge gap (see the Learning Loop section of `AGENTS.md` / the project template).
+- Subagents cannot delegate further (`subagent_depth: 1`); report capability gaps to the planner instead.
 
 ## 9. Verification protocol
 
@@ -73,4 +72,4 @@ Never invent APIs, filenames, or module structures. Before writing code:
 - Load at most 2 additional skills per task beyond `agent-core` (see `agent-core` Skill-count cap). If more are needed, split the task or delegate to subagents/templates/checklists.
 - Use the compact Learning Brief (4-field) as the standard format.
 - Use structured PASS/FAIL checklist format for reviews when appropriate.
-- Deep research: read PROJECT_INDEX.md first; break task into sub-tasks in TASKS.md; each sub-task gets its own attempt file and its own `tasks/<id>.md` detail file.
+- Deep research: read `memory/PROJECT_INDEX.md` first; break task into sub-tasks in TASKS.md; each sub-task gets its own attempt file and its own `tasks/<id>.md` detail file.

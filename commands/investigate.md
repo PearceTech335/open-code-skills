@@ -1,7 +1,9 @@
 ---
 description: Evidence-first network/software investigation producing Observed/Evidence/Hypothesis/Test/Finding
-agent: network-engineer
+agent: build
 ---
+
+Load the `network-engineer` skill first (OT/network troubleshooting with evidence-first methodology).
 
 Investigate: $ARGUMENTS
 

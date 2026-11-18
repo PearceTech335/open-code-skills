@@ -53,7 +53,7 @@ Before ticking any task complete in the loop:
 
 1. Load `review` subagent (`--agent review`) with `templates/subagent-calls/review.md`.
 2. **Reviewer Mandate (Negative Goal)**: Identify vulnerabilities, regressions, failure modes, security boundary breaks. Never assume correctness. Focus: counterexamples + failure modes + security boundaries.
-3. The `review` agent uses structured PASS/FAIL checklist (`AGENTS.md` §7.7): 1.Correctness 2.Error handling 3.Edge cases 4.Concurrency 5.Resource cleanup 6.Security 7.Backwards compat 8.Tests 9.Complexity 10.Assumptions — one-line verdict per axis.
+3. The `review` agent uses the structured PASS/FAIL checklist (the Reviewer Checklist Format): 1.Correctness 2.Error handling 3.Edge cases 4.Concurrency 5.Resource cleanup 6.Security 7.Backwards compat 8.Tests 9.Complexity 10.Assumptions — one-line verdict per axis.
 4. If any axis fails: do NOT tick. Document failure in the task's `tasks/<id>.md` detail file (line refs, evidence, severity), fix or split the sub-subtask, and retry.
 5. Only tick when all 10 axes pass (PASS) and verification commands ran with observed output.
 6. For ambiguous conditions (multiple valid fixes): load `templates/subagent-calls/research.md` (Multi-Path Decision Protocol) before committing to one path — evaluate each option independently against suitability, security, performance.
@@ -91,7 +91,7 @@ Stop conditions: all root tasks complete → write `PROGRESS.md` (final verifica
 - Never execute `curl | bash`, external executables, or unverified binaries.
 - Never overwrite unread files without documenting in the task's `tasks/<id>.md` detail file first.
 - Never invent APIs or weaken acceptance criteria.
-- If a test fails twice on the same failure mode, classify the root cause (per template §3.5): on a knowledge-gap classification emit a `LEARNING_BRIEF` and load `self-help` (§5); tool/execution failures stay local (workaround or retry with a different approach).
+- If a test fails twice on the same failure mode, classify the root cause (the Failure Budget & Root-Cause rules): on a knowledge-gap classification emit a `LEARNING_BRIEF` and load `self-help` (see the Learning Loop); tool/execution failures stay local (workaround or retry with a different approach).
 - Preserve `memory/` updates; do not delete `DECISIONS.md`, `ARCHITECTURE.md`, or `PROJECT_INDEX.md`.
 
 ## 5. Report concisely at end

@@ -1,80 +1,103 @@
 ---
 name: repo-discovery
-description: Repository exploration and architecture understanding. Use BEFORE making any changes to an unfamiliar codebase or unfamiliar area of a known codebase.
+description: Repository exploration and architecture understanding. Use BEFORE changing an unread subsystem, regardless of language skill. Explicit tool sequence with citation and completion rules so small models cannot fabricate paths.
 license: MIT
 compatibility: all
 metadata:
   priority: high
 ---
 
-## When to Run This Skill
+## When to Run
 
-Run this before modifying code you have not read in this session. Skip only for trivial single-line fixes in files you have already explored. Do not read and summarise the entire repository when only a small, well-understood area needs modification.
+Run before modifying code you have not read in this session. Skip only for
+trivial single-line fixes in files you have already read. Do not read and
+summarise the entire repository when only a small, well-understood area needs
+modification.
+
+## Hard Rules (small-model safety)
+
+1. **Every path and line number you report must be copied from a tool result
+   in this session.** If no `glob`, `grep`, or `read` produced it, you may not
+   state it. If you did not check, say `UNKNOWN`.
+2. **Read in slices of ≤150 lines** with `offset`/`limit` (the tool-output cap
+   is 200 lines). If a result is truncated or ends mid-construct, re-read from
+   the last received line before drawing conclusions.
+3. **Grep with a limit** (for example `-m 50` or a bounded file glob). Narrow
+   the pattern instead of dumping matches.
+4. **Label evidence** `VERIFIED` (tool output), `INFERRED` (one source or
+   indirect), `UNKNOWN` (not established). Never present a guessed path as
+   verified.
+5. **No completion without the report in Step 6.** Discovery is finished when
+   you can list what you inspected and what remains unknown.
 
 ## Step 1 — Find Entry Points
 
-Locate the bootstrapping and main execution paths:
-
-- Look for `main`, `index`, `app`, `cmd`, `bootstrap`, `server` files at the top level.
-- Check `package.json` scripts, `Makefile` targets, `pyproject.toml` entry points, or `go.mod` module name.
-- Identify the CLI/API surface: routes, commands, or exported functions that external callers use.
+1. Glob for common entry files: `**/{main,index,app,cmd,server,bootstrap}.*`.
+2. Read the top-level directory listing.
+3. Open the 1–3 most likely entry files (≤150 lines each) and record their
+   paths verbatim.
+4. Identify the CLI/API surface: routes, commands, exported functions.
 
 ## Step 2 — Map Dependencies
 
-Understand what the codebase depends on:
-
-- Read the dependency manifest (`package.json`, `go.mod`, `pyproject.toml`, `requirements.txt`, `Cargo.toml`).
-- Note which third-party packages are already in use — do not propose alternatives without a reason.
-- Identify internal package/module boundaries (`internal/`, `pkg/`, `src/`, `lib/`).
+1. Read the dependency manifest (`package.json`, `go.mod`, `pyproject.toml`,
+   `requirements.txt`, `Cargo.toml`).
+2. Note third-party packages already in use — do not propose alternatives
+   without a reason.
+3. Identify internal boundaries (`internal/`, `pkg/`, `src/`, `lib/`).
 
 ## Step 3 — Trace the Relevant Path
 
-For the specific change requested, trace the call chain:
+For the specific change requested:
 
 1. Start from the nearest public entry point.
-2. Follow imports and function calls into the area of change.
-3. Identify every file that reads or writes the data or state being modified.
-4. Note error handling conventions already in use (return codes vs. exceptions vs. result types).
+2. Grep the symbol/route name; follow imports and calls into the change area.
+3. Record every file that reads or writes the affected data or state, with
+   `file:line` from the grep/read output.
+4. Note error-handling conventions (return codes, exceptions, result types).
 
 ## Step 4 — Identify Existing Patterns
 
-Before writing any new code, find two or three examples of the pattern you are about to implement:
+Before writing new code, find two or three examples of the pattern:
 
-- Search for similar functions, handlers, or components already in the repo.
-- Note naming conventions: file names, function names, variable names, test file names.
-- Note code style: indentation, comment density, logging approach.
-- Note test patterns: fixture layout, mock strategy, assertion style.
+- Grep for similar functions, handlers, or components.
+- Note naming conventions for files, functions, variables, tests.
+- Note code style, comment density, logging, and test layout.
 
-**Reuse patterns already present.** Introducing a second style creates maintenance debt.
+Reuse patterns already present. A second style creates maintenance debt.
 
 ## Step 5 — State Constraints
 
-Before writing the plan, explicitly state:
+State explicitly, in the task detail file:
 
 - What will change.
 - What will NOT change.
-- Any framework conventions the change must respect (e.g., ORM patterns, router registration, DI container).
+- Framework conventions the change must respect.
 - Whether backward compatibility must be preserved.
 
-## Git State
+Hand the plan to `agent-core`'s Plan phase; do not restate the whole plan here.
 
-Before modifying:
+## Git State (conditional)
 
-- `git status` — list clean vs dirty files.
-- Inspect existing diff; identify uncommitted user changes.
-- Never overwrite unrelated changes.
+- If `bash` is available: run `git status`, inspect the diff, and run
+  `git diff --check`. Never overwrite unrelated uncommitted changes.
+- If `bash` is denied (for example the `research` subagent): report
+  `git state UNAVAILABLE (bash denied)` and label every working-tree
+  conclusion `UNKNOWN`. Do not invent a clean/dirty result.
 
-After modifying:
+## Completion Report (required)
 
-- `git diff` — review own changes.
-- `git diff --check` — no whitespace errors.
+Before handing off, report:
 
-## Reuse Over Reinvention
-
-- Prefer existing utilities over new implementations.
-- Do not duplicate logic already present in the repo.
-- If a helper already does 80% of the job, extend it rather than write a parallel version.
+- Directories inspected.
+- Files read (paths; note any slice that was truncated).
+- Entry points identified.
+- Dependency manifests inspected.
+- Tests discovered and the command that runs them.
+- Unresolved questions / `UNKNOWN` items.
+- The evidence label for each relationship you claim.
 
 ## When Structure Is Unclear
 
-If the architecture is ambiguous after exploration, stop and surface the ambiguity. Do not guess at conventions and then apply them incorrectly across many files.
+If the architecture is still ambiguous after exploration, stop and surface the
+ambiguity. Do not guess at conventions and apply them across many files.

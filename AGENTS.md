@@ -137,7 +137,7 @@ Skills are organized in a hierarchy — load the ones relevant to the task. **Ca
 
 Supporting skills: `template-library`, `readme-authoring`, `git-practices`, `auto-memory`, `research-method`, `self-help`, `supervisor`, `test-engineering`, `root-cause-analysis`, `interface-design`, `production-readiness`, `network-engineer`, `ste-writing`. Skills load on demand via the `skill` tool. Topic memory is wired via `opencode.json: instructions[]`. For heavy analysis, prefer subagents (`research`, `review`, `architect`) over loading extra skills.
 
-**Framework-level (not task skills):** `agent-evaluation` (independent benchmarks, run separately) and `framework-validator` (automated checks for refs/agents/skills/frontmatter/conflicts) — not loaded per coding task; run as separate processes.
+**Static checks (this repo):** `node scripts/validate_skills.js` (skill frontmatter and structure) and `node scripts/verify.js` (config parses; path references in `AGENTS.md`/`MISSION.md` resolve). These are the available framework-level checks; there is no separate packaged validator.
 
 ## Learning Loop
 

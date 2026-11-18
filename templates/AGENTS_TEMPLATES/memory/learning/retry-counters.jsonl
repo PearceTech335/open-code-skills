@@ -1,2 +1,0 @@
-# ROTATED: use memory/learning/tasks/<task-id>-attempts.jsonl per sub-subtask
-# After resolution: append one line to metrics.jsonl; delete per-task file.

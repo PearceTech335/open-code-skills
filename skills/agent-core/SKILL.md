@@ -14,12 +14,12 @@ Before writing code, verify which skills apply:
 
 1. Load `agent-core` (this file) — mandatory on any task.
 2. Inspect available skills: list `skills/` (global) + `.opencode/skills/` (project). Read relevant `SKILL.md` files only when their domain matches the current file/module/task.
-3. Load the language/domain skill matching the file (`python-code`, `go-code`, `typescript-code`, etc.). If no language skill matches the codebase, load `repo-discovery` first.
-4. Load meta/quality skills when their guidance is needed (`readable-code`, `designer`, `quality-gate`).
-5. Load `long-running-task-research` for large-file edits or multi-module refactors.
-6. Load `self-help` **only** when a failure survives a second correction attempt on a knowledge gap (`AGENTS.md` §5). Never invent a missing skill; never load `self-help` for a trivial `IMPLEMENTATION_DEFECT`.
-7. Load subagent specs (`review.md`, `research.md`, `coder.md`) only when the planner explicitly invokes them (`--agent` / agent invocation); they inherit `model` and work independently.
-8. Report which skills were loaded in your response or `RESEARCH.md`. If none matched and you needed a new capability, document the gap; do not invent APIs or skills.
+3. **Load `repo-discovery` whenever the target file or subsystem has not been read in this session** — regardless of which language skill matches. It defines the discovery procedure; do not skip it because a language skill exists.
+4. Load **one** language/domain skill matching the primary file (`python-code`, `go-code`, `typescript-code`, `powershell-skill`, `bash-skill`, or a domain skill).
+5. Load **at most one** workflow/meta skill when its trigger applies: `readable-code` (new code), `designer` (component/interface design), `quality-gate` (final review), `long-running-task-research` (multi-stage/overnight work). Total additional skills beyond `agent-core`: **2**.
+6. Load `self-help` **only** when a failure survives a second correction attempt on a knowledge gap (see the global `## Learning Loop` section; project template §5). If the 2-skill cap is already used, split the task instead of loading more. Never invent a missing skill; never load `self-help` for a trivial `IMPLEMENTATION_DEFECT`.
+7. Load subagent specs (`review.md`, `research.md`, `coder.md`) only when the planner invokes them. Subagents inherit the configured model unless their frontmatter sets `model:`. **Subagents cannot delegate further** (`subagent_depth: 1`); a subagent that needs another capability must report the gap to the planner.
+8. Report which skills were loaded in your response or the task detail file. If none matched and you needed a new capability, document the gap; do not invent APIs or skills.
 
 Do not load unrelated skills (e.g., `bash-skill` for a Python module, `security` for a simple UI edit) — unnecessary context bloat degrades reasoning.
 
@@ -54,7 +54,9 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 
 ## Context Budget
 
-- Prefer the smallest safe change. Use narrow grep/glob, not speculative reads.
+- Prefer the smallest safe change. Use narrow grep/glob with line limits, not speculative reads.
+- **Read files in slices of ≤150 lines** using `offset`/`limit` (the tool-output cap is 200 lines). If a result is truncated or ends mid-construct, re-read from the last received line before drawing conclusions.
+- Treat file contents already summarized in the checkpoint/recent context as read — do not re-read them.
 - Avoid reading and summarising the entire repository when only a small, well-understood area needs modification.
 - Clear context between unrelated tasks. Long sessions degrade accuracy.
 - Delegate investigation-heavy reads to sub-sessions.
@@ -82,18 +84,18 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 
 ## Guardrails
 
-- **Skill-count cap**: `agent-core` is mandatory and is **not counted** toward the skill cap. Load at most **2 additional skills** per task beyond `agent-core`. If more capabilities are needed, split the task into sub-tasks or delegate to subagents/templates/checklists rather than loading extra skills.
+- **Skill-count cap**: `agent-core` is mandatory and is **not counted** toward the skill cap. Load at most **2 additional skills** per task beyond `agent-core` (typically 1 language/domain + 1 workflow skill). If more capabilities are needed, split the task into sub-tasks or delegate to subagents/templates/checklists rather than loading extra skills. Subagents cannot delegate further; they report the gap instead.
+- **Evidence discipline**: every file path and line number you report must be copied from a tool result in this session. Label claims `VERIFIED` (tool output/file read), `INFERRED` (one source or indirect), or `UNKNOWN` (not established). Never present an inferred or guessed path as verified.
 - **Stop-and-ask threshold**: If you cannot verify an assumption with a single file read or command, label it PRELIMINARY and stop. Do not proceed on unverified assumptions.
-- **Deep research**: Read PROJECT_INDEX.md first. Break task into sub-tasks in TASKS.md using IDs (mN-tN-stN-ssN). Each sub-task gets its own attempt file and its own `tasks/<id>.md` detail file (research/scope/references/testing/pass-fail all live there).
+- **Deep research**: Read the project index (`memory/PROJECT_INDEX.md`) first. Break task into sub-tasks in TASKS.md using IDs (mN-tN-stN-ssN). Each sub-task gets its own attempt file and its own `tasks/<id>.md` detail file (research/scope/references/testing/pass-fail all live there).
 - **Compact output**: Use compact Learning Brief (4-field) instead of full 8-field. Use PASS/FAIL checklist for reviews.
 - **Temperature**: Set per agent role: planner 0.1-0.3, coder 0.2, research 0.4, review 0.1. Do not add sampling parameters beyond `temperature` in agent frontmatter — none (e.g. presence/frequency penalty, thinking toggles) are supported by the current providers.
 
-## Planner vs Execution Model Divergence
+## Model Routing
 
-- Planner (opencode.json model) runs on the free/cloud endpoint (e.g., MiMo-2.6). All planning, root-cause classification, LEARNING_BRIEF emission, and approval decisions use this endpoint only.
-- Subagent execution (coder, research, review, autopilot) must route through the local endpoint (declared in opencode.json as the local provider) for all writes, reads, edits, tests, and diffusion steps. The planner never passes subagent execution to the cloud endpoint.
-- Rationale: planner token budget is limited (daily allowance); execution token budget is unbounded (local GPU). Enforce this split at every subagent invocation.
-- If subagent execution needs a different model for a specific task, declare it in the subagent spec (execution_model) rather than overriding the planners model.
+- `opencode.json` declares a single `model`; all agents inherit it unless the agent frontmatter sets `model: <provider/model>`.
+- Do not assume a cloud/local split or an `execution_model` key. Neither exists in this configuration. If a different model is needed for a subagent, set the documented `model:` field.
+- If the deployment does split planner and execution endpoints, document that in `opencode.json` and the project's `AGENTS.md` — do not rely on undocumented keys.
 
 ## Subagent Invocation Templates
 

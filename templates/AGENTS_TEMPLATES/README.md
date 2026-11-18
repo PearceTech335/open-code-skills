@@ -1,6 +1,6 @@
 # AGENTS_TEMPLATES — Project Starter + Autonomous Learning Loop
 
-This folder is the **copy/paste starter template** for new OpenCode projects. Copypaste its contents (`AGENTS.md`, `MISSION.md`, `TASKS.md`, `tasks/TEMPLATE.md`, `memory/`, `.opencode/skills/`) to a new project root. It does **not** replace your global config (`~/.config/opencode/AGENTS.md` + global skills); it layers project-specific rules, the self-improving Learning Loop, and the Skill Policy on top.
+This folder is the **copy/paste starter template** for new OpenCode projects. Copypaste its contents (`AGENTS.md`, `MISSION.md`, `TASKS.md`, `tasks/`, `templates/`, `memory/`, `.opencode/skills/`) — but not `README.md`, which documents this template, not your project — to a new project root. It does **not** replace your global config (`~/.config/opencode/AGENTS.md` + global skills); it layers project-specific rules, the self-improving Learning Loop, and the Skill Policy on top.
 
 ## What this folder is for
 
@@ -90,7 +90,7 @@ Audit trail lives in `.opencode/skills/` + `memory/learning/metrics.jsonl` (one 
 
 ## Template directory purpose (`/templates/AGENTS_TEMPLATES/`)
 
-This directory (`C:\Users\pearc\.config\opencode\templates/AGENTS_TEMPLATES/`) holds the **master starter scaffold** — the same contents you copy into a new project root. It's kept separate from global `AGENTS.md` so that:
+This directory (`~/.config/opencode/templates/AGENTS_TEMPLATES/`) holds the **master starter scaffold** — the same contents you copy into a new project root. It's kept separate from global `AGENTS.md` so that:
 
 - Global config (`~/.config/opencode/AGENTS.md`) stays stable across all projects.
 - Each project gets its own `AGENTS.md`, `MISSION.md`, `TASKS.md`, `tasks/` (with `TEMPLATE.md`), `memory/`, `.opencode/skills/` without overriding globals.
@@ -127,7 +127,7 @@ When a subagent returns a report, the planner must verify key claims before usin
 ## Verification checklist (before reporting complete)
 
 - [ ] `MISSION.md` filled (mission brief, source of truth, execution host, priorities); `AGENTS.md` §5 (Learning Loop) and §6 (Skill Policy) intact.
-- [ ] §2 steps 5/9a/9b and §3.5 steps 6-7 (test PASS + supervisor gate) intact; §3.5 (Failure Budget), §3.6 (Subagent Templates, incl. `test.md`), §3.7 (Planner vs Execution, incl. `test`), §3.8 (Output Verification), §3.9 (Research Decomposition) intact.
+- [ ] §2 steps 5/7/8a/8b and §3.5 steps 6-7 (test PASS + supervisor gate) intact; §3.5 (Failure Budget), §3.6 (Subagent Templates, incl. `test.md`), §3.7 (Model Routing, incl. `test`), §3.8 (Output Verification), §3.9 (Research Decomposition) intact.
 - [ ] §7.5-§7.9 intact (Template Management, Self-Help Two-Phase, Reviewer Checklist, Deep Research, Compact Learning Brief).
 - [ ] `TASKS.md` reflects actual milestone/task status with sub-subtask IDs (`mN-tN-stN-ssN`); each item links to a `tasks/<id>.md` detail file.
 - [ ] `tasks/TEMPLATE.md` exists (copied from template); detail files are the per-task reviewable records.

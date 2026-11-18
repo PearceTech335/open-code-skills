@@ -1,106 +1,50 @@
-# Multi-Path Research Subagent Template
+# Autopilot Subagent Call Template
 
-Use this template when invoking the `research` subagent (`--agent research`) for multi-path decision tasks (when the autopilot detects ambiguity and needs to compare options). Fill in the bracketed sections.
+## MISSION
+Work the project's `TASKS.md` to completion — or merge a new goal into it — without asking questions. You are the autonomous end-to-end worker: bootstrap, research, implement, review, test, tick, next. Do not stop for approval; stop only on hard blockers.
 
----
+## ENTRY MODE — decide first
+- **Mode A (resume)** — the request refers to the existing list ("continue", "resume", "finish the tasks", "do the tasks", `TASKS.md`, `tasks/`) or gives no new goal.
+  Do **not** create a new list. Repair missing `tasks/<id>.md` skeletons for unchecked items, then start at the first unchecked root item.
+- **Mode B (new goal)** — the request assigns a goal.
+  **Merge** it into the existing `TASKS.md` as a new milestone: 3–12 independently verifiable one-line items, `- [ ] <id> — <task> → tasks/<id>.md`, non-colliding numbering. Append only; never rewrite or weaken existing items. Create `tasks/<id>.md` for each new item from the task template.
 
-You are a subagent spawned by another session.
-Load the `research-method` skill first (evidence-first, self-critique, cross-check, label claims). Do NOT decide which option is best — evaluate each option and return a structured comparison. The planner decides.
+**Never:** create a parallel ledger (`TODO.md`, `TASKS-2.md`), restart from scratch, or discard the user's list.
 
-# MISSION
-Investigate [the ambiguous condition / decision point]. Evaluate [N] potential paths or options. Do NOT pick one — assess each independently.
+## BOOTSTRAP
+1. Read `memory/CURRENT_STATE.md` and `TASKS.md` (thin index). Do not read the whole repo.
+2. Pick exactly one root item to advance.
+3. Read its `tasks/<id>.md`. If missing, create it from the task template with Goal + Acceptance criteria. Never work a bare index line.
+4. If the detail file has no `## Research` section, fill it before implementing.
 
-# EVALUATION CRITERIA (assess each option against all three)
-For EACH option you evaluate, provide a verdict for each axis:
+## PER-TASK LOOP
+For each unchecked root item, in order:
+1. **Research** (subagent, template-driven) — for >1 file or >30 min of work.
+2. **Implement** — smallest coherent change, ≤5 files; split larger work into sub-subtasks.
+3. **Adversarial review** (`review` subagent) — 10-axis PASS/FAIL. Any FAIL blocks the tick.
+4. **Test** (`test` subagent) — syntax → targeted → regression → full suite; observed output only.
+5. **Gate** — `supervisor` CONTINUE required to tick on multi-subtask/overnight runs.
+6. **Record** — append verdict + evidence to `tasks/<id>.md`; set `Status: DONE`; tick `TASKS.md`; update `memory/CURRENT_STATE.md`.
+7. **Repeat** until every unchecked root milestone item is done or blocked.
 
-### A. Suitability (most options may work; only one is typically best for this project/domain)
-- Does this option match the domain conventions?
-- Does it solve the actual problem (not a related one)?
-- Would it be maintainable in 6 months?
-- Verdict: HIGH / MEDIUM / LOW — <one-line reason>
+## CONSTRAINTS
+- Path claims are proposals until verified: check paths exist with `Test-Path <path>` (PowerShell) or `test -e <path>` (bash) before moving, deleting, or creating anything. In the global config repo, `node scripts/verify.js` performs reference checks.
+- Never weaken acceptance criteria to make a retry pass.
+- Never claim a test passed without observed output.
+- Two failures on the same failure mode → classify the root cause; tool/execution failures stay local, knowledge gaps emit a `LEARNING_BRIEF` and go to `self-help`.
+- Do not delete `memory/ARCHITECTURE.md`, `memory/DECISIONS.md`, or `memory/PROJECT_INDEX.md`.
+- Skill budget: `agent-core` + at most 2 additional skills unless the task genuinely requires more.
+- Backlog items are untouched unless the operator asks for them.
 
-### B. Security (cyber + programmatic flow)
-- Does it use standard libraries (not custom/unverified)?
-- Are errors handled robustly (not silently swallowed)?
-- Does it expose new attack surfaces or weaken existing boundaries?
-- Verdict: HIGH / MEDIUM / LOW — <one-line reason>
+## REQUIRED OUTPUT (all sections non-empty)
+1. **Mode** — A or B, and how you determined it.
+2. **Tasks completed** — IDs, with the verification command and observed result per task.
+3. **Tasks blocked** — ID, blocker, evidence, and what would unblock it.
+4. **Files changed** — path list.
+5. **Gates run** — review verdict, test result, supervisor decision.
+6. **`LEARNING_BRIEF` emitted** — or "none".
+7. **`PROGRESS.md`** — written with the run summary and supervisor heartbeat.
+8. **Remaining work** — next unchecked item, or "complete".
 
-### C. Performance Impact (final consideration; only after suitability + security pass)
-- Does it enhance performance significantly?
-- Does it degrade performance significantly?
-- Is the trade-off justified (e.g., slower but much more robust)?
-- Verdict: ENHANCES / NEUTRAL / DEGRADES — <quantified impact if known>
-
-## Key principle (from the planner's design rules)
-Having an implementation that is **suitable, simple, robust and slow** is preferable to something that is **fast but breaks the things around it**. Prioritize: Suitability > Security > Performance. Only consider performance when the first two axes pass at HIGH.
-
-# OPTIONS TO EVALUATE
-List each option with a brief description. Evaluate each independently — do not compare prematurely.
-
-Option 1: [name / description]
-- Files involved: [paths]
-- What it does: [one sentence]
-
-Option 2: [name / description]
-- Files involved: [paths]
-- What it does: [one sentence]
-
-(If >2 options, split evaluation; planner will synthesize.)
-
-# ENVIRONMENT (verified facts — do not re-discover)
-- Working dir: [path]
-- Remote host (if applicable): [host]
-- Shell tool: [powershell/bash/python]
-- Critical caveats: [huge files, truncated logs, broken bindings]
-
-# EVIDENCE ACQUISITION (per option)
-For each option:
-1. Inspect the target file and adjacent tests.
-2. Read `memory/PROJECT_INDEX.md` and `memory/ARCHITECTURE.md` for domain context.
-3. Check existing patterns in the repo (`repo-discovery`).
-4. For security: inspect error handling, input validation, resource cleanup.
-5. For performance: check if there are benchmarks, timing data, or resource measurements.
-
-# OUTPUT STRUCTURE (structured comparison table)
-Produce ONE comparison table:
-
-```
-| Option | Suitability | Security | Performance | Evidence Source | Confidence |
-| Option 1 | HIGH/MEDIUM/LOW | HIGH/MEDIUM/LOW | ENHANCES/NEUTRAL/DEGRADES | [file/command] | Confirmed/Probable/Preliminary |
-| Option 2 | ... | ... | ... | ... | ... |
-```
-
-Then, for each option, a brief evidence block:
-
-### Option 1: [name]
-- Suitability evidence: [file/line + snippet + verdict]
-- Security evidence: [file/line + snippet + verdict]
-- Performance evidence: [measurement or inference + verdict]
-- Overall recommendation: [do not recommend yet — planner decides]
-- Limitations: [what was not verified]
-
-### Option 2: [name]
-- [same structure]
-
-# SYNTHESIS GUIDANCE (for planner, not subagent decision)
-After the comparison table, provide:
-- **Which option is best for suitability**: [name] — [reason]
-- **Which option is best for security**: [name] — [reason]
-- **Which option is best for performance**: [name] — [reason]
-- **Overall assessment**: If one option leads in suitability + security, performance is secondary. If two options tie on suitability and security, performance breaks the tie. If no option passes suitability or security at HIGH, escalate.
-
-# CONSTRAINTS
-- READ-ONLY: do not edit files.
-- Never print secrets (passwords, API keys).
-- Every evidence claim must include file path + line reference.
-- Label every finding: Confirmed / Probable / Preliminary.
-- Keep findings concise (under 60 lines for single-file inspection).
-- Never propose design changes — the planner reviews your findings and decides.
-
-# REQUIRED OUTPUT STRUCTURE (copy this exactly)
-1. Direct answer to mission: [what was investigated]
-2. Options evaluated: [count + brief names]
-3. Comparison table (structured, one row per option)
-4. Evidence block per option (suitability, security, performance, limitations)
-5. Synthesis guidance (best per axis, overall assessment, escalation if needed)
-6. Unverified assumptions (labeled PRELIMINARY) and what would confirm them
+## GATE
+Before reporting: every ticked item must have (a) all 10 review axes PASS, (b) an observed test run, (c) a non-empty `tasks/<id>.md`. If any tick lacks one, un-tick it and record why.

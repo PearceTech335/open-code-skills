@@ -57,20 +57,20 @@ Before concluding, critique your own findings:
 If evaluating options, assess each independently:
 | Option | Suitability | Security | Maintainability | Evidence | Confidence |
 |--------|-------------|----------|-----------------|----------|------------|
-| ...    | HIGH/MED/LOW| HIGH/MED/LOW| HIGH/MED/LOW   | file:line/cmd | Verified/Probable/Preliminary |
+| ...    | HIGH/MED/LOW| HIGH/MED/LOW| HIGH/MED/LOW   | file:line/cmd | VERIFIED/INFERRED/PRELIMINARY |
 
 Key: suitability > security > maintainability. Don't pick prematurely — show tradeoffs.
 
 ## CONSTRAINTS
-- READ-ONLY: no file edits, writes, restarts, git ops, code changes, commits
+- READ-ONLY **except** the assigned `tasks/<id>.md` detail file: you may create/append **only** that file, and only its `## Research` section. No other file edits, writes, restarts, git ops, code changes, or commits.
 - Never print secrets
 - Every command claimed must have been run; if failed, say so and adapt
-- Label unverified as PRELIMINARY, don't guess
+- Every path and line number must come from a tool result in this session; label unverified as PRELIMINARY, don't guess
 - Follow WebFetch Policy strictly (never fetch agent/skill/config files or `github.com/anomalyco/*` or `.config/opencode/*`)
 - Evidence-first, cite references
 
 ## REQUIRED OUTPUT STRUCTURE
-1. **TL;DR** (1-2 sentences) + overall confidence (`VERIFIED`/`PROBABLE`/`PRELIMINARY`)
+1. **TL;DR** (1-2 sentences) + overall confidence (`VERIFIED`/`INFERRED`/`PRELIMINARY`)
 2. **Direct answer to mission** (concrete answer; if insufficient evidence to decide, say so)
 3. **Findings with evidence** (per hypothesis/option, with file:line/command + excerpt)
 4. **Adversarial critique** (counterarguments, alternatives, risks, framework alignment)
