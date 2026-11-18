@@ -38,7 +38,7 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
 ```text
 ~/.config/opencode/      ← copy these files here (global config)
 ├── AGENTS.md            # global base: engineering standards every project inherits
-├── skills/              # 33 on-demand skills
+├── skills/              # on-demand skills
 ├── agents/              # autopilot · coder · research · review · test · architect
 ├── commands/            # /overnight /research /review /improve /investigate
 ├── templates/
