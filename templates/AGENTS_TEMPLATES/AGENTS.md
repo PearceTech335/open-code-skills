@@ -1,12 +1,15 @@
 # <PROJECT_NAME> — Agent Instructions
 
 > This file layers **project-specific** rules on top of the GLOBAL agent config
-> (`~/.config/opencode/AGENTS.md` + global skills). Global rules still apply and
-> are NOT replaced here: Engineering Standards (workflow, principles, verification,
-> behaviour), the skill hierarchy, security/WebFetch policy, language tool mapping,
-> and the global Learning Loop pointer. This file adds the project's workflow,
-> knowledge layout, and the self-improving Skill Policy. It does NOT repeat
-> global content — it only adds what is specific to this project.
+> (`~/.config/opencode/AGENTS.md` + global skills). It is a scaffold: **customize
+> only the header** (this block, the `<PROJECT_NAME>` line, and `## 1. Mission`)
+> and leave the rest aligned with the global config. Global rules still apply and
+> are NOT replaced here: Engineering Standards (workflow, principles,
+> verification, behaviour), the skill hierarchy, security/WebFetch policy,
+> language tool mapping, the Checkpoint Discipline, the
+> Documentation Style (STE-inspired) section, and the global Learning Loop
+> pointer. This file adds the project's workflow, knowledge layout, and the
+> self-improving Skill Policy — not global content.
 
 ## 1. Mission
 
@@ -15,6 +18,14 @@ project is, and its priorities in order). It is kept separate so this file can
 be re-aligned with the global template without losing project context. Edit
 `MISSION.md` when the mission changes; edit this file when the workflow/rules
 change.
+
+**Customization surface (the only project-specific parts):**
+- This header block and the `<PROJECT_NAME>` line.
+- The prose in `## 1. Mission` and any project-specific additions below it.
+- The STE opt-in declaration, if this project needs full ASD-STE100 conformance.
+
+Everything else stays aligned with the global config — do not fork global
+rules into this file.
 
 Documentation style: the global config applies ASD-STE100-inspired principles
 to human-facing docs. A project that needs full ASD-STE100 conformance must
@@ -27,7 +38,7 @@ claims conformance.
 Before any work: `memory/PROJECT_INDEX.md` → `memory/CURRENT_STATE.md` → `TASKS.md` (thin index, one line per task: `<id> — <one-line> → tasks/<id>.md`).
 Each loop iteration, re-read `CURRENT_STATE.md` + `TASKS.md` (not `RESEARCH.md`, not conversation history) and advance the single unchecked item there.
 Every `TASKS.md` item links to a `tasks/<id>.md` **detail file** — the research agent writes the `## Research` section; the planner writes implementation notes, the attempt log, the review verdict and `Status:`. `review` and `test` are read-only; they return text and the planner appends it verbatim. The detail file is the single reviewable record for that task: when you need to review a ticked task, open only that file.
-Autopilot bootstrap (when the operator invokes the `autopilot` agent): **Mode A** — request refers to TASKS.md/continue/resume → do not create a new list; resume the first unchecked item and work through every unchecked root item. **Mode B** — new goal assigned → merge into the existing `TASKS.md` as a new milestone (never rewrite the list); create the detail files; run the full loop. Backlog items are untouched unless explicitly asked. Full loop lives in `agents/autopilot.md` (§0).
+Autopilot bootstrap (when the operator invokes the `autopilot` agent): **Mode A** — request refers to TASKS.md/continue/resume → do not create a new list; resume the first unchecked item and work through every unchecked root item. **Mode B** — new goal assigned → merge into the existing `TASKS.md` as a new milestone (never rewrite the list); create the detail files; run the full loop. Backlog items are untouched unless explicitly asked. Full loop lives in the global autopilot spec (`~/.config/opencode/agents/autopilot.md`) (§0).
 If index missing/stale: load `project-index` (and `repo-discovery` if needed), inspect, update/create index first.
 
 For non-trivial tasks (consolidated flow):
@@ -40,8 +51,9 @@ For non-trivial tasks (consolidated flow):
 7. Load `review` subagent (`templates/subagent-calls/review.md`) — adversarial PASS/FAIL (§7.7). The review agent is read-only; the planner appends its verdict to `tasks/<id>.md`. Only proceed when all 10 axes PASS.
 8a. Verify (planner): syntax → static analysis → diff review (with observed output).
 8b. Invoke `--agent test` (`templates/subagent-calls/test.md`) — targeted → regression → broader suite, explicit timeouts, PASS/FAIL with evidence. Only proceed past this step on test PASS; failures return to implementer/`review` for classification. The test agent is read-only; the planner appends results to `tasks/<id>.md`.
+8c. Load `quality-gate` as the final pass — fix or record any issues. Only the planner reports done at this point.
 9. Record in `CURRENT_STATE.md`; set `tasks/<id>.md` `Status:` to `DONE` (all criteria checked, evidence in file); tick in `TASKS.md`.
-10. GIT commit only after steps 7 and 8b pass. Never commit before review/test pass.
+10. GIT commit only after steps 7, 8b and 8c pass. Never commit before review/test/quality-gate pass.
 
 Never claim a test passed without observed output.
 
@@ -96,7 +108,7 @@ Before ticking any sub-subtask complete:
 3. If any axis fails: do NOT tick. The review agent returns the analysis; the planner appends it to the task's `tasks/<id>.md` detail file (line refs, evidence, severity) and, for session-wide tracking, to `RESEARCH.md`. Fix or split further, then retry.
 4. Only tick when all 10 axes pass AND verification commands ran with observed output.
 5. This applies to ALL sub-subtasks, not just the final milestone — overnight runs must not silently accumulate errors.
-6. After `review` PASS (steps 1–3) and verification evidence (step 4): invoke `--agent test` (targeted → regression) — require test PASS.
+6. After `review` PASS (steps 1–3) and verification evidence (step 4): invoke `--agent test` (targeted → regression) — require test PASS. Then load `quality-gate` as the final pass before any tick.
 7. Load `supervisor` skill (multi-subtask/overnight runs only, per `skills/supervisor/SKILL.md`): tick only on `CONTINUE`/`STOP-SUCCESS`. `REPLAN` → planner edits the affected `TASKS.md` section only, then re-runs supervisor; do not tick. `ESCALATE`/`STOP-FAILURE` → write blocker note + evidence, do not tick, stop (in autopilot/overnight runs `ESCALATE` instead records the blocker and moves to the next item — no human wait; stop only on hard blockers, per `skills/supervisor/SKILL.md` Unattended Mode). Supervisor appends its heartbeat to `PROGRESS.md` (never `metrics.jsonl`).
 
 The planner never approves its own work unverified — an adversarial subagent verifies each step.

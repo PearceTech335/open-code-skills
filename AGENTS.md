@@ -1,5 +1,15 @@
 # Engineering Standards
 
+> The global base layer every project loads. A project adds a **complementary**
+> `AGENTS.md` scaffolded from `templates/AGENTS_TEMPLATES/AGENTS.md` — customize
+> only its header block and `## 1. Mission`; it adds the project's task workflow
+> (TASKS.md index + `tasks/<id>.md` detail files, the failure budget, the
+> Learning Loop, the Skill Policy) without repeating these global rules. Do not
+> duplicate global content into project files; do not fork global rules there
+> either. Global rules that a project cannot override: the Checkpoint
+> Discipline, the Documentation Style (STE-inspired) section, this Workflow,
+> Security/WebFetch policy, and the language tool mapping.
+
 ## Workflow
 
 For non-trivial tasks:

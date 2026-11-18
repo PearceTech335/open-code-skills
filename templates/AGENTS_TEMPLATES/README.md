@@ -15,7 +15,7 @@ Global rules (`agent-core`, `readable-code`, `repo-discovery`, `quality-gate`, `
 
 ## Process enforcement for small local models
 
-This starter targets sustained agentic coding on small local models (e.g. Qwen3.5-4B-class models at small configured contexts — see `opencode.json`) by enforcing a frontier-model-style process per task: file-first state (`PROJECT_INDEX`/`CURRENT_STATE`/`TASKS` index + `tasks/<id>.md` detail files), research before implementation for non-trivial changes, adversarial `review`, execution-based `test`, and `supervisor` gating before any tick (§2 steps 5/9b, §3.5 steps 6–7). Checklists, templates, per-task detail files and the 3-strike failure budget externalise process discipline so it does not depend on model scale — at the cost of per-task subagent latency, which the file-first design contains. `AGENTS.md` stays lean: it only points at the skill/agent/template files that carry the detail.
+This starter targets sustained agentic coding on small local models (e.g. Qwen3.5-4B-class models at small configured contexts — see `opencode.json`) by enforcing a frontier-model-style process per task: file-first state (`PROJECT_INDEX`/`CURRENT_STATE`/`TASKS` index + `tasks/<id>.md` detail files), research before implementation for non-trivial changes, adversarial `review`, execution-based `test`, and `supervisor` gating before any tick (§2 steps 5/8c, §3.5 steps 6–7). Checklists, templates, per-task detail files and the 3-strike failure budget externalise process discipline so it does not depend on model scale — at the cost of per-task subagent latency, which the file-first design contains. `AGENTS.md` stays lean: it only points at the skill/agent/template files that carry the detail.
 
 ## How the autonomous Learning Loop works
 
@@ -127,7 +127,7 @@ When a subagent returns a report, the planner must verify key claims before usin
 ## Verification checklist (before reporting complete)
 
 - [ ] `MISSION.md` filled (mission brief, source of truth, execution host, priorities); `AGENTS.md` §5 (Learning Loop) and §6 (Skill Policy) intact.
-- [ ] §2 steps 5/7/8a/8b and §3.5 steps 6-7 (test PASS + supervisor gate) intact; §3.5 (Failure Budget), §3.6 (Subagent Templates, incl. `test.md`), §3.7 (Model Routing, incl. `test`), §3.8 (Output Verification), §3.9 (Research Decomposition) intact.
+- [ ] §2 steps 5/7/8a/8b/8c and §3.5 steps 6-7 (test PASS + supervisor gate) intact; §3.5 (Failure Budget), §3.6 (Subagent Templates, incl. `test.md`), §3.7 (Model Routing, incl. `test`), §3.8 (Output Verification), §3.9 (Research Decomposition) intact.
 - [ ] §7.5-§7.9 intact (Template Management, Self-Help Two-Phase, Reviewer Checklist, Deep Research, Compact Learning Brief).
 - [ ] `TASKS.md` reflects actual milestone/task status with sub-subtask IDs (`mN-tN-stN-ssN`); each item links to a `tasks/<id>.md` detail file.
 - [ ] `tasks/TEMPLATE.md` exists (copied from template); detail files are the per-task reviewable records.

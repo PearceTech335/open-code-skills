@@ -77,7 +77,7 @@ Your directory structure should include:
 ├── skills/self-help/templates/
 │   ├── learning-brief.md
 │   └── skill-template.md
-├── templates/AGENTS_TEMPLATES/    # copy/paste starter (AGENTS.md + MISSION.md + TASKS.md + tasks/TEMPLATE.md + memory/ + .opencode/skills/)
+├── templates/AGENTS_TEMPLATES/    # copy/paste starter (AGENTS.md header + MISSION.md + TASKS.md + tasks/TEMPLATE.md + templates/subagent-calls/ + memory/ + .opencode/skills/)
 ├── templates/subagent-calls/      # invocation templates (research.md, review.md, test.md, coder.md, autopilot.md)
 ├── AGENTS.md                     # global agent config (engineering standards, skill hierarchy, verification, Behaviour + Test Agent protocol)
 ├── opencode.json                  # local-only (gitignored) — endpoint config; agent block removed; subagents inherit `model`
@@ -140,7 +140,7 @@ When a failure survives a second correction attempt on a **knowledge-gap** root 
 Auto-approved skills are provisional — audit `.opencode/skills/` and `metrics.jsonl`. Cap: `max-new-skills-per-run: 3`; exceed → stop/escalate. Routing prefers existing skills (update before create); drafted skills target ~60 lines (soft limit).
 
 ### Skill Policy & Lightweight Design
-`AGENTS.md` §6 declares `auto-approve: project-skills` and the new-skill-per-run cap above; set policy to `off` for full human gate. Per-task skill loading is capped separately (2 additional skills beyond mandatory `agent-core`; see the global `AGENTS.md` skill hierarchy). Skills live in `skills/` (global) and `.opencode/skills/` (project); agent specs live in `agents/*.md` + `commands/*.md`. `templates/AGENTS_TEMPLATES/` is the copy/paste starter (includes `AGENTS.md`, `MISSION.md`, `TASKS.md`, `tasks/TEMPLATE.md`, `memory/`, `.opencode/skills/`). No JSON `agent` block — managing agents is add/remove one `.md` file.
+`AGENTS.md` §6 ships `auto-approve: off` (fail-closed) and the new-skill-per-run cap; set it to `project-skills` for unattended project-skill approval (global promotion always requires review). Per-task skill loading is capped separately (2 additional skills beyond mandatory `agent-core`; see the global `AGENTS.md` skill hierarchy). Skills live in `skills/` (global) and `.opencode/skills/` (project); agent specs live in `agents/*.md` + `commands/*.md`. `templates/AGENTS_TEMPLATES/` is the copy/paste starter (includes `AGENTS.md`, `MISSION.md`, `TASKS.md`, `tasks/TEMPLATE.md`, `templates/subagent-calls/`, `memory/`, `.opencode/skills/`). No JSON `agent` block - managing agents is add/remove one `.md` file.
 
 ### Failure Budget (3-Strike Gate)
 Every sub-subtask (`TASKS.md` ID) gets its own `tasks/<id>.md` detail file (the full per-task record) plus `memory/learning/tasks/<id>-attempts.jsonl`; after resolution (success/final failure/workaround) summarize one line to `memory/learning/metrics.jsonl` and delete the per-task attempts file — no unbounded growth. Tool/execution failures (repeated edit mismatches, exact-match errors) stay local (RCA by `review`, workaround, no global `self-help`) unless `review` classifies a recurring structural gap (`ALGORITHM_UNDERSTANDING_GAP`, etc.), which then triggers §5.
@@ -150,7 +150,7 @@ Every sub-subtask (`TASKS.md` ID) gets its own `tasks/<id>.md` detail file (the 
 
 ```text
 <project-root>/
-├── AGENTS.md              # §2 checklist (steps 5/7/8a/8b) + §3.5 failure budget (steps 6-7: test PASS + supervisor gate)
+├── AGENTS.md              # §2 checklist (steps 5/7/8a/8b/8c) + §3.5 failure budget (steps 6-7: test PASS + supervisor gate)
 ├── MISSION.md             # mission brief (separate from AGENTS.md §1; edit when mission changes)
 ├── TASKS.md               # thin index: one line per task → tasks/<id>.md
 ├── tasks/                 # per-task detail files (research, scope, references, testing, pass/fail)
