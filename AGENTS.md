@@ -98,6 +98,30 @@ The `test` agent performs QA testing of code changes — dynamic verification by
 - The agent is read-only with respect to source files: it does not modify code. It surfaces failures for the implementer (or `review` for root-cause classification); it does not silently swallow or fix them.
 - Order of QA: `research` prepares context → implement → `review` (static check) → `test` (execution check) → `quality-gate` (final review).
 
+## Checkpoint Discipline (Critical for Small Models)
+
+**Treat the recent-context as ground truth:**
+- Do NOT re-read files whose contents are already summarized in the checkpoint
+- Do NOT read files that are explicitly marked as "already reviewed" in the checkpoint
+- Only read files that are NOT referenced in the checkpoint or whose content is not fully captured
+
+**Checkpoint must preserve:**
+- Current task/goal with clear acceptance criteria
+- Key file paths and their purpose in the current task
+- Decisions made with reasons (including rejected alternatives)
+- Verification commands executed and their observed output
+- Blockers and unresolved issues with severity classification
+- Session state (what was completed, what remains, what's blocked)
+
+**Tool Output Management:**
+- Use `offset`/`limit` parameters when reading files (200–500 lines per slice)
+- Grep with line limits (max 100–200 lines) to avoid overwhelming output
+- Never read entire files when only a specific section is needed
+- When using grep, add `grep -A 20 -B 5` or similar to get context without bloat
+- The `tool_output` configuration (max_lines=200, max_bytes=12000) helps prevent ballooning but the agent must actively use slicing
+
+**Critical Rule:** If the checkpoint already summarizes file content, do NOT read the file again. This prevents redundant reads that waste context tokens and slow down small models.
+
 ## Skills & Memory
 
 Skills are organized in a hierarchy — load the ones relevant to the task. **Cap:** `agent-core` is mandatory and **not counted** toward the skill cap. Load at most **2 additional skills** per task beyond `agent-core`. Use subagents/templates/checklists to avoid consuming skill slots.
