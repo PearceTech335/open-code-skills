@@ -135,7 +135,7 @@ When invoking a subagent, use the corresponding template from `templates/subagen
 - `templates/subagent-calls/review.md` — for code review tasks (invoke: `--agent review`)
 - `templates/subagent-calls/test.md` — for QA testing tasks (invoke: `--agent test`)
 - `templates/subagent-calls/coder.md` — for code generation tasks (invoke: `--agent coder`)
-- `templates/subagent-calls/autopilot.md` — autonomous end-to-end worker: bootstrap (Mode A resume existing TASKS.md / Mode B merge new goal as new milestone), research, implement, review, test, loop until all root tasks complete (invoke: `--agent autopilot`)
+- `templates/subagent-calls/autopilot.md` — quality-control loop: bootstrap (Mode A resume existing TASKS.md / Mode B merge new goal as new milestone), research ? coder ? review ? test ? fix loop ? docs update, until all root tasks complete (invoke: `--agent autopilot`)
 
 Fill in the bracketed sections. If no template exists for the task type, create one via the self-help process (§7.5) before invoking the subagent. Templates ensure a structured, complete prompt rather than an ad-hoc one.
 

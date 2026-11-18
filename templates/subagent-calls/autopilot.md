@@ -1,50 +1,68 @@
-# Autopilot Subagent Call Template
+# Autopilot Invocation Template (Quality-Control Orchestrator)
+
+Use this template when switching to the `autopilot` agent. It drives the full
+"how a software dev would do it" loop, one task at a time, for small local
+(9B-class) models. Fill in the bracketed sections.
 
 ## MISSION
-Work the project's `TASKS.md` to completion — or merge a new goal into it — without asking questions. You are the autonomous end-to-end worker: bootstrap, research, implement, review, test, tick, next. Do not stop for approval; stop only on hard blockers.
+[The operator's goal: either work the existing TASKS.md list to completion,
+or merge the following request into TASKS.md as a new milestone and work it.]
 
 ## ENTRY MODE — decide first
-- **Mode A (resume)** — the request refers to the existing list ("continue", "resume", "finish the tasks", "do the tasks", `TASKS.md`, `tasks/`) or gives no new goal.
-  Do **not** create a new list. Repair missing `tasks/<id>.md` skeletons for unchecked items, then start at the first unchecked root item.
-- **Mode B (new goal)** — the request assigns a goal.
-  **Merge** it into the existing `TASKS.md` as a new milestone: 3–12 independently verifiable one-line items, `- [ ] <id> — <task> → tasks/<id>.md`, non-colliding numbering. Append only; never rewrite or weaken existing items. Create `tasks/<id>.md` for each new item from the task template.
+- **Mode A (resume)** — the request refers to the existing list ("continue",
+  "resume", "finish the tasks", "do the tasks", or no new goal). Do not create a
+  new list; repair missing `tasks/<id>.md` skeletons; start at the first
+  unchecked item.
+- **Mode B (new goal)** — the request assigns a goal. Merge it into
+  `TASKS.md` as a new milestone (3–12 verifiable items, `- [ ] <id> — <task>
+  → tasks/<id>.md`); append only; never rewrite the existing list.
 
-**Never:** create a parallel ledger (`TODO.md`, `TASKS-2.md`), restart from scratch, or discard the user's list.
+Never create a parallel ledger (`TODO.md`, `TASKS-2.md`). Backlog untouched.
 
-## BOOTSTRAP
-1. Read `memory/CURRENT_STATE.md` and `TASKS.md` (thin index). Do not read the whole repo.
-2. Pick exactly one root item to advance.
-3. Read its `tasks/<id>.md`. If missing, create it from the task template with Goal + Acceptance criteria. Never work a bare index line.
-4. If the detail file has no `## Research` section, fill it before implementing.
-
-## PER-TASK LOOP
-For each unchecked root item, in order:
-1. **Research** (subagent, template-driven) — for >1 file or >30 min of work.
-2. **Implement** — smallest coherent change, ≤5 files; split larger work into sub-subtasks.
-3. **Adversarial review** (`review` subagent) — 10-axis PASS/FAIL. Any FAIL blocks the tick.
-4. **Test** (`test` subagent) — syntax → targeted → regression → full suite; observed output only.
-5. **Gate** — `supervisor` CONTINUE required to tick on multi-subtask/overnight runs.
-6. **Record** — append verdict + evidence to `tasks/<id>.md`; set `Status: DONE`; tick `TASKS.md`; update `memory/CURRENT_STATE.md`.
-7. **Repeat** until every unchecked root milestone item is done or blocked.
+## PER-TASK LOOP (repeat for every unchecked root item)
+1. **Repo lookup** — read `memory/PROJECT_INDEX.md` (create/verify it first if
+   missing/stale), `memory/CURRENT_STATE.md`, the target entry points and
+   adjacent tests. Evidence, not memory.
+2. **Pick the task** — first unchecked item in the active milestone; read
+   `tasks/<id>.md`; fill Goal + Acceptance criteria if thin. Blocked task →
+   record + skip.
+3. **Research** — `--agent research`, writing only the `## Research` section:
+   existing patterns/call sites, file targets, flow-corruption risk, security
+   risk, explicit blockers, smallest robust implementation shape.
+4. **Plan** — ≤5 files; what will NOT change; the failure mode you're
+   preventing. Split bigger work into its own detail files.
+5. **Implement** — `--agent coder` with this plan; Power-of-10-inspired bar
+   (simple flow, bounded ops, small functions, explicit errors, validated
+   input, no dead/duplicate code, comments on non-obvious intent).
+6. **Review** — `--agent review` adversarial; 10-axis PASS/FAIL + complexity
+   critique + security pass. Any FAIL → fix → re-review (max 2 rounds).
+7. **Test** — `--agent test` targeted → regression → broader suite, explicit
+   timeouts. Failure → bounded fix loop: review classifies → research digs →
+   coder fixes → retest (max 3 iterations).
+8. **Document** — fill `tasks/<id>.md` (change + review verdict + test
+   evidence + risks), update `memory/CURRENT_STATE.md` (and `DECISIONS.md` /
+   `ARCHITECTURE.md` / `PROJECT_INDEX.md` when relevant), set `Status: DONE`,
+   tick `TASKS.md`, commit, append heartbeat to `PROGRESS.md`.
+9. **Next task** — repeat until the root milestones are done or a hard blocker
+   stops the run.
 
 ## CONSTRAINTS
-- Path claims are proposals until verified: check paths exist with `Test-Path <path>` (PowerShell) or `test -e <path>` (bash) before moving, deleting, or creating anything. In the global config repo, `node scripts/verify.js` performs reference checks.
-- Never weaken acceptance criteria to make a retry pass.
-- Never claim a test passed without observed output.
-- Two failures on the same failure mode → classify the root cause; tool/execution failures stay local, knowledge gaps emit a `LEARNING_BRIEF` and go to `self-help`.
-- Do not delete `memory/ARCHITECTURE.md`, `memory/DECISIONS.md`, or `memory/PROJECT_INDEX.md`.
-- Skill budget: `agent-core` + at most 2 additional skills unless the task genuinely requires more.
-- Backlog items are untouched unless the operator asks for them.
+- One task at a time; never write code yourself (use `coder`) except trivial
+  fixes you verify by running.
+- Evidence only: observed command output; paths/line numbers copied from tools.
+- No weakening acceptance criteria; no disabling/silencing tests.
+- Reads ≤150 lines; treat the checkpoint as ground truth — do not re-read.
+- Subagents cannot delegate further (depth 1).
+- `MISSION.md` and `TASKS.md` structure are never rewritten; tick only.
+- Log attempts to `memory/learning/tasks/<id>-attempts.jsonl`; `LEARNING_BRIEF`
+  only for knowledge gaps (self-help loop).
 
 ## REQUIRED OUTPUT (all sections non-empty)
 1. **Mode** — A or B, and how you determined it.
-2. **Tasks completed** — IDs, with the verification command and observed result per task.
-3. **Tasks blocked** — ID, blocker, evidence, and what would unblock it.
-4. **Files changed** — path list.
-5. **Gates run** — review verdict, test result, supervisor decision.
-6. **`LEARNING_BRIEF` emitted** — or "none".
-7. **`PROGRESS.md`** — written with the run summary and supervisor heartbeat.
+2. **Tasks completed** — IDs, with the verification command + observed result each.
+3. **Tasks blocked** — ID, blocker, evidence, what would unblock it.
+4. **Fix iterations** — for any failed test: how many, root causes, fixes.
+5. **Files changed** — path list.
+6. **Docs updated** — which files, why.
+7. **`PROGRESS.md`** — written; one-line user summary.
 8. **Remaining work** — next unchecked item, or "complete".
-
-## GATE
-Before reporting: every ticked item must have (a) all 10 review axes PASS, (b) an observed test run, (c) a non-empty `tasks/<id>.md`. If any tick lacks one, un-tick it and record why.

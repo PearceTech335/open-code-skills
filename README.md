@@ -40,7 +40,7 @@ A curated collection of production-grade, highly compressed, Power-of-10-inspire
 - **`security`**, **`penetration-tester`**, **`networking`**, **`ot-networking`**, **`packet-analysis`**: Evidence-first domain investigation and security review standards.
 
 ### Custom Commands (`commands/`)
-- **`/overnight`**: Shortcut for autopilot mode with a new goal — the request is merged into the existing `TASKS.md` as a new milestone (thin index + `tasks/<id>.md` detail file per task), then the full research → implement → review → test loop runs until all root tasks are done. Switching to the `autopilot` agent does the same thing directly.
+- **`/overnight`**: Shortcut for autopilot mode with a new goal — the request is merged into the existing `TASKS.md` as a new milestone (thin index + `tasks/<id>.md` detail file per task), then the full fix-loop QC cycle runs (repo lookup → research → coder → review → test → fix loop on failures → docs update) until all root tasks are done. Switching to the `autopilot` agent does the same thing directly.
 - **`/research`**: Fast file parsing and information extraction via specialized subagents.
 - **`/improve`**: Triggers the `self-help` skill workflow to research and draft new skills.
 - **`/review`**: Evidence-first code review command.
@@ -57,7 +57,7 @@ Your directory structure should include:
 ```text
 ~/.config/opencode/
 ├── agents/
-│   ├── autopilot.md        # autonomous end-to-end worker (Mode B: new goal merged into TASKS.md; Mode A: "work the TASKS.md file")
+│   ├── autopilot.md        # quality-control loop (Mode B: new goal; Mode A: resume TASKS.md) — task pick → repo lookup → research → coder → review → test → fix loop → docs update
 │   ├── coder.md            # code generation subagent
 │   ├── architect.md        # software architecture subagent
 │   ├── research.md         # discovery/parser subagent
@@ -91,7 +91,7 @@ Project-level starter (`templates/AGENTS_TEMPLATES/`) layers on top of this glob
 
 ## Long Horizon Agentic Tasks
 
-This repo wires up the framework for sustained, multi-turn agentic work - from fully autonomous end-to-end runs (`autopilot.md`: task breakdown, research, implementation, adversarial review, testing, all through to completion) through adversarial review (`review.md`) and QA testing (`test.md`) to autonomous skill creation (`self-help`). Each piece is designed to survive beyond a single prompt.
+This repo wires up the framework for sustained, multi-turn agentic work - from quality-control end-to-end runs (`autopilot.md`: task selection, repo lookup, research with blockers, coder implementation, adversarial review, testing, recursive bug-fix loop, docs update) through adversarial review (`review.md`) and QA testing (`test.md`) to autonomous skill creation (`self-help`). Each piece is designed to survive beyond a single prompt.
 
 ### Process Enforcement for Small Local Models
 
