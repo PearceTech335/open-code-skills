@@ -5,6 +5,7 @@
 > operator reviews a ticked task, THIS is the only file they need to open.
 
 Status: <NOT_STARTED | IN_PROGRESS | BLOCKED | DONE>
+Phase: <INVESTIGATING | RESEARCHED | PLANNED | IMPLEMENTING | REVIEWING | TESTING | DOCUMENTING | DONE> (orchestrator-internal; Status stays the 4-value contract)
 TASKS.md line: <exact one-liner from TASKS.md>
 Attempts: memory/learning/tasks/<id>-attempts.jsonl (deleted on resolution)
 
