@@ -1,11 +1,17 @@
-# AGENTS_TEMPLATES — Project Starter + Autonomous Learning Loop
+# AGENTS_TEMPLATES — Project Starter (Two-Layer Scaffold)
 
-This folder is the **copy/paste starter template** for new OpenCode projects. Copypaste its contents (`AGENTS.md`, `MISSION.md`, `TASKS.md`, `tasks/`, `templates/`, `memory/`, `.opencode/skills/`) — but not `README.md`, which documents this template, not your project — to a new project root. It does **not** replace your global config (`~/.config/opencode/AGENTS.md` + global skills); it layers project-specific rules, the self-improving Learning Loop, and the Skill Policy on top.
+Copy/paste this folder's contents into a new OpenCode project root: `AGENTS.md`, `MISSION.md`, `TASKS.md`, `tasks/`, `templates/`, `memory/`, `.opencode/skills/` — but **not** `README.md` (which documents the template, not your project).
+
+The project is governed by **two files, loaded together**:
+- Global base: `~/.config/opencode/AGENTS.md` — hard rules (workflow, verification, principles, STE-inspired docs, Checkpoint Discipline, QA order). You do not fork those.
+- Project complement: this file's `AGENTS.md` — mission, TASKS workflow, failure budget, Learning Loop, Skill Policy, memory layout. **Customize only its header and `## 1. Mission`** (and the STE opt-in declaration, if the project needs full ASD-STE100 conformance). Leave the rest aligned with the global config.
+
+> *STE-inspired plain language throughout this repo — no "ASD-STE100 compliant" claims anywhere.*
 
 ## What this folder is for
 
 - **Project mission brief** (`MISSION.md`) — what the project is, its source of truth, execution host, sync discipline, credentials, and priorities. Kept separate from `AGENTS.md` so the workflow file can be re-aligned with the global template without losing project context (`AGENTS.md` §1 points here).
-- **Project-level agent instructions** (`AGENTS.md`) — startup rules (§2 checklist), execution protocol (§3), evidence/correctness standards (§8 Verification Standard: VERIFIED claims cite independent source; PRELIMINARY states limitation), and the Learning Loop (§5) + Skill Policy (§6). Behaviour (§3.5/§2.6): uncertain conditions trigger structured `research.md`/`review.md` subagent calls, not open-ended prose. `supervisor` gates ticks on multi-subtask runs (§3.5 step 7; heartbeat to `PROGRESS.md`).
+- **Project-level agent instructions** (`AGENTS.md`) — startup rules (§2 checklist), execution protocol (§3), evidence/correctness standards (§8 Verification Standard: VERIFIED claims cite independent source; PRELIMINARY states limitation), and the Learning Loop (§5) + Skill Policy (§6). Behaviour (§3.5): uncertain conditions trigger structured `research.md`/`review.md` subagent calls, not open-ended prose. `supervisor` gates ticks on multi-subtask runs (§3.5 step 7; heartbeat to `PROGRESS.md`).
 - **Task index + detail files** (`TASKS.md` + `tasks/<id>.md`) — `TASKS.md` is a thin one-line-per-task index (may grow to hundreds of lines); each line links to `tasks/<id>.md`, the detail file the research/coder/review agents fill with research, scope, references, testing criteria, attempts and pass/fail evidence. One file per task = one reviewable record.
 - **Self-improving skills** (`.opencode/skills/`) — where project-specific skills live; the `self-help` skill drafts them, the Learning Gate validates them, and the Skill Policy controls approval.
 - **Project knowledge scaffold** (`memory/`) — persistent index, state, architecture, decisions, known issues, milestones, and the `learning/` sink (`briefs/` + `metrics.jsonl`).
@@ -74,17 +80,18 @@ Audit provisional skills in .opencode/skills/ + metrics.jsonl
 | **Project agents / subagent specs** | `agents/*.md`, `commands/*.md` | Define roles (`review`, `coder`, etc.) with `description`, `mode`, `prompt`, optional `model:` override (omit to inherit global `model`) |
 | **Self-help templates** | `~/.config/opencode/skills/self-help/templates/` | `skill-template.md`, `learning-brief.md` — starter formats for new skills/briefs |
 
-## Skill Policy (§6 of this file) — quick setup
+## Skill Policy (§6 of AGENTS.md) — quick setup
 
-In `AGENTS.md` Section 6, set for this project:
+In `AGENTS.md` Section 6, the starter ships fail-closed:
 
 ```
-    auto-approve: project-skills
+    auto-approve: off
     max-new-skills-per-run: 3
 ```
 
-- With `auto-approve`: overnight autonomous runs proceed without human pauses; new skills activate as provisional.
-- Without it (line removed / `off`): every skill pauses for review (safer when you want oversight).
+- With `auto-approve: off`: every new skill pauses for human review (safer default; required when you want oversight).
+- Set `auto-approve: project-skills`: unattended project-scoped skill approval, skills activate as provisional (global promotion always requires review). The Learning Gate still runs either way.
+- Cap applies per autonomous run: exceeding it stops the run instead of approving more skills.
 
 Audit trail lives in `.opencode/skills/` + `memory/learning/metrics.jsonl` (one JSON line per completed cycle: brief path, skill name, approval mode, retry result).
 
@@ -108,7 +115,7 @@ Standardized prompt templates for invoking subagents. Use the corresponding temp
 | `review.md` | Code review tasks |
 | `test.md` | QA testing tasks (runs test suite, PASS/FAIL with evidence) |
 | `coder.md` | Code generation tasks |
-| `autopilot.md` | Autonomous end-to-end worker (Mode A resume existing TASKS.md / Mode B merge new goal as new milestone); loops until all root tasks complete |
+| `autopilot.md` | Engineering orchestrator (Mode A resume existing TASKS.md / Mode B merge new goal as milestone); repo lookup → research → coder → review → test → fix loop → docs update, until all root tasks are done |
 
 If no template exists for the task type, create one via the self-help process (§7.5) before invoking. Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
 
