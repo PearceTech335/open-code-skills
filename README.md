@@ -20,7 +20,7 @@ It is designed to be **dropped into** `~/.config/opencode/` and the contents of 
 
 ## Who this is for, and what it is aimed at
 
-**Audience:** operators running OpenCode for sustained, long-horizon agentic coding — especially beneficial on **small, self-hosted models** (Qwen3 4B/9B class at modest contexts, e.g. via Ollama or LM Studio), and equally usable with frontier models to produce high quality generated code and projects.
+**Audience:** operators running OpenCode for sustained, long-horizon agentic coding — especially beneficial on **small, self-hosted models** at modest contexts (e.g. via Ollama or LM Studio; the declared `model` must support tool calls), and equally usable with frontier models to produce high quality generated code and projects.
 
 **The aim:** make a small local model behave like a frontier one *procedurally*. Small models do not reliably generate the constraints, verification, and recovery discipline an autonomous coding run needs. This repo supplies that discipline externally:
 
@@ -78,6 +78,10 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
 - `AGENTS.md` (this repo) — hard rules you cannot override per project: workflow, verification requirements, principles, STE-inspired documentation, Checkpoint Discipline, the QA order (`review → test → quality-gate`).
 - `AGENTS.md` (your project, from the scaffold) — the task machinery: mission, `TASKS.md`/`tasks/<id>.md` workflow, failure budget, Learning Loop, Skill Policy, memory layout. Customize **only** this header and `MISSION.md`; you do not need to fork global rules into it.
 
+## Model Routing
+
+`opencode.json` declares an endpoint via `provider` plus a single `model`; **all agents inherit that one configured `model`**. There is no required cloud endpoint and no cloud/local split. The orchestrator runs specialists **sequentially** against the one endpoint — deliberate: no inference-session contention on bandwidth-limited hardware, and the workflow does not depend on any external model. The one supported override is an agent's own `model: <provider/model[#variant]>` frontmatter; there is no `execution_model` key. `opencode.json` is local-only (gitignored). Whatever you declare is what runs — the framework is deliberately agnostic to model choice, size, and vendor, as long as the declared `model` supports tool calls.
+
 ## Design principles
 
 - **No fabricated facts.** Every path and line number the agent reports must come from a tool result in that session.
@@ -116,4 +120,4 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
 
 ---
 
-*Fork it, adapt it, start a run. If your 9B model survives one full `/overnight` cleanly, the experiment worked.*
+*Fork it, adapt it, start a run. If your model survives one full `/overnight` cleanly, the experiment worked.*

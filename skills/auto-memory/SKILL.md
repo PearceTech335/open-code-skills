@@ -58,8 +58,8 @@ If the topic has no file yet, create it and add a line to MEMORY.md.
 ```markdown
 ## Ollama tool_call hangs on empty args object — 2026-07-02
 
-**Context**: Trying to call a no-argument tool via qwen3:8b.
-**Insight**: qwen3:8b requires at least one dummy field in args or it sends malformed JSON and hangs.
+**Context**: Trying to call a no-argument tool via a local model served by Ollama.
+**Insight**: Some local models require at least one dummy field in args, or they send malformed JSON and hang.
 **Evidence**: Adding `"_": null` to the args schema resolved the hang immediately.
 ```
 
@@ -74,7 +74,7 @@ Last updated: YYYY-MM-DD
 
 ## Topics
 
-- **debugging.md** — Tool call hang fix (qwen3:8b empty args), ...
+- **debugging.md** — Tool call hang fix (empty-arg tools vs local models), ...
 - **environment.md** — Ollama server (remote): model load times, VRAM limits, ...
 - **python.md** — subprocess timeout on Windows, pathlib vs os.path edge cases, ...
 - **ansible.md** — vault decrypt on Windows path, molecule driver quirks, ...

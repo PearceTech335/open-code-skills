@@ -61,6 +61,18 @@ If evaluating options, assess each independently:
 
 Key: suitability > security > maintainability. Don't pick prematurely — show tradeoffs.
 
+## EVIDENCE CONTRACT
+Every finding must carry:
+- `classification:` VERIFIED | INFERRED | UNKNOWN | PRELIMINARY
+- `source:` internal | command | webfetch
+- `file:` repo-relative path (plus `lines:` when relevant)
+- `observation:` what the tool output shows (one sentence)
+- `why:` why it matters
+- `recommendation:` the concrete next action
+- `confidence:` high | medium | low
+
+The planner verifies `file:line` claims against tool output before accepting them.
+
 ## CONSTRAINTS
 - READ-ONLY **except** the assigned `tasks/<id>.md` detail file: you may create/append **only** that file, and only its `## Research` section. No other file edits, writes, restarts, git ops, code changes, or commits.
 - Never print secrets

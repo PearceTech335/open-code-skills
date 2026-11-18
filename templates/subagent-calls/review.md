@@ -36,6 +36,9 @@ Review the current implementation as if you did not write it. Do not modify file
 9. Complexity:      PASS/FAIL — <one-line reason>
 10. Assumptions:    PASS/FAIL — <one-line reason>
 
+# POWER OF 10 (mandatory)
+Report the 10-row Power-of-10 table (see the review agent spec) — PASS/FAIL/N/A with `file:line` evidence, mapping the underlying principles to this language (bounded behaviour, explicit control flow, predictable resource use, verifiable assumptions; do not mechanically apply C rules where they do not apply). Any applicable FAIL means reject.
+
 # ADVERSARIAL FRAMING
 Your job is to FIND BUGS, not to confirm correctness. Actively attempt to construct a counterexample to the implementation's central claim. Search for the failure the implementer would not have looked for.
 
@@ -56,6 +59,17 @@ task_id: <mN-tN-stN-ssN>
 root_cause: <classification>
 evidence: <one-line>
 learning_objective: <one sentence — reusable capability that must improve>
+
+# EVIDENCE CONTRACT
+Every finding must carry:
+- `id:` F-001, F-002, ...
+- `classification:` CONFIRMED | PROBABLE | PRELIMINARY
+- `file:` repo-relative path + `line`/function
+- `observation:` what the diff shows
+- `why:` why it matters (impact)
+- `recommendation:` concrete fix
+- `confidence:` high | medium | low
+The planner verifies `file:line` claims against the actual diff before accepting them.
 
 # CONSTRAINTS
 - Do not modify files.

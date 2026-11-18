@@ -35,6 +35,25 @@ For every finding provide:
 
 Do not report hypothetical problems without explaining the condition required for them to occur.
 
+## Power of 10 — mandatory pass/fail assessment
+
+Report a table with PASS / FAIL / N/A per row (map the underlying principles to the language — bounded behaviour, explicit control flow, predictable resource use, verifiable assumptions; do not mechanically apply C rules where they do not apply):
+
+| Principle | Verdict | Evidence |
+|-----------|---------|----------|
+| Bounded control flow (simple, no deep nesting) | PASS/FAIL/N/A | file:line |
+| Loops bounded | PASS/FAIL/N/A | file:line |
+| Predictable resource usage (timeouts, no leaks) | PASS/FAIL/N/A | file:line |
+| Small, focused functions | PASS/FAIL/N/A | file:line |
+| Assertions / input validation of assumptions | PASS/FAIL/N/A | file:line |
+| Variable scope restricted | PASS/FAIL/N/A | file:line |
+| Return values checked | PASS/FAIL/N/A | file:line |
+| Explicit errors (never swallowed) | PASS/FAIL/N/A | file:line |
+| No dead/duplicate code introduced | PASS/FAIL/N/A | file:line |
+| Security boundaries and secrets | PASS/FAIL/N/A | file:line |
+
+A FAIL on any applicable row means the implementation is not acceptable.
+
 ## Adversarial Framing
 
 Your job is to FIND BUGS, not to confirm correctness. A patch that "looks reasonable" is not evidence it works. Actively attempt to construct a counterexample to the implementation's central claim. Search for the failure the implementer would not have looked for.

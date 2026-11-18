@@ -69,10 +69,15 @@ Proportional to the change. Minimum: syntax → static analysis → targeted tes
 
 ## Behaviour
 
-If uncertain: do NOT guess. Use structured subagent calls:
+If uncertain: do NOT guess. Use structured subagent calls, with this hierarchy when you cannot stop for an answer mid-run:
 - **Ambiguous condition / conflicting evidence** → load `templates/subagent-calls/research.md`, invoke `--agent research` with completed template. Synthesize results; do not pick blindly.
 - **Verification needed / potential failure mode** → load `templates/subagent-calls/review.md`, invoke `--agent review` (PASS/FAIL checklist, negative goal: find bugs, not confirm correctness).
 - **Unsafe assumption** → label `PRELIMINARY`, stop. Document blocker in `RESEARCH.md`; ask or resolve with evidence before proceeding.
+- **Missing evidence** → investigate; never guess.
+- **Ambiguous implementation** → research the missing piece; take the smallest robust change.
+- **Unverified but reversible** → record as `PRELIMINARY` with evidence; proceed cautiously.
+- **Architectural or security uncertainty** → invoke `--agent architect`; do not guess through it.
+- **Irreversible or security-sensitive** → `BLOCKED`; never improvised, even unattended.
 
 Always: inspect repository (`repo-discovery`) before changing; test safe assumptions (single command/file read); protect uncommitted changes (`git status`, `git diff --check`); surface conflicts with architecture rather than inventing fixes.
 
@@ -124,7 +129,7 @@ The `test` agent performs QA testing of code changes — dynamic verification by
 - Session state (what was completed, what remains, what's blocked)
 
 **Tool Output Management:**
-- Use `offset`/`limit` parameters when reading files (200–500 lines per slice)
+- Use `offset`/`limit` parameters when reading files (150–200 lines per slice; the tool-output cap is 200)
 - Grep with line limits (max 100–200 lines) to avoid overwhelming output
 - Never read entire files when only a specific section is needed
 - When using grep, add `grep -A 20 -B 5` or similar to get context without bloat

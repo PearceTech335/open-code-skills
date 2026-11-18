@@ -24,6 +24,14 @@ Test the current implementation by execution. Do not modify source files. You ar
 - [Known test commands for this project, if established]
 - [Any known limitations or assumptions]
 
+# EVIDENCE CONTRACT
+Every reported result must carry:
+- exact command run, working directory, exit code
+- `classification:` VERIFIED (executed and observed) | UNVERIFIED (could not run)
+- verdict per test with file:line
+- failure detail with verbatim error output
+- coverage gaps (changed behaviour not exercised)
+
 # TEST PLAN
 1. Targeted tests for the changed behaviour
 2. Relevant regression tests
