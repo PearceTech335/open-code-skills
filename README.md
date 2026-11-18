@@ -8,7 +8,7 @@ A version-controlled global configuration for [OpenCode](https://opencode.ai) �
 
 ## What this is
 
-This repo is an opinionated OpenCode setup:
+This repo is an OpenCode setup aimed at improving agentic code generation:
 
 - **`AGENTS.md`** — the global base document. Every project loads it. It contains the engineering standards: workflow, verification, principles, behaviour rules, the skill hierarchy, testing protocol, documentation style (ASD-STE100-inspired).
 - **`skills/`** — 33 loadable on-demand skills (see below).
@@ -16,11 +16,11 @@ This repo is an opinionated OpenCode setup:
 - **`templates/AGENTS_TEMPLATES/`** — a copy/paste project scaffold. Customize only its header and `MISSION.md`; everything else stays aligned with the global config.
 - **`templates/subagent-calls/`** — completion templates for invoking the specialist agents deterministically.
 
-It is designed to be **dropped into** `~/.config/opencode/` and copied per project, not npm-installed.
+It is designed to be **dropped into** `~/.config/opencode/` and the contents of **`templates/AGENTS_TEMPLATES`** copied into the project root, per project. You must create your own `opencode.json` there (it is gitignored; declare your provider and a `model` that supports tool calls) — without it, nothing runs.
 
 ## Who this is for, and what it is aimed at
 
-**Audience:** operators running OpenCode for sustained, long-horizon agentic coding — especially on **small, self-hosted models** (Qwen3 4B/9B class at modest contexts, e.g. via Ollama or LM Studio), and equally usable with frontier models.
+**Audience:** operators running OpenCode for sustained, long-horizon agentic coding — especially beneficial on **small, self-hosted models** (Qwen3 4B/9B class at modest contexts, e.g. via Ollama or LM Studio), and equally usable with frontier models to produce high quality generated code and projects.
 
 **The aim:** make a small local model behave like a frontier one *procedurally*. Small models do not reliably generate the constraints, verification, and recovery discipline an autonomous coding run needs. This repo supplies that discipline externally:
 
@@ -60,24 +60,7 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
    cd ~/.config/opencode
    ```
 
-2. **Create your own `opencode.json`** (it is gitignored on purpose). Declare your provider(s) + a `model` whose `limit.output` is well below its `limit.context` (compaction loops otherwise):
-
-   ```jsonc
-   {
-     "$schema": "https://opencode.ai/config.json",
-     "provider": {
-       "lmstudio": { "npm": "@ai-sdk/openai-compatible",
-         "options": { "baseURL": "http://localhost:1234/v1", "apiKey": "lm-studio" },
-         "models": { "qwen/qwen3-4b-thinking-2507": { "limit": { "context": 65536, "output": 8192 }, "tool_call": true } } }
-     },
-     "model": "lmstudio/qwen/qwen3-4b-thinking-2507",
-     "permission": { "edit": "allow", "bash": "allow", "webfetch": "allow" }
-   }
-   ```
-
-3. **Verify the install:** `node scripts/verify.js` and `node scripts/validate_skills.js` (must both pass).
-
-4. **Scaffold a project for a long run:**
+2. **Scaffold a project for a long run:**
 
    ```bash
    cp -r ~/.config/opencode/templates/AGENTS_TEMPLATES/* ./my-project
@@ -91,7 +74,7 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
 **Global base (this repo) + project complement** are both loaded in every session:
 
 - `AGENTS.md` (this repo) — hard rules you cannot override per project: workflow, verification requirements, principles, STE-inspired documentation, Checkpoint Discipline, the QA order (`review → test → quality-gate`).
-- `AGENTS.md` (your project, from the scaffold) — the task machinery: mission, `TASKS.md`/`tasks/<id>.md` workflow, failure budget, Learning Loop, Skill Policy, memory layout. Customize **only** this header and `MISSION.md`; do not fork global rules into it.
+- `AGENTS.md` (your project, from the scaffold) — the task machinery: mission, `TASKS.md`/`tasks/<id>.md` workflow, failure budget, Learning Loop, Skill Policy, memory layout. Customize **only** this header and `MISSION.md`; you do not need to fork global rules into it.
 
 ## Design principles
 
