@@ -21,7 +21,7 @@ Global rules (`agent-core`, `readable-code`, `repo-discovery`, `quality-gate`, `
 
 ## Process enforcement for small local models
 
-This starter targets sustained agentic coding on small, self-hosted models at modest configured contexts — whatever tool-calling model you declare in `opencode.json` — by enforcing a frontier-model-style process per task: file-first state (`PROJECT_INDEX`/`CURRENT_STATE`/`TASKS` index + `tasks/<id>.md` detail files), research before implementation, adversarial `review`, execution-based `test`, and `supervisor` gating before any tick (§2 steps 5/8c, §3.5 steps 6–7). Checklists, templates, per-task detail files and the 3-strike failure budget externalise process discipline so it does not depend on model scale — at the cost of per-task subagent latency, which the file-first design contains. `AGENTS.md` stays lean: it only points at the skill/agent/template files that carry the detail.
+This starter targets sustained agentic coding on small, self-hosted models at modest configured contexts — whatever tool-calling model you declare in `opencode.json` — by enforcing a frontier-model-style process per task: file-first state (`PROJECT_INDEX`/`CURRENT_STATE`/`TASKS` index + `tasks/<id>.md` detail files), research before implementation, adversarial `review`, execution-based `test`, and `supervisor` gating before any tick (§2 steps 5/8c, §3.5 steps 6–7). Checklists, templates, per-task detail files and the failure budget externalise process discipline so it does not depend on model scale — at the cost of per-task subagent latency, which the file-first design contains. `AGENTS.md` stays lean: it only points at the skill/agent/template files that carry the detail.
 
 ## How the autonomous Learning Loop works
 
@@ -36,11 +36,11 @@ write LEARNING_BRIEF → memory/learning/briefs/<task-id>.md
         ↓
 load self-help, pass the Brief path
         ↓
-self-help researches (source acquisition → cross-check ≥2 → critique → counterexample → repro)
+self-help researches (source acquisition → cross-check against independent sources → critique → counterexample → repro)
         ↓
 drafts Power-of-10 skill (YAML frontmatter, numbered rules, guardrails, verification protocol)
         ↓
-Learning Gate (5 checks: evidence, relevance, correctness, scope, executable check)
+Learning Gate (evidence, relevance, correctness, scope, executable checks)
         ↓
 Approval: Section 6 Skill Policy
    • auto-approve: project-skills  → activates as auto-approved-provisional
@@ -65,9 +65,9 @@ Audit provisional skills in .opencode/skills/ + metrics.jsonl
 - Never generate a skill for a trivial `IMPLEMENTATION_DEFECT`.
 - Never weaken original acceptance criteria to make retry pass.
 - Auto-approved skills are `Status: auto-approved-provisional`; always audit.
-- `max-new-skills-per-run: 3` (cap per autonomous run; exceed → stop/escalate).
+- `max-new-skills-per-run` caps autonomously generated skills per run; exceeding it stops the run instead of approving more.
 - Tool/execution failures (repeated edit mismatches, exact-match errors) stay local (RCA by `review`, workaround, no global `self-help`) unless `review` classifies a recurring structural gap, which then triggers §5.
-- Routing prefers existing skills (update before create); drafted skills target ~60 lines (soft limit).
+- Routing prefers existing skills (update before create); drafted skills are kept short.
 - Spill raw tool output to `RESEARCH.md` and cite the path; keep cited evidence in-context (§8).
 - `auto-approve` is project-scoped and provisional — post-run audit required (§6).
 
@@ -86,8 +86,9 @@ In `AGENTS.md` Section 6, the starter ships fail-closed:
 
 ```
     auto-approve: off
-    max-new-skills-per-run: 3
 ```
+
+`max-new-skills-per-run` also lives in Section 6: it caps how many skills may be generated per autonomous run; exceeding it stops the run. Its current value lives in `AGENTS.md` §6, which is the single source of truth — do not copy it into documentation.
 
 - With `auto-approve: off`: every new skill pauses for human review (safer default; required when you want oversight).
 - Set `auto-approve: project-skills`: unattended project-scoped skill approval, skills activate as provisional (global promotion always requires review). The Learning Gate still runs either way.
@@ -125,11 +126,11 @@ Every sub-subtask (`TASKS.md` ID) gets its own `memory/learning/tasks/<id>-attem
 
 ## Research Decomposition (§3.9 of AGENTS.md)
 
-When given a vague or broad research prompt, do not attempt to answer in one pass: (1) broad-brush scan to identify major areas and sub-questions, (2) decompose into 3-5 specific targeted sub-questions, (3) invoke the research agent for each sub-question with a focused prompt, (4) synthesize findings into the final report. The research agent elaborates the matching `tasks/<id>.md` detail file.
+When given a vague or broad research prompt, do not attempt to answer in one pass: (1) broad-brush scan to identify major areas and sub-questions, (2) decompose into focused, independently answerable sub-questions, (3) invoke the research agent for each sub-question with a focused prompt, (4) synthesize findings into the final report. The research agent elaborates the matching `tasks/<id>.md` detail file.
 
 ## Subagent Output Verification (§3.8 of AGENTS.md)
 
-When a subagent returns a report, the planner must verify key claims before using them: (1) mandatory answer to the mission question stated, (2) every factual claim has attached evidence (command/file reference), (3) no empty sections, (4) cross-check with at least two independent sources.
+When a subagent returns a report, the planner must verify key claims before using them: (1) mandatory answer to the mission question stated, (2) every factual claim has attached evidence (command/file reference), (3) no empty sections, (4) cross-check against independent sources.
 
 ## Verification checklist (before reporting complete)
 
@@ -142,6 +143,6 @@ When a subagent returns a report, the planner must verify key claims before usin
 - [ ] `.opencode/skills/` exists with `.gitkeep`; first skill draft placed when loop triggers.
 - [ ] `memory/learning/briefs/` + `metrics.jsonl` + `tasks/` present (zero-byte sink ready).
 - [ ] `templates/subagent-calls/` contains invocation templates (research.md, review, test, coder, autopilot).
-- [ ] Evidence for any skill creation: source URLs, cross-check ≥2, counterexample, reproduction, Learning Gate checks.
+- [ ] Evidence for any skill creation: source URLs, cross-checks, counterexample, reproduction, Learning Gate checks.
 
 

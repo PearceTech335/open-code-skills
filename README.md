@@ -26,8 +26,8 @@ It is designed to be **dropped into** `~/.config/opencode/` and the contents of 
 
 - **File-first state** — the agent reads `TASKS.md` index + `tasks/<id>.md` detail files and memory files, never a fat prompt.
 - **Delegation with verification** — every non-trivial step goes to a specialist (`research` for investigation, `coder` for implementation, `review` for adversarial checks, `test` for execution), and the primary agent verifies their outputs.
-- **Quality gates before "done"** — adversarial review (10 axes + security + complexity), executed tests, a final quality-gate pass, then the tick.
-- **Failure recovery** — root-cause first, bounded recursion (max 3 iterations), blockers recorded, never silently skipped.
+- **Quality gates before "done"** — adversarial review (checklist, security, complexity), executed tests, a final quality-gate pass, then the tick.
+- **Failure recovery** - root-cause first, bounded recursion, no blind retries, blockers recorded, never silently skipped.
 
 The result, at the cost of per-step subagent latency: long runs stay on-goal, every step's evidence is inspectable, and behaviour is consistent regardless of the executing model.
 
@@ -92,7 +92,7 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
 
 ## What’s inside
 
-**Core:** `agent-core` (tool discipline + always-on requirements micro-checklist + the **2 additional skills per task** cap), `self-help`, `auto-memory`, `template-library`, `supervisor`, `long-running-task-research`, `research-method`, `git-practices`, `readme-authoring`, `ste-writing`.
+**Core:** `agent-core` (tool discipline + always-on requirements micro-checklist + the per-task skill-loading cap), `self-help`, `auto-memory`, `template-library`, `supervisor`, `long-running-task-research`, `research-method`, `git-practices`, `readme-authoring`, `ste-writing`.
 
 **Design, quality & process:** `readable-code`, `repo-discovery`, `project-index`, `quality-gate`, `designer`, `strategic-engineering`, `test-engineering`, `root-cause-analysis`, `interface-design`, `production-readiness`, `html-js-graphics-3d`, `network-engineer`.
 
