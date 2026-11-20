@@ -11,3 +11,5 @@
 !.gitignore
 !/AGENTS.md
 opencode.json
+# Ignore backup files
+*.bak
