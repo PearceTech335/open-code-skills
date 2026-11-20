@@ -107,7 +107,7 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
 ## Honest status
 
 - **Verified**: config parses; fresh project scaffold passes `verify.js --project`; all skill files pass the frontmatter validator; the framework runs a full task lifecycle in principle (designed + adversarially audited; see git history).
-- **Not verified**: a live end-to-end run on a small local model has not yet been executed against a real repository in this repo. Small models remain fallible; the point of this repo is that failure is bounded and visible, not that it never happens.
+- **Not verified**: a live end-to-end run on a small local model is currently being executed against a real **one shot** 'Build me a game' style project. Using Qwen3-4b-Thinking-2507, when the project run has completed the whole project with and without this framework will be linked for everyone's perusal. The testing is being completed with one model, same prompt, same tasks and mission, only difference is this framework vs clean opencode. Small models remain fallible; the point of this repo is that failure is bounded, visible, traceable, reviewable and fixable, not that it never happens.
 - **Not a certification**: ASD-STE100-inspired documentation style is applied as principles; this repo never claims "STE compliant" or "ASD-STE100 certified". Full conformance is an opt-in per project via the official Issue 9 standard from asd-ste100.org.
 - **Personal configuration**: `opencode.json`, `plugin/`, `scripts/` are local-only (gitignored) and machine-specific.
 
