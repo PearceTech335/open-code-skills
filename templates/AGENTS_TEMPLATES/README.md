@@ -19,6 +19,19 @@ The project is governed by **two files, loaded together**:
 
 Global rules (`agent-core`, `readable-code`, `repo-discovery`, `quality-gate`, `security`, WebFetch policy, the global Learning Loop pointer in `AGENTS.md`) still apply. This file gives the project its spin on workflow, knowledge layout, and autonomous improvement.
 
+## Two operating modes explained
+
+This project scaffold supports two distinct orchestration modes via the same state files (`TASKS.md`, `tasks/`, `CURRENT_STATE.md`):
+
+### Autopilot (default) — Light loop for frontier models
+The `autopilot` agent uses a slimmed-down loop suitable for frontier models that can handle most work themselves. It assumes a capable model that can internalise much of the research/review/test discipline. External specialist agents are invoked only when escalation criteria are met (ambiguity, high-risk changes, or operator request).
+
+### /rigour — Full multi-stage quality pipeline
+The `/rigour` command activates the rigorous orchestration path for local models or high-stakes work where token usage is acceptable and code quality/integrity is paramount. Every task goes through all 9 stages: research → decomposition → adversarial review → planning → implementation → review → test → sign-off. External specialist agents (`research`, `review`, `test`) are invoked explicitly at each stage.
+
+### Model routing
+`opencode.json` declares an endpoint via `provider` plus a single `model`; all agents inherit that one configured `model`. The orchestrator runs specialists sequentially against the one endpoint — deliberate: no inference-session contention on bandwidth-limited hardware. Agents can override with their own `model:` frontmatter if needed.
+
 ## Process enforcement for small local models
 
 This starter targets sustained agentic coding on small, self-hosted models at modest configured contexts — whatever tool-calling model you declare in `opencode.json` — by enforcing a frontier-model-style process per task: file-first state (`PROJECT_INDEX`/`CURRENT_STATE`/`TASKS` index + `tasks/<id>.md` detail files), research before implementation, adversarial `review`, execution-based `test`, and `supervisor` gating before any tick (§2 steps 5/8c, §3.5 steps 6–7). Checklists, templates, per-task detail files and the failure budget externalise process discipline so it does not depend on model scale — at the cost of per-task subagent latency, which the file-first design contains. `AGENTS.md` stays lean: it only points at the skill/agent/template files that carry the detail.

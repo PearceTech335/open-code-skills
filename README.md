@@ -11,8 +11,8 @@ A version-controlled global configuration for [OpenCode](https://opencode.ai) �
 This repo is an OpenCode setup aimed at improving agentic code generation:
 
 - **`AGENTS.md`** — the global base document. Every project loads it. It contains the engineering standards: workflow, verification, principles, behaviour rules, the skill hierarchy, testing protocol, documentation style (ASD-STE100-inspired).
-- **`skills/`** — on-demand skills (see below).
-- **`agents/` + `commands/`** — specialist agents (`coder`, `research`, `review`, `test`, `architect`, `autopilot`) and slash commands.
+- **`skills/`** — on-demand skills.
+- **`agents/` + `commands/`** — specialist agents (`coder`, `research`, `review`, `test`, `architect`, `autopilot-light`, `rigour`) and slash commands.
 - **`templates/AGENTS_TEMPLATES/`** — a copy/paste project scaffold. Customize only its header and `MISSION.md`; everything else stays aligned with the global config.
 - **`templates/subagent-calls/`** — completion templates for invoking the specialist agents deterministically.
 
@@ -33,21 +33,31 @@ The result, at the cost of per-step subagent latency: long runs stay on-goal, ev
 
 This is a **starter + personal configuration**, not a finished product. See "Honest status".
 
-## Layout
+## Two operating modes
 
-```text
-~/.config/opencode/      ← copy these files here (global config)
-├── AGENTS.md            # global base: engineering standards every project inherits
-├── skills/              # on-demand skills
-├── agents/              # autopilot · coder · research · review · test · architect
-├── commands/            # /overnight /research /review /improve /investigate
-├── templates/
-│   ├── AGENTS_TEMPLATES/    # project scaffold (copy into a repo root)
-│   └── subagent-calls/      # research/review/test/coder/autopilot invocation templates
-├── scripts/             # validate_skills.js · verify.js (validators, run with node)
-├── opencode.json        # you must supply your own (gitignored, see below)
-└── README.md
-```
+### Autopilot (default) — Light loop for frontier models
+
+The `autopilot` agent uses a slimmed-down loop suitable for frontier models that can handle most work themselves:
+
+- Bootstrap → light repository discovery → direct implementation or single coder call → optional targeted review/test if needed → acceptance.
+- Frontier models internalise much of the research/review/test discipline; forcing the full pipeline on them wastes tokens and time.
+- External specialist agents are invoked only when escalation criteria are met (ambiguity, high-risk changes, or operator request).
+
+Use when: You want fast iteration with a frontier model that can handle most work internally.
+
+### /rigour — Full multi-stage quality pipeline
+
+The `/rigour` command activates the rigorous orchestration path for local models or high-stakes work where token usage is acceptable and code quality/integrity is paramount:
+
+- Research → decomposition → adversarial review → planning → implementation → review → test → sign-off.
+- Every task goes through all 9 stages of the rigour loop — no shortcuts.
+- External specialist agents (`research`, `review`, `test`) are invoked explicitly at each stage.
+
+Use when: You're using a local model, working on production code, or need maximum integrity and evidence.
+
+### Model Routing
+
+`opencode.json` declares an endpoint via `provider` plus a single `model`; **all agents inherit that one configured `model`**. There is no required cloud endpoint and no cloud/local split. The orchestrator runs specialists **sequentially** against the one endpoint — deliberate: no inference-session contention on bandwidth-limited hardware, and the workflow does not depend on any external model. The one supported override is an agent's own `model: <provider/model[#variant]>` frontmatter; there is no `execution_model` key. `opencode.json` is local-only (gitignored). Whatever you declare is what runs — the framework is deliberately agnostic to model choice, size, and vendor, as long as the declared `model` supports tool calls.
 
 ## Quick start
 
@@ -55,21 +65,21 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
 
 1. **Clone this repo into your global config:**
 
-   ```bash
-   git clone https://github.com/PearceTech335/open-code-skills.git ~/.config/opencode
-   cd ~/.config/opencode
-   ```
+    ```bash
+    git clone https://github.com/PearceTech335/open-code-skills.git ~/.config/opencode
+    cd ~/.config/opencode
+    ```
 
-   *Optional: sanity-check the install with `node scripts/verify.js` (config parses; referenced files resolve). It is not required to proceed.*
+    *Optional: sanity-check the install with `node scripts/verify.js` (config parses; referenced files resolve). It is not required to proceed.*
 
 2. **Scaffold a project for a long run:**
 
-   ```bash
-   cp -r ~/.config/opencode/templates/AGENTS_TEMPLATES/* ./my-project
-   cd my-project && cp MISSION.md MISSION.md   # fill in the mission brief
-   ```
+    ```bash
+    cp -r ~/.config/opencode/templates/AGENTS_TEMPLATES/* ./my-project
+    cd my-project && cp MISSION.md MISSION.md   # fill in the mission brief
+    ```
 
-   `MISSION.md` + `TASKS.md` (thin index; add one line per task) is all you edit by hand. Then open the project in OpenCode and switch to the **`autopilot`** agent, or run `/overnight <new goal>`. Autopilot works through the list: repo lookup → research → coder → review → test → fix loop → docs update → tick → next task.
+    `MISSION.md` + `TASKS.md` (thin index; add one line per task) is all you edit by hand. Then open the project in OpenCode and switch to the **`autopilot`** agent, or run `/rigour <new goal>` for maximum integrity. Autopilot uses a light loop suitable for frontier models that can handle most work themselves. The `/rigour` command activates the full multi-stage quality pipeline (research → decomposition → adversarial review → planning → implementation → review → test → sign-off) for every task — use when token usage is acceptable and code quality/integrity is paramount.
 
 ## How the two-layer model works
 
@@ -77,10 +87,6 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
 
 - `AGENTS.md` (this repo) — hard rules you cannot override per project: workflow, verification requirements, principles, STE-inspired documentation, Checkpoint Discipline, the QA order (`review → test → quality-gate`).
 - `AGENTS.md` (your project, from the scaffold) — the task machinery: mission, `TASKS.md`/`tasks/<id>.md` workflow, failure budget, Learning Loop, Skill Policy, memory layout. Customize **only** this header and `MISSION.md`; you do not need to fork global rules into it.
-
-## Model Routing
-
-`opencode.json` declares an endpoint via `provider` plus a single `model`; **all agents inherit that one configured `model`**. There is no required cloud endpoint and no cloud/local split. The orchestrator runs specialists **sequentially** against the one endpoint — deliberate: no inference-session contention on bandwidth-limited hardware, and the workflow does not depend on any external model. The one supported override is an agent's own `model: <provider/model[#variant]>` frontmatter; there is no `execution_model` key. `opencode.json` is local-only (gitignored). Whatever you declare is what runs — the framework is deliberately agnostic to model choice, size, and vendor, as long as the declared `model` supports tool calls.
 
 ## Design principles
 
@@ -90,7 +96,7 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
 - **Everything is instance state.** The framework persists state in files (`memory/`, `tasks/`), so any turn or resume works without the conversation history.
 - **The reviewer is not the author.** Adversarial agents check actual diffs (never summaries); no self-approval.
 
-## What’s inside
+## What's inside
 
 **Core:** `agent-core` (tool discipline + always-on requirements micro-checklist + the per-task skill-loading cap), `self-help`, `auto-memory`, `template-library`, `supervisor`, `long-running-task-research`, `research-method`, `git-practices`, `readme-authoring`, `ste-writing`.
 
@@ -98,9 +104,9 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
 
 **Language & domain:** `python-code`, `go-code`, `typescript-code`, `bash-skill`, `powershell-skill`, `ansible-code`, `security`, `penetration-tester`, `networking`, `ot-networking`, `packet-analysis`.
 
-**Agents:** `autopilot` (engineering orchestrator/QC; Mode A resume list / Mode B new goal merged as milestone), `coder`, `research`, `review`, `test`, `architect`.
+**Agents:** `autopilot` (engineering orchestrator/QC; light loop for frontier models), `autopilot-light` (slimmed-down front-end model orchestrator), `rigour` (full multi-stage quality pipeline), `coder`, `research`, `review`, `test`, `architect`.
 
-**Commands:** `/overnight`, `/research`, `/review`, `/improve`, `/investigate`.
+**Commands:** `/rigour` (maximum integrity mode), `/research`, `/review`, `/improve`, `/investigate`.
 
 **Static checks:** `node scripts/verify.js` (config + path references), `node scripts/validate_skills.js` (skill frontmatter/structure). No other CI exists in this repo.
 
@@ -120,4 +126,4 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
 
 ---
 
-*Fork it, adapt it, start a run. If your model survives one full `/overnight` cleanly, the experiment worked.*
+*Fork it, adapt it, start a run. If your model survives one full `/rigour` cleanly, the experiment worked.*
