@@ -1,85 +1,104 @@
 # <PROJECT_NAME> — Agent Instructions
 
-> This file layers **project-specific** rules on top of the GLOBAL agent config
-> (`~/.config/opencode/AGENTS.md` + global skills). It is a scaffold: **customize
-> only the header** (this block, the `<PROJECT_NAME>` line, and `## 1. Mission`)
-> and leave the rest aligned with the global config. Global rules still apply and
-> are NOT replaced here: Engineering Standards (workflow, principles,
-> verification, behaviour), the skill hierarchy, security/WebFetch policy,
-> language tool mapping, the Checkpoint Discipline, the
-> Documentation Style (STE-inspired) section, and the global Learning Loop
-> pointer. This file adds the project's workflow, knowledge layout, and the
-> self-improving Skill Policy — not global content.
+This file layers project-specific rules on top of the global agent config
+(~/.config/opencode/AGENTS.md + global skills). It is a scaffold: customize only
+the header block, the <PROJECT_NAME> line, and ## 1. Mission. Global rules still
+apply and are NOT replaced here.
 
 ## 1. Mission
 
-Read `MISSION.md` in this directory for the project mission brief (what this
-project is, and its priorities in order). It is kept separate so this file can
-be re-aligned with the global template without losing project context. Edit
-`MISSION.md` when the mission changes; edit this file when the workflow/rules
-change.
+Read MISSION.md in this directory for the project mission brief (what this project
+is, and its priorities in order). It is kept separate so this file can be re-aligned
+with the global template without losing project context. Edit MISSION.md when the
+mission changes; edit this file when the workflow/rules change.
 
-**Customization surface (the only project-specific parts):**
-- This header block and the `<PROJECT_NAME>` line.
-- The prose in `## 1. Mission` and any project-specific additions below it.
+Customization surface (the only project-specific parts):
+- This header block and the <PROJECT_NAME> line.
+- The prose in ## 1. Mission and any project-specific additions below it.
 - The STE opt-in declaration, if this project needs full ASD-STE100 conformance.
 
-Everything else stays aligned with the global config — do not fork global
-rules into this file.
+Everything else stays aligned with the global config — do not fork global rules
+into this file.
 
 Documentation style: the global config applies ASD-STE100-inspired principles
 to human-facing docs. A project that needs full ASD-STE100 conformance must
-declare it here or in `MISSION.md`, obtain the official standard (Issue 9,
-free at asd-ste100.org), and review against it — the global config never
-claims conformance.
+declare it here or in MISSION.md, obtain the official standard (Issue 9, free at
+asd-ste100.org), and review against it — the global config never claims conformance.
 
 ## 2. Mandatory Task Startup (Checklist)
 
-Before any work: `memory/PROJECT_INDEX.md` → `memory/CURRENT_STATE.md` → `TASKS.md` (thin index, one line per task: `<id> — <one-line> → tasks/<id>.md`).
-Each loop iteration, re-read `CURRENT_STATE.md` + `TASKS.md` (not `RESEARCH.md`, not conversation history) and advance the single unchecked item there.
-Every `TASKS.md` item links to a `tasks/<id>.md` **detail file** — the research agent writes the `## Research` section; the planner writes implementation notes, the attempt log, the review verdict and `Status:`. `review` and `test` are read-only; they return text and the planner appends it verbatim. The detail file is the single reviewable record for that task: when you need to review a ticked task, open only that file.
-Autopilot bootstrap (when the operator invokes the `autopilot` agent): **Mode A** — request refers to TASKS.md/continue/resume → do not create a new list; resume the first unchecked item and work through every unchecked root item. **Mode B** — new goal assigned → merge into the existing `TASKS.md` as a new milestone (never rewrite the list); create the detail files; run the full loop. Backlog items are untouched unless explicitly asked. Full loop lives in the global autopilot spec (`~/.config/opencode/agents/autopilot.md`) (§0).
-If index missing/stale: load `project-index` (and `repo-discovery` if needed), inspect, update/create index first.
+Before any work: memory/PROJECT_INDEX.md → memory/CURRENT_STATE.md → TASKS.md
+(thin index, one line per task: <id> — <one-line> → tasks/<id>.md).
+Each loop iteration, re-read CURRENT_STATE.md + TASKS.md (not RESEARCH.md, not
+conversation history) and advance the single unchecked item there.
+Every TASKS.md item links to a tasks/<id>.md detail file — the research agent
+writes the ## Research section; the planner writes implementation notes, the
+attempt log, the review verdict and Status:. review and test are read-only; they
+return text and the planner appends it verbatim. The detail file is the single
+reviewable record for that task: when you need to review a ticked task, open only
+that file.
+
+Autopilot bootstrap (when the operator invokes the autopilot agent):
+Mode A — request refers to TASKS.md/continue/resume → do not create a new list;
+resume the first unchecked item and work through every unchecked root item.
+Mode B — new goal assigned → merge into the existing TASKS.md as a new milestone
+(never rewrite the list); create the detail files; run the full loop. Backlog items
+are untouched unless explicitly asked. Full loop lives in the global autopilot spec
+(~/.config/opencode/agents/autopilot.md) (§0).
+If index missing/stale: load project-index (and repo-discovery if needed), inspect,
+update/create index first.
 
 For non-trivial tasks (consolidated flow):
-1. Inspect implementation / load `repo-discovery`.
+1. Inspect implementation / load repo-discovery.
 2. Set acceptance criteria.
 3. Identify affected modules + tests.
 4. Load language/domain skill; plan smallest coherent change.
-5. If the task touches >1 file, changes behaviour/API, or the planner is uncertain: invoke `--agent research` with `templates/subagent-calls/research.md` (structured prompt only). The research agent fills the task's `tasks/<id>.md` detail file (findings, references, testing criteria). Exempt: comment/format-only and single-line trivial changes.
-6. Implement (`coder` subagent or direct edit).
-7. Load `review` subagent (`templates/subagent-calls/review.md`) — adversarial PASS/FAIL (§7.7). The review agent is read-only; the planner appends its verdict to `tasks/<id>.md`. Only proceed when all 10 axes PASS.
+5. If the task touches >1 file, changes behaviour/API, or the planner is uncertain:
+   invoke --agent research with templates/subagent-calls/research.md (structured
+   prompt only). The research agent fills the task's tasks/<id>.md detail file
+   (findings, references, testing criteria). Exempt: comment/format-only and
+   single-line trivial changes.
+6. Implement (coder subagent or direct edit).
+7. Load review subagent (templates/subagent-calls/review.md) — adversarial
+   PASS/FAIL (§7.7). The review agent is read-only; the planner appends its verdict
+   to tasks/<id>.md. Only proceed when all 10 axes PASS.
 8a. Verify (planner): syntax → static analysis → diff review (with observed output).
-8b. Invoke `--agent test` (`templates/subagent-calls/test.md`) — targeted → regression → broader suite, explicit timeouts, PASS/FAIL with evidence. Only proceed past this step on test PASS; failures return to implementer/`review` for classification. The test agent is read-only; the planner appends results to `tasks/<id>.md`.
-8c. Load `quality-gate` as the final pass — fix or record any issues. Only the planner reports done at this point.
-9. Record in `CURRENT_STATE.md`; set `tasks/<id>.md` `Status:` to `DONE` (all criteria checked, evidence in file); tick in `TASKS.md`.
+8b. Invoke --agent test (templates/subagent-calls/test.md) — targeted → regression
+   → broader suite, explicit timeouts, PASS/FAIL with evidence. Only proceed past
+   this step on test PASS; failures return to implementer/review for classification.
+   The test agent is read-only; the planner appends results to tasks/<id>.md.
+8c. Load quality-gate as the final pass — fix or record any issues. Only the
+   planner reports done at this point.
+9. Record in CURRENT_STATE.md; set tasks/<id>.md Status: to DONE (all criteria
+   checked, evidence in file); tick in TASKS.md.
 10. GIT commit only after steps 7, 8b and 8c pass. Never commit before review/test/quality-gate pass.
 
 Never claim a test passed without observed output.
 
 ## 2.1 Architectural Escalation — Architect Sub-Agent
 
-`agent-core` invokes the `architect` sub-agent when a task introduces or exposes significant architectural complexity.
+agent-core invokes the architect sub-agent when a task introduces or exposes
+significant architectural complexity.
 
-**Invocation triggers:**
+Invocation triggers:
 - New projects or projects without architecture documentation.
 - Unclear component responsibilities or module dependencies.
 - Introduction of major components.
 - Database schema redesigns or significant API changes.
 - Refactoring across multiple modules.
 
-**Do not invoke for:**
+Do not invoke for:
 - Simple bug fixes or isolated function updates.
 - Small utilities.
 - Comment or formatting changes.
 
-**Responsibilities:**
+Responsibilities:
 - Initial architecture design and discovery.
 - Component responsibilities and dependency mapping.
 - Architecture documentation and change management.
 - Architectural governance and integrity.
 
-**Boundaries:**
+Boundaries:
 - Do not implement routine features.
 - Do not modify production code without explicit delegation.
 - Do not invent undocumented functionality.
@@ -87,86 +106,150 @@ Never claim a test passed without observed output.
 - Evaluate dependencies before introducing them.
 - Avoid unnecessary documentation regeneration.
 
-Architecture decisions must be reflected in `ARCHITECTURE.md` and significant design decisions recorded in `DECISIONS.md`.
+Architecture decisions must be reflected in ARCHITECTURE.md and significant
+design decisions recorded in DECISIONS.md.
 
-Manual invocation is unnecessary when `agent-core` identifies a defined trigger.
+Manual invocation is unnecessary when agent-core identifies a defined trigger.
 
 ## 3. Task Execution
 
 Consolidated in §2 checklist above. Key rules only:
-- Concurrent edit guard: never edit a file another agent is writing; verify file state before edit (`read` last 5 lines before `edit`).
-- Stop-and-ask: label `PRELIMINARY` and stop on unverified assumptions.
+- Concurrent edit guard: never edit a file another agent is writing; verify file
+  state before edit (read last 5 lines before edit).
+- Stop-and-ask: label PRELIMINARY and stop on unverified assumptions.
 - Failure budget: see §3.5.
 
-When a failure survives a second correction attempt on a knowledge gap: load `self-help`, pass `LEARNING_BRIEF`. After skill approval (§6), retry against ORIGINAL criteria; do not weaken.
+When a failure survives a second correction attempt on a knowledge gap: load
+self-help, pass LEARNING_BRIEF. After skill approval (§6), retry against ORIGINAL
+criteria; do not weaken.
 
 ## 3.5 Failure Budget & Root-Cause Gate
 
 Before ticking any sub-subtask complete:
-1. Load `review` subagent (`--agent review`) with `templates/subagent-calls/review.md`.
-2. The `review` agent performs adversarial review using the structured PASS/FAIL checklist (§7.7) — 10 axes with one-line verdicts per axis.
-3. If any axis fails: do NOT tick. The review agent returns the analysis; the planner appends it to the task's `tasks/<id>.md` detail file (line refs, evidence, severity) and, for session-wide tracking, to `RESEARCH.md`. Fix or split further, then retry.
+1. Load review subagent (--agent review) with templates/subagent-calls/review.md.
+2. The review agent performs adversarial review using the structured PASS/FAIL
+   checklist (§7.7) — 10 axes with one-line verdicts per axis.
+3. If any axis fails: do NOT tick. The review agent returns the analysis; the
+   planner appends it to the task's tasks/<id>.md detail file (line refs, evidence,
+   severity) and, for session-wide tracking, to RESEARCH.md. Fix or split further,
+   then retry.
 4. Only tick when all 10 axes pass AND verification commands ran with observed output.
-5. This applies to ALL sub-subtasks, not just the final milestone — overnight runs must not silently accumulate errors.
-6. After `review` PASS (steps 1–3) and verification evidence (step 4): invoke `--agent test` (targeted → regression) — require test PASS. Then load `quality-gate` as the final pass before any tick.
-7. Load `supervisor` skill (multi-subtask/overnight runs only, per `skills/supervisor/SKILL.md`): tick only on `CONTINUE`/`STOP-SUCCESS`. `REPLAN` → planner edits the affected `TASKS.md` section only, then re-runs supervisor; do not tick. `ESCALATE`/`STOP-FAILURE` → write blocker note + evidence, do not tick, stop (in autopilot/overnight runs `ESCALATE` instead records the blocker and moves to the next item — no human wait; stop only on hard blockers, per `skills/supervisor/SKILL.md` Unattended Mode). Supervisor appends its heartbeat to `PROGRESS.md` (never `metrics.jsonl`).
+5. This applies to ALL sub-subtasks, not just the final milestone — overnight runs
+   must not silently accumulate errors.
+6. After review PASS (steps 1–3) and verification evidence (step 4): invoke --agent
+   test (targeted → regression) — require test PASS. Then load quality-gate as the
+   final pass before any tick.
+7. Load supervisor skill (multi-subtask/overnight runs only, per skills/supervisor/SKILL.md):
+   tick only on CONTINUE/STOP-SUCCESS. REPLAN → planner edits the affected
+   TASKS.md section only, then re-runs supervisor; do not tick. ESCALATE/STOP-FAILURE
+   → write blocker note + evidence, do not tick, stop (in autopilot/overnight runs
+   ESCALATE instead records the blocker and moves to the next item — no human wait;
+   stop only on hard blockers, per skills/supervisor/SKILL.md Unattended Mode).
+   Supervisor appends its heartbeat to PROGRESS.md (never metrics.jsonl).
 
-The planner never approves its own work unverified — an adversarial subagent verifies each step.
+The planner never approves its own work unverified — an adversarial subagent
+verifies each step.
 
-Every sub-subtask earns its own file, not an append-only global log: write attempts to `memory/learning/tasks/<task-id>-attempts.jsonl` (one line per try). When the sub-subtask resolves (success, final failure, or workaround adopted), append **one** summary line to `memory/learning/metrics.jsonl` — then delete `<task-id>-attempts.jsonl`. Never leave per-task tracking files after resolution; never grow `metrics.jsonl` beyond one line per sub-subtask.
+Every sub-subtask earns its own file, not an append-only global log: write
+attempts to memory/learning/tasks/<task-id>-attempts.jsonl (one line per try).
+When the sub-subtask resolves (success, final failure, or workaround adopted),
+append one summary line to memory/learning/metrics.jsonl — then delete
+<task-id>-attempts.jsonl. Never leave per-task tracking files after resolution;
+never grow metrics.jsonl beyond one line per sub-subtask.
 
-`{"timestamp":"...","task_id":"m1-t1","subtask":"st1-edit-eval","attempt":1,"status":"fail","reason":"oldString mismatch on evaluation.py"}`
+{"timestamp":"...","task_id":"m1-t1","subtask":"st1-edit-eval","attempt":1,
+ "status":"fail","reason":"oldString mismatch on evaluation.py"}
 
 Rules:
-- Write each attempt line to `memory/learning/tasks/<task-id>-attempts.jsonl` (not a global file).
-- **Attempt 1 (fail)**: retry with a different approach — inspect file bytes exactly (`read`), verify whitespace/indentation, confirm exact oldString.
-- **Attempt 2 (fail)**: load `review` or `research` subagent to diagnose root cause. Write diagnosis to `memory/learning/briefs/<task-id>-attempt2.md`. Classify: if root cause is a tool/execution failure (e.g., edit oldString mismatch, exact-match requirement, environment) → stay local; do not emit `LEARNING_BRIEF` or load global `self-help`. Only if the root cause is a recurring structural knowledge gap (`ALGORITHM_UNDERSTANDING_GAP`, `API_OR_LIBRARY_MISUSE`, `DATA_OR_SCHEMA_CONVENTION_GAP`, etc.) emit a `LEARNING_BRIEF` block for §5. Do NOT retry blindly.
-- **Attempt 3 (fail)**: stop retrying this sub-subtask. Write proposed workaround to `memory/CURRENT_STATE.md`, load the autopilot agent (§0 Mode A: work the existing list) or split further in `TASKS.md`. Then summarize one line (`{task_id,subtask,attempts,status,root_cause,workaround}`) to `memory/learning/metrics.jsonl` and delete `memory/learning/tasks/<task-id>-attempts.jsonl`.
-- **Breakdown format**: `TASKS.md` uses IDs (`mN-tN-stN-ssN`) so each sub-subtask can have its own `memory/learning/tasks/<id>-attempts.jsonl`; never share a budget across unrelated subtasks.
+- Write each attempt line to memory/learning/tasks/<task-id>-attempts.jsonl (not
+  a global file).
+- Attempt 1 (fail): retry with a different approach — inspect file bytes exactly
+  (read), verify whitespace/indentation, confirm exact oldString.
+- Attempt 2 (fail): load review or research subagent to diagnose root cause.
+  Write diagnosis to memory/learning/briefs/<task-id>-attempt2.md. Classify: if
+  root cause is a tool/execution failure (e.g., edit oldString mismatch, exact-match
+  requirement, environment) → stay local; do not emit LEARNING_BRIEF or load global
+  self-help. Only if the root cause is a recurring structural knowledge gap
+  (ALGORITHM_UNDERSTANDING_GAP, API_OR_LIBRARY_MISUSE, DATA_OR_SCHEMA_CONVENTION_GAP,
+  etc.) emit a LEARNING_BRIEF block for §5. Do NOT retry blindly.
+- Attempt 3 (fail): stop retrying this sub-subtask. Write proposed workaround to
+  memory/CURRENT_STATE.md, load the autopilot agent (§0 Mode A: work the existing
+  list) or split further in TASKS.md. Then summarize one line
+  ({task_id,subtask,attempts,status,root_cause,workaround}) to
+  memory/learning/metrics.jsonl and delete memory/learning/tasks/<task-id>
+  -attempts.jsonl.
+- Breakdown format: TASKS.md uses IDs (mN-tN-stN-ssN) so each sub-subtask can have
+  its own memory/learning/tasks/<id>-attempts.jsonl; never share a budget across
+  unrelated subtasks.
 
-Example (your evaluation.py failure): attempt 1 failed due to context mismatch; attempt 2 should read the exact block from the file, confirm indentation; attempt 3 triggers `review` → RCA = "edit tool requires exact match" → workaround = construct exact string from `read` output, edit once; if that also fails, split into sub-subtask (`read` verification → `edit` application → `test`) rather than repeating the same edit attempt.
+Example (your evaluation.py failure): attempt 1 failed due to context mismatch;
+attempt 2 should read the exact block from the file, confirm indentation; attempt
+3 triggers review → RCA = "edit tool requires exact match" → workaround = construct
+exact string from read output, edit once; if that also fails, split into
+sub-subtask (read verification → edit application → test) rather than repeating
+the same edit attempt.
 
 Never retry the same action unchanged after a failure.
 
 ## 3.6 Subagent Invocation Templates
 
-When invoking a subagent, use the corresponding template from `templates/subagent-calls/`:
-- `templates/subagent-calls/research.md` — for investigation/discovery/decision-research tasks (invoke: `--agent research`)
-- `templates/subagent-calls/review.md` — for code review tasks (invoke: `--agent review`)
-- `templates/subagent-calls/test.md` — for QA testing tasks (invoke: `--agent test`)
-- `templates/subagent-calls/coder.md` — for code generation tasks (invoke: `--agent coder`)
-- `templates/subagent-calls/autopilot.md` — quality-control loop: bootstrap (Mode A resume existing TASKS.md / Mode B merge new goal as new milestone), research ? coder ? review ? test ? fix loop ? docs update, until all root tasks complete (invoke: `--agent autopilot`)
+When invoking a subagent, use the corresponding template from
+templates/subagent-calls/:
+- templates/subagent-calls/research.md — for investigation/discovery/decision-research
+  tasks (invoke: --agent research)
+- templates/subagent-calls/review.md — for code review tasks (invoke: --agent review)
+- templates/subagent-calls/test.md — for QA testing tasks (invoke: --agent test)
+- templates/subagent-calls/coder.md — for code generation tasks (invoke: --agent coder)
+- templates/subagent-calls/autopilot.md — quality-control loop: bootstrap (Mode A
+  resume existing TASKS.md / Mode B merge new goal as new milestone), research ? coder
+  ? review ? test ? fix loop ? docs update, until all root tasks complete (invoke:
+  --agent autopilot)
 
-Fill in the bracketed sections. If no template exists for the task type, create one via the self-help process (§7.5) before invoking the subagent. Templates ensure a structured, complete prompt rather than an ad-hoc one.
+Fill in the bracketed sections. If no template exists for the task type, create one
+via the self-help process (§7.5) before invoking the subagent. Templates ensure a
+structured, complete prompt rather than an ad-hoc one.
 
 ## 3.7 Model Routing
 
-- `opencode.json` declares a single `model`; all agents inherit it. An agent that needs a different model sets `model: <provider/model>` in its own frontmatter — that is the only supported per-agent mechanism.
-- If the deployment does split planner and execution endpoints, declare the split explicitly in `opencode.json` and state it in the project mission/README; do not rely on undocumented keys.
-- `execution_model` is not a supported agent field; do not use it.
-- Subagents cannot delegate further (`subagent_depth: 1`); they report capability gaps to the planner.
+- opencode.json declares a single model; all agents inherit it. An agent that needs
+  a different model sets model: <provider/model> in its own frontmatter — that is the
+  only supported per-agent mechanism.
+- If the deployment does split planner and execution endpoints, declare the split
+  explicitly in opencode.json and state it in the project mission/README; do not rely
+  on undocumented keys.
+- execution_model is not a supported agent field; do not use it.
+- Subagents cannot delegate further (subagent_depth: 1); they report capability gaps
+  to the planner.
 
 ## 3.8 Planner Verification of Subagent Output
 
-When a subagent returns a report, the planner MUST verify key claims before using them:
+When a subagent returns a report, the planner MUST verify key claims before using
+them:
 
-1. **Mandatory answer check**: Did the subagent state the direct answer to the mission question? If not, reject and re-prompt.
-2. **Evidence check**: For every factual claim (line numbers, counts, file paths), verify with at least one independent command or file read. Do not trust the subagent's claims blindly.
-3. **No empty sections**: Every section in the required output structure must contain content. Reject reports with blank sections.
-4. **Cross-check**: Confirm key findings with at least two independent sources before using them in planning.
+1. Mandatory answer check: Did the subagent state the direct answer to the mission
+   question? If not, reject and re-prompt.
+2. Evidence check: For every factual claim (line numbers, counts, file paths), verify
+   with at least one independent command or file read. Do not trust the subagent's
+   claims blindly.
+3. No empty sections: Every section in the required output structure must contain
+   content. Reject reports with blank sections.
+4. Cross-check: Confirm key findings with at least two independent sources before
+   using them in planning.
 
-This rule exists because small models produce reports that "have the shape of an answer" but may contain unverified or hallucinated specifics. The planner is the quality gate.
+This rule exists because small models produce reports that "have the shape of an
+answer" but may contain unverified or hallucinated specifics. The planner is the
+quality gate.
 
-Persistent project knowledge lives in `memory/`.
+Persistent project knowledge lives in memory/.
 
-- `PROJECT_INDEX.md`: repository map and navigation.
-- `CURRENT_STATE.md`: active milestone, task, and next actions.
-- `ARCHITECTURE.md`: verified system architecture and data flow.
-- `DECISIONS.md`: important design decisions and rationale.
-- `KNOWN_ISSUES.md`: unresolved defects, limitations, and risks.
-- `milestones/`: milestone-specific implementation and verification records.
-- `learning/briefs/`: Learning Briefs emitted by the `review` agent (§5).
-- `learning/metrics.jsonl`: one JSON line per completed learning cycle.
+- PROJECT_INDEX.md: repository map and navigation.
+- CURRENT_STATE.md: active milestone, task, and next actions.
+- ARCHITECTURE.md: verified system architecture and data flow.
+- DECISIONS.md: important design decisions and rationale.
+- KNOWN_ISSUES.md: unresolved defects, limitations, and risks.
+- milestones/: milestone-specific implementation and verification records.
+- learning/briefs/: Learning Briefs emitted by the review agent (§5).
+- learning/metrics.jsonl: one JSON line per completed learning cycle.
 
 Read only the files relevant to the current task.
 
@@ -179,57 +262,65 @@ Do not record assumptions as facts.
 
 When the operator gives a vague or broad prompt:
 
-**Step A (Scan)**: Load `repo-discovery`, list top 5 relevant areas/files. Output sub-questions only — no full report.
-**Step B (Decompose)**: Break findings into max 3 specific, answerable questions. Each must map to one file read or command.
+Step A (Scan): Load repo-discovery, list top 5 relevant areas/files. Output
+sub-questions only — no full report.
+Step B (Decompose): Break findings into max 3 specific, answerable questions. Each
+must map to one file read or command.
 
-Only proceed after Step B. For each sub-question: invoke `--agent research` with `templates/subagent-calls/research.md`. Planner synthesizes all results (not sub-researchers). The research agent elaborates the matching `tasks/<id>.md` detail file, not a chat response.
+Only proceed after Step B. For each sub-question: invoke --agent research with
+templates/subagent-calls/research.md. Planner synthesizes all results (not
+sub-researchers). The research agent elaborates the matching tasks/<id>.md detail
+file, not a chat response.
 
 ## 5. Learning Loop (self-improving)
 
-When the `review` subagent returns a `LEARNING_BRIEF` block after a failure
-has survived a second correction attempt on a knowledge-gap failure:
+When the review subagent returns a LEARNING_BRIEF block after a failure has
+survived a second correction attempt on a knowledge-gap failure:
 
 1. Do NOT edit code to retry blindly.
-2. Write the returned `LEARNING_BRIEF` block to
-   `memory/learning/briefs/<task-id>.md`. Template: the global `self-help`
-   skill at `~/.config/opencode/skills/self-help/templates/learning-brief.md`.
-3. Load the `self-help` skill and pass it the Brief path. self-help researches
-   the gap, drafts a Power-of-10 skill, and clears the Learning Gate
-   (evidence, relevance, correctness, scope, executable check).
-4. Approval: if §6 Skill Policy declares `auto-approve: project-skills`, the
-   skill activates as `auto-approved-provisional`; otherwise self-help pauses
-   for human approval.
+2. Write the returned LEARNING_BRIEF block to memory/learning/briefs/<task-id>.md.
+   Template: the global self-help skill at ~/.config/opencode/skills/self-help/templates/learning-brief.md.
+3. Load the self-help skill and pass it the Brief path. self-help researches the
+   gap, drafts a Power-of-10 skill, and clears the Learning Gate (evidence, relevance,
+   correctness, scope, executable check).
+4. Approval: if §6 Skill Policy declares auto-approve: project-skills, the skill
+   activates as auto-approved-provisional; otherwise self-help pauses for human
+   approval.
 5. Retry once against the ORIGINAL acceptance criteria.
 6. Run the FULL regression suite (not just the failing test).
-7. Append one JSON line to `memory/learning/metrics.jsonl`.
+7. Append one JSON line to memory/learning/metrics.jsonl.
 
-Never generate a skill for a trivial `IMPLEMENTATION_DEFECT`. Never weaken the
+Never generate a skill for a trivial IMPLEMENTATION_DEFECT. Never weaken the
 original acceptance criteria to make a retry pass.
 
 ## 6. Skill Policy
 
 Controls whether new project skills need human approval before activating.
 
-    auto-approve: off
-    max-new-skills-per-run: 3
+auto-approve: off
+max-new-skills-per-run: 3
 
-- `auto-approve: off` — all new skills pause for human approval (the Learning Gate still runs on every skill). Set to `project-skills` to skip the human pause for PROJECT-scoped skills only (global promotion always requires review). The Learning Gate still runs on every skill. The starter ships fail-closed; enabling auto-approve is an explicit, reviewable decision.
-- `max-new-skills-per-run` — cap per autonomous run; when exceeded, stop and
-  escalate rather than generating more.
-- Every auto-approved skill is PROVISIONAL (`Status: auto-approved-provisional`)
-  until reviewed. Audit them in `.opencode/skills/` and `metrics.jsonl`.
-  `auto-approve` applies to project skills only; global promotion always
-  requires review, and unattended runs still require a post-run audit of
-  provisional skills.
+- auto-approve: off — all new skills pause for human approval (the Learning Gate
+  still runs on every skill). Set to project-skills to skip the human pause for
+  PROJECT-scoped skills only (global promotion always requires review). The Learning
+  Gate still runs on every skill. The starter ships fail-closed; enabling auto-approve
+  is an explicit, reviewable decision.
+- max-new-skills-per-run — cap per autonomous run; when exceeded, stop and escalate
+  rather than generating more.
+- Every auto-approved skill is PROVISIONAL (Status: auto-approved-provisional)
+  until reviewed. Audit them in .opencode/skills/ and metrics.jsonl.
+  auto-apply applies to project skills only; global promotion always requires review,
+  and unattended runs still require a post-run audit of provisional skills.
 
 ## 7. Skill Management
 
-Project skills live in `.opencode/skills/`. Global skills provide reusable engineering practices (see global AGENTS.md).
+Project skills live in .opencode/skills/. Global skills provide reusable engineering
+practices (see global AGENTS.md).
 
 Before creating a new skill:
 1. Check whether an existing skill already covers the problem.
 2. Determine whether the gap is recurring and project-specific.
-3. If project-specific, draft the skill under `.opencode/skills/`.
+3. If project-specific, draft the skill under .opencode/skills/.
 4. If broadly reusable, propose it for the global skills repository.
 5. Validate the new skill's instructions and frontmatter.
 6. Apply §6 Skill Policy for approval (human gate, or auto-approve).
@@ -240,36 +331,46 @@ Do not automatically promote project-specific knowledge to global skills.
 
 ## 7.5 Template Management
 
-Structured output templates live in `skills/self-help/templates/` (global) and `.opencode/templates/` (project).
+Structured output templates live in skills/self-help/templates/ (global) and
+.opencode/templates/ (project).
 
-Before producing structured output (learning brief, skill draft, task breakdown, review report):
-1. Check `templates/` for an existing template matching the output type.
+Before producing structured output (learning brief, skill draft, task breakdown,
+review report):
+1. Check templates/ for an existing template matching the output type.
 2. If a template exists, use it — do not invent a new structure.
-3. If no template exists, load `self-help` to research the output format, draft a minimal template, and place it in `templates/` for future use. This is a one-time effort — subsequent tasks reuse the template.
-4. Templates are versioned with the project. Update them when the output format changes.
+3. If no template exists, load self-help to research the output format, draft a
+   minimal template, and place it in templates/ for future use. This is a one-time
+   effort — subsequent tasks reuse the template.
+4. Templates are versioned with the project. Update them when the output format
+   changes.
 
 ## 7.6 Self-Help Two-Phase Split (quality-preserving)
 
-When a knowledge-gap failure triggers `self-help` (§5), split the pipeline into two phases:
+When a knowledge-gap failure triggers self-help (§5), split the pipeline into two
+phases:
 
-**Phase A — Research + Draft (planner):**
-1. Load `self-help` and read the Learning Brief.
-2. Research: websearch → cross-check (≥2 sources) → adversarial critique → reproducible example.
-3. Draft the skill using `~/.config/opencode/skills/self-help/templates/skill-template.md` (global template; see §7.5).
+Phase A — Research + Draft (planner):
+1. Load self-help and read the Learning Brief.
+2. Research: websearch → cross-check (≥2 sources) → adversarial critique → reproducible
+   example.
+3. Draft the skill using ~/.config/opencode/skills/self-help/templates/skill-template.md
+   (global template; see §7.5).
 4. Output: draft skill + sources + evidence labels.
 
-**Phase B — Learning Gate (review):**
+Phase B — Learning Gate (review):
 1. Validate all 5 checks (evidence, relevance, correctness, scope, executable check).
 2. Approve or reject with one-line reason per check.
-3. If approved → activate as `auto-approved-provisional` (per §6). If rejected → return to Phase A with specific feedback.
+3. If approved → activate as auto-approved-provisional (per §6). If rejected → return
+   to Phase A with specific feedback.
 
-Quality is preserved: same research depth, same Learning Gate. The split just moves heavy reasoning to the planner and verification to the `review` agent.
+Quality is preserved: same research depth, same Learning Gate. The split just moves
+heavy reasoning to the planner and verification to the review agent.
 
 ## 7.7 Reviewer Checklist Format
 
-Use a structured pass/fail checklist instead of open-ended prose. For each axis, commit to a verdict and one-line reason:
+Use a structured pass/fail checklist instead of open-ended prose. For each axis,
+commit to a verdict and one-line reason:
 
-```
 1. Correctness:     PASS/FAIL — <one-line reason>
 2. Error handling:  PASS/FAIL — <one-line reason>
 3. Edge cases:      PASS/FAIL — <one-line reason>
@@ -280,7 +381,6 @@ Use a structured pass/fail checklist instead of open-ended prose. For each axis,
 8. Tests:           PASS/FAIL — <one-line reason>
 9. Complexity:      PASS/FAIL — <one-line reason>
 10. Assumptions:    PASS/FAIL — <one-line reason>
-```
 
 This forces a verdict per axis rather than prose that may miss issues.
 
@@ -288,47 +388,58 @@ This forces a verdict per axis rather than prose that may miss issues.
 
 Research each task in depth before implementing:
 
-1. Read `memory/PROJECT_INDEX.md` first — never start coding without the index (canonical location; fall back to a root `PROJECT_INDEX.md` only for legacy projects).
-2. Break the task into sub-tasks in `TASKS.md` using IDs (`mN-tN-stN-ssN`) — one line per task, links to `tasks/<id>.md`.
-3. Each sub-task gets its own `tasks/<id>.md` detail file (research fills it: Goal, scope, findings, references, testing criteria) and its own `memory/learning/tasks/<id>-attempts.jsonl`.
-4. If a sub-task is still too complex (e.g., requires >3 files or >1 hour), break it further into sub-sub-tasks.
-5. Never implement a task that hasn't been decomposed. If you can't decompose it, load `repo-discovery` first.
+1. Read memory/PROJECT_INDEX.md first — never start coding without the index
+   (canonical location; fall back to a root PROJECT_INDEX.md only for legacy projects).
+2. Break the task into sub-tasks in TASKS.md using IDs (mN-tN-stN-ssN) — one line
+   per task, links to tasks/<id>.md.
+3. Each sub-task gets its own tasks/<id>.md detail file (research fills it: Goal,
+   scope, findings, references, testing criteria) and its own
+   memory/learning/tasks/<id>-attempts.jsonl.
+4. If a sub-task is still too complex (e.g., requires >3 files or >1 hour), break
+   it further into sub-sub-tasks.
+5. Never implement a task that hasn't been decomposed. If you can't decompose it,
+   load repo-discovery first.
 
-This is already partially implemented via `TASKS.md` IDs and §3.5 failure budget. The rule above makes it explicit.
+This is already partially implemented via TASKS.md IDs and §3.5 failure budget. The
+rule above makes it explicit.
 
 ## 7.9 Compact Learning Brief (Mandatory Format)
 
-When `review` returns `LEARNING_BRIEF` (failure survived 2 attempts):
+When review returns LEARNING_BRIEF (failure survived 2 attempts):
 
-```
 LEARNING_BRIEF (compact — 4 fields)
 task_id: <id>
 root_cause: <classification>
 evidence: <one-line>
 learning_objective: <one sentence>
-```
 
 Rules:
-- Planner writes this file to `memory/learning/briefs/<task-id>.md`.
-- Never generate a skill for a trivial `IMPLEMENTATION_DEFECT`.
+- Planner writes this file to memory/learning/briefs/<task-id>.md.
+- Never generate a skill for a trivial IMPLEMENTATION_DEFECT.
 - Never weaken original acceptance criteria for retry.
 
-Full 8-field expansion only when `self-help` requires it (§5).
+Full 8-field expansion only when self-help requires it (§5).
 
 ## 8. Evidence and Correctness
 
-**Verification Standard** (applies to all observations and subagent claims):
-- Every claim labeled `VERIFIED` must cite an independent source (command output, file read, grep result).
-- Every claim labeled `PRELIMINARY` must state the limitation that prevents verification.
-- Never label a claim `VERIFIED` without an attached reference.
+Verification Standard (applies to all observations and subagent claims):
+- Every claim labeled VERIFIED must cite an independent source (command output, file
+  read, grep result).
+- Every claim labeled PRELIMINARY must state the limitation that prevents verification.
+- Never label a claim VERIFIED without an attached reference.
 
-Global Engineering Standards (verification, principles, behaviour) apply. This section adds project-specific evidence rules:
+Global Engineering Standards (verification, principles, behaviour) apply. This
+section adds project-specific evidence rules:
 
-- Distinguish between verified facts, reasonable hypotheses, unverified assumptions, and known limitations.
+- Distinguish between verified facts, reasonable hypotheses, unverified assumptions,
+  and known limitations.
 - Prefer repository evidence and reproducible experiments over memory.
-- When code behaviour is unclear, inspect the implementation and construct a test that distinguishes competing explanations.
-- Keep evidence cited in a report in-context; spill only raw tool output (not derived findings with line refs) to `RESEARCH.md` and cite the spill path.
-- If applicable to this project (e.g. ML/data work), investigate temporal leakage, data leakage, incorrect labels, invalid evaluation splits, and inappropriate baselines.
+- When code behaviour is unclear, inspect the implementation and construct a test
+  that distinguishes competing explanations.
+- Keep evidence cited in a report in-context; spill only raw tool output (not derived
+  findings with line refs) to RESEARCH.md and cite the spill path.
+- If applicable to this project (e.g. ML/data work), investigate temporal leakage,
+  data leakage, incorrect labels, invalid evaluation splits, and inappropriate baselines.
 
 ## 9. Completion
 
@@ -340,5 +451,6 @@ A task is complete only when:
 - The diff has been reviewed.
 - Required project documentation is updated.
 - Remaining risks and limitations are recorded.
-- `TASKS.md` reflects the actual task status (index only).
-- The task's `tasks/<id>.md` detail file is complete (Status: DONE, research/attempts/testing/review verdict filled) — it is the record a reviewer opens.
+- TASKS.md reflects the actual task status (index only).
+- The task's tasks/<id>.md detail file is complete (Status: DONE, research/attempts/testing/review
+  verdict filled) — it is the record a reviewer opens.
