@@ -53,10 +53,10 @@ This command activates the rigorous multi-stage orchestration path for maximum i
 
 ## Notes
 
-- This command still uses `agent: autopilot` as the orchestrator — no separate agent needed.
-- Mode flags are injected into the orchestration loop via system prompt modifications.
+- This command uses the dedicated `rigour` agent (`agents/rigour.md`) which enforces the full 9-stage quality pipeline for every task.
 - The same specialist agents (`coder`, `research`, `review`, `test`) are reused.
 - State files (`TASKS.md`, `tasks/`, `CURRENT_STATE.md`) are shared between modes.
+- The `autopilot` agent defaults to the light loop (for frontier models); use `/rigour` for maximum integrity.
 
 ## Example usage
 

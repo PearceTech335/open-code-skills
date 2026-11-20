@@ -103,7 +103,8 @@ When invoking a subagent, use the corresponding template from templates/subagent
 - research.md -- investigation/discovery/decision research (unified template: evidence-first, adversarial review, references)
 - review.md -- code review tasks
 - coder.md -- code generation tasks
-- autopilot.md -- quality-control loop (resume existing TASKS.md or merge new goal as milestone; pick task → repo lookup → research → coder → review → test → bounded fix loop → docs update → tick → next)
+- autopilot.md -- lightweight orchestrator for frontier models (bootstrap, light discovery, direct implementation, optional review/test, acceptance, tick)
+- rigour.md -- rigorous multi-stage quality pipeline (research -> decomposition -> adversarial review -> planning -> implementation -> review -> test -> sign-off)
 
 Fill in the bracketed sections. If no template exists, create one via self-help (section 7.5) before invoking.
 Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
@@ -131,6 +132,6 @@ This ensures each researcher call is focused and verifiable, rather than one mas
 - --agent research: loads agents/research.md (fast file parser, discovery)
 - --agent review: loads agents/review.md (adversarial review, LEARNING_BRIEF emitter)
 - --agent coder: loads agents/coder.md (code generation subagent)
-- --agent autopilot: loads agents/autopilot.md (quality-control loop: bootstrap (Mode A/B), repo lookup, research with blockers, coder implementation, review, test, fix loop, docs update, tick to completion — used as a primary agent via the agent switch, not a subagent)
+- --agent autopilot: loads agents/autopilot.md (lightweight orchestrator for frontier models: bootstrap, light discovery, direct implementation, optional review/test, acceptance, tick - used as a primary agent via the agent switch, not a subagent)
 - network-engineer: load skill `skills/network-engineer/SKILL.md` (OT/network troubleshooting). Prefer subagents only when escalation needs investigation orchestration; otherwise use the skill to conserve slots.
 The template file (templates/subagent-calls/) provides the structured prompt; the agent spec (agents/) provides the role definition. Both must match.

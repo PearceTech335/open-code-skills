@@ -104,7 +104,7 @@ Use when: You're using a local model, working on production code, or need maximu
 
 **Language & domain:** `python-code`, `go-code`, `typescript-code`, `bash-skill`, `powershell-skill`, `ansible-code`, `security`, `penetration-tester`, `networking`, `ot-networking`, `packet-analysis`.
 
-**Agents:** `autopilot` (engineering orchestrator/QC; light loop for frontier models), `autopilot-light` (slimmed-down front-end model orchestrator), `rigour` (full multi-stage quality pipeline), `coder`, `research`, `review`, `test`, `architect`.
+**Agents:** `autopilot` (lightweight orchestrator for frontier models), `rigour` (full multi-stage quality pipeline for local models/high-stakes), `coder`, `research`, `review`, `test`, `architect`.
 
 **Commands:** `/rigour` (maximum integrity mode), `/research`, `/review`, `/improve`, `/investigate`.
 

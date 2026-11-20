@@ -1,8 +1,9 @@
 # Autopilot Invocation Template (Engineering Orchestrator)
 
-Use when switching to the `autopilot` agent. It runs the full
-select → discover → research → plan → implement → review → test → correct →
-document → accept loop, one root task at a time. Fill in the bracketed sections.
+Use when switching to the `autopilot` agent (light loop) or the `rigour` agent
+(full pipeline). The `autopilot` agent runs a slimmed-down loop suitable for
+frontier models. The `rigour` agent enforces the full 9-stage quality pipeline
+for every task. Fill in the bracketed sections.
 
 ## MISSION
 [The operator's goal: either work the existing `TASKS.md` list to completion,
