@@ -18,11 +18,11 @@ Load when creating or revising a README.md (repository root, `.github`, `docs/`,
 2. **Draft before you build (new projects), then keep it truthful.** Writing the README first forces you to settle the interface before the code; retroactively written READMEs miss details. Never let the README claim behavior the code does not have.
 3. **Stay an introduction, not a manual.** Include only what a newcomer needs to start and contribute; move long-form reference material to a wiki/docs site. Keep well under GitHub's 500 KiB render truncation.
 4. **Headings: exactly one `#` title, never skip levels.** Descriptive `##` names double as section anchors and feed GitHub's auto-generated Outline menu.
-5. **Plain language.** Second person for instructions, active voice, one idea per paragraph, runnable command examples instead of prose paragraphs; run paragraphs through a readability checker when available.
-6. **Descriptive, relative links.** Link text names the destination (never "click here"), stays on one line, and in-repo targets use relative paths so links survive branch switches and clones.
+5. **Use plain language.** Second person for instructions, active voice, one idea per paragraph, runnable command examples instead of prose paragraphs; run paragraphs through a readability checker when available.
+6. **Use descriptive, relative links.** Link text names the destination (never "click here"), stays on one line, and in-repo targets use relative paths so links survive branch switches and clones.
 7. **Images carry alt text** — succinct and descriptive ("screenshot of ..." is appropriate for UI captures). Lists use real `-`/`*` markers, never emoji as bullets. Use emoji sparingly — screen readers announce their full names.
-8. **Link the companion files:** License, CONTRIBUTING, CODE_OF_CONDUCT, SUPPORT — GitHub surfaces community health files automatically; the README should point to them.
-9. **Place it where GitHub surfaces it:** root (default), `.github/`, or `docs/` — precedence `.github` > root > `docs`. A profile README is a root README in a repo named exactly like the username.
+8. **Link the companion files.** License, CONTRIBUTING, CODE_OF_CONDUCT, SUPPORT — GitHub surfaces community health files automatically; the README should point to them.
+9. **Place it where GitHub surfaces it.** Root (default), `.github/`, or `docs/` — precedence `.github` > root > `docs`. A profile README is a root README in a repo named exactly like the username.
 
 ## Guardrails
 
