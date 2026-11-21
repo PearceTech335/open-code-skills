@@ -61,3 +61,4 @@ Read AGENTS.md, memory/CURRENT_STATE.md, TASKS.md. Select next eligible unchecke
 - This template enforces full pipeline for every task — no shortcuts.
 - Specialist agents (coder, research, review, test) are invoked explicitly at each stage.
 - State files (TASKS.md, tasks/, CURRENT_STATE.md) are shared with autopilot mode.
+- Can be invoked as `@rigour` subagent for full pipeline enforcement.

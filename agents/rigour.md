@@ -1,6 +1,6 @@
 ---
-description: Rigorous multi-stage orchestration for local models or high-stakes work (research → decomposition → adversarial review → planning → implementation → review → test → sign-off). Forces full quality pipeline every step. Use when token usage is acceptable and code quality/integrity is paramount.
-mode: primary
+description: Rigorous multi-stage orchestration for local models or high-stakes work (research → decomposition → adversarial review → planning → implementation → review → test → sign-off). Forces full quality pipeline every step. Use when token usage is acceptable and code quality/integrity is paramount. Can be invoked as /rigour command or @rigour subagent.
+mode: subagent
 temperature: 0.1
 permission:
   edit: allow
@@ -116,7 +116,7 @@ Maximum integrity, evidence, and adversarial process. This agent is designed for
 
 - This agent shares the same state files (`TASKS.md`, `tasks/`, `CURRENT_STATE.md`) as autopilot.
 - Specialist agents (`coder`, `research`, `review`, `test`) are invoked explicitly at each stage.
-- Use `/rigour` command to activate this orchestration path (see `commands/rigour.md`).
+- Can be invoked as `/rigour` command or `@rigour` subagent for full pipeline enforcement.
 
 ## End of run
 

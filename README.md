@@ -45,15 +45,18 @@ The `autopilot` agent uses a slimmed-down loop suitable for frontier models that
 
 Use when: You want fast iteration with a frontier model that can handle most work internally.
 
-### /rigour — Full multi-stage quality pipeline
+### @rigour — Subagent Notation (full quality pipeline)
 
-The `/rigour` command activates the rigorous orchestration path for local models or high-stakes work where token usage is acceptable and code quality/integrity is paramount:
+The `@rigour` subagent notation activates the rigorous quality pipeline for every task. Invoke with `@rigour <task goal>` to enforce the 9-stage pipeline: research → decomposition → adversarial review → planning → implementation → review → test → sign-off.
 
-- Research → decomposition → adversarial review → planning → implementation → review → test → sign-off.
-- Every task goes through all 9 stages of the rigour loop — no shortcuts.
-- External specialist agents (`research`, `review`, `test`) are invoked explicitly at each stage.
+- **Full pipeline mandatory:** Every task goes through all 9 stages — research, decomposition, adversarial review, planning, implementation, review, test, sign-off. No shortcuts.
+- **Research first:** Never implement without documented research findings.
+- **Adversarial review required:** Every change gets independent critique before acceptance.
+- **Test evidence mandatory:** Full verification sequence with observed PASS/FAIL output.
+- **Specialist agents invoked explicitly:** `coder`, `research`, `review`, `test` at each stage.
+- **Shared state files:** `TASKS.md`, `tasks/`, `CURRENT_STATE.md` shared with autopilot mode.
 
-Use when: You're using a local model, working on production code, or need maximum integrity and evidence.
+Use when: You're using a local model, working on production code, security-sensitive changes, or need maximum integrity and evidence. Choose `@rigour` subagent notation for the full quality pipeline.
 
 ### Model Routing
 
@@ -79,7 +82,7 @@ Use when: You're using a local model, working on production code, or need maximu
     cd my-project && cp MISSION.md MISSION.md   # fill in the mission brief
     ```
 
-    `MISSION.md` + `TASKS.md` (thin index; add one line per task) is all you edit by hand. Then open the project in OpenCode and switch to the **`autopilot`** agent, or run `/rigour <new goal>` for maximum integrity. Autopilot uses a light loop suitable for frontier models that can handle most work themselves. The `/rigour` command activates the full multi-stage quality pipeline (research → decomposition → adversarial review → planning → implementation → review → test → sign-off) for every task — use when token usage is acceptable and code quality/integrity is paramount.
+    `MISSION.md` + `TASKS.md` (thin index; add one line per task) is all you edit by hand. Then open the project in OpenCode and switch to the **`autopilot`** agent, or use `@rigour <new goal>` for maximum integrity. Autopilot uses a light loop suitable for frontier models that can handle most work themselves. The `@rigour` subagent notation activates the full multi-stage quality pipeline (research → decomposition → adversarial review → planning → implementation → review → test → sign-off) for every task — use when token usage is acceptable and code quality/integrity is paramount.
 
 ## How the two-layer model works
 
@@ -106,7 +109,7 @@ Use when: You're using a local model, working on production code, or need maximu
 
 **Agents:** `autopilot` (lightweight orchestrator for frontier models), `rigour` (full multi-stage quality pipeline for local models/high-stakes), `coder`, `research`, `review`, `test`, `architect`.
 
-**Commands:** `/rigour` (maximum integrity mode), `/research`, `/review`, `/improve`, `/investigate`.
+**Commands:** `@rigour` (rigour subagent), `/research`, `/review`, `/improve`, `/investigate`.
 
 **Static checks:** `node scripts/verify.js` (config + path references), `node scripts/validate_skills.js` (skill frontmatter/structure). No other CI exists in this repo.
 
@@ -126,4 +129,4 @@ Use when: You're using a local model, working on production code, or need maximu
 
 ---
 
-*Fork it, adapt it, start a run. If your model survives one full `/rigour` cleanly, the experiment worked.*
+*Fork it, adapt it, start a run. If your model survives one full `@rigour` cleanly, the experiment worked.*
