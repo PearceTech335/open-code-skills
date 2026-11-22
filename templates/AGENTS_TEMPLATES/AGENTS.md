@@ -231,7 +231,8 @@ structured, complete prompt rather than an ad-hoc one.
 - Delegation is controlled by each agent's `permissions` frontmatter
   (`action: subagent`). `@rigour` carries `allow` for research, coder, review,
   and test; specialists carry `deny` and report capability gaps to the
-  orchestrator. `subagent_depth` is a deprecated legacy setting and is ignored.
+  orchestrator. Set `experimental.subagent_depth` in `opencode.json` so the
+  orchestrator may launch them (e.g., 2). Specialists must not delegate further.
 
 ## 3.8 Planner Verification of Subagent Output
 
