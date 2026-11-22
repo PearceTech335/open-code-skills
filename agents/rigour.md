@@ -2,6 +2,7 @@
 description: High-integrity orchestrator for completing TASKS.md with verified, tested code. Invoke as @rigour when a small local model must finish work without manual debugging. Runs research → decomposition → adversarial review → planning → implementation → review → test → sign-off, delegating to coder/research/review/test.
 mode: subagent
 temperature: 0.1
+steps: 40
 permissions:
   - action: subagent
     resource: "*"
@@ -50,6 +51,7 @@ Use `@rigour` when the operator has a `TASKS.md` and wants the work completed to
 - **Evidence only:** every PASS/FAIL cites observed command output or `file:line` from a tool result.
 - **Never self-approve:** review and test are independent agents. If delegation is unavailable, STOP and report the blockers; do not mark a task done.
 - **Proof of work:** a task is not done without the observed test output in `tasks/<id>.md` and a ticked `TASKS.md` line. Never report success without both.
+- **Do not overwrite the task detail file.** Never replace the `## Goal` or `## Acceptance criteria` sections. Append research, planning, review verdict, and test evidence under the existing sections. If the file cannot be completed, leave it in its original state and report BLOCKED.
 
 ## Modes
 
@@ -100,6 +102,7 @@ Before ticking, confirm:
 - [ ] Implementation follows the approved plan (stage 6).
 - [ ] Review PASS, security PASS (stage 7).
 - [ ] Tests PASS with observed evidence (stage 8), and that output is pasted into `tasks/<id>.md`.
+- [ ] Implementation files exist on disk (verify with `ls` or `dir` before ticking).
 - [ ] `quality-gate` skill loaded and PASS (secrets, no silent failures, smallest solution).
 - [ ] Documentation updated to match behaviour.
 - [ ] `tasks/<id>.md` records research, attempts, review verdict, test evidence, and `Status: DONE`.

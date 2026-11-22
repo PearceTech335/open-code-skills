@@ -28,9 +28,11 @@ Use when invoking `@rigour` to complete `TASKS.md` with verified, tested code. F
 
 - Do not self-approve. `review` and `test` are independent and read-only.
 - Do not weaken acceptance criteria to make a test pass.
+- Do not overwrite the task detail file's `## Goal` or `## Acceptance criteria` sections. Append research, planning, review verdict, and test evidence under the existing sections. If the file cannot be completed, leave it in its original state and report BLOCKED.
 - Evidence only: observed command output; `file:line` copied from tools.
 - Failure budget: investigate/correct → deeper research → reconsider approach → BLOCKED. Track `memory/learning/tasks/<id>-attempts.jsonl`; summarize to `memory/learning/metrics.jsonl` on resolution.
 - Hard blockers: destructive migrations, credential changes, production deployments, security-boundary changes. Stop and report.
+- Proof of work: paste the exact observed test output into `tasks/<id>.md` and tick `TASKS.md` only after verification. Never report success without both.
 
 ## REQUIRED OUTPUT (all sections non-empty)
 

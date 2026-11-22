@@ -114,6 +114,17 @@ Even in autopilot mode, invoke full research/review/test when:
 - Specialist agents (`coder`, `research`, `review`, `test`) are reused when invoked.
 - The full rigour pipeline is available via the `@rigour` subagent (see `agents/rigour.md`).
 
+## Verifying @rigour output (primary agent responsibility)
+
+After `@rigour` returns, the primary agent must verify before accepting:
+1. `TASKS.md` shows the task ticked (`- [x]`).
+2. `tasks/<id>.md` has `Status: DONE` (not `TODO`).
+3. The implementation files exist on disk (verify with `ls` or `dir`).
+4. `tasks/<id>.md` contains the exact observed test output, not a summary.
+5. The reported test count matches the actual test files on disk.
+
+If any check fails, do not tick the task. Report the discrepancy and re-invoke `@rigour` or escalate.
+
 ## End of run
 
 Write `PROGRESS.md` with: tasks completed, blockers, significant findings, remaining work, next eligible task.

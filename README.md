@@ -68,6 +68,8 @@ Use when: You want fast iteration, or you want to create the task list before a 
 
 **Configuration:** `@rigour` must be allowed to launch the specialist subagents. In OpenCode V2 this is controlled by the agent's `permissions` frontmatter (`action: subagent, allow`), not by `subagent_depth` (a deprecated legacy field). The `rigour` agent already declares those permissions; if they are removed, the pipeline is not enforceable.
 
+**Model capability:** `@rigour` is designed for local models where token usage is not a constraint. However, the orchestrator must be capable of following a multi-stage protocol and delegating to specialists. Models below 7B (e.g., 4B) may not reliably follow the pipeline and can hallucinate success. Use at least a 7B model for the orchestrator, or a frontier/cloud model when available. Individual specialists inherit the same model unless overridden via `model:` frontmatter.
+
 ### Model Routing
 
 `opencode.json` declares an endpoint via `provider` plus a single `model`; **all agents inherit that one configured `model`**. There is no required cloud endpoint and no cloud/local split. The orchestrator runs specialists **sequentially** against the one endpoint — deliberate: no inference-session contention on bandwidth-limited hardware, and the workflow does not depend on any external model. The one supported override is an agent's own `model: <provider/model[#variant]>` frontmatter; there is no `execution_model` key. `opencode.json` is local-only (gitignored). Whatever you declare is what runs — the framework is deliberately agnostic to model choice, size, and vendor, as long as the declared `model` supports tool calls.
