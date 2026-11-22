@@ -23,11 +23,11 @@ Global rules (`agent-core`, `readable-code`, `repo-discovery`, `quality-gate`, `
 
 This project scaffold supports two distinct orchestration modes via the same state files (`TASKS.md`, `tasks/`, `CURRENT_STATE.md`):
 
-### Autopilot (default) — Light loop for frontier models
-The `autopilot` agent uses a slimmed-down loop suitable for frontier models that can handle most work themselves. It assumes a capable model that can internalise much of the research/review/test discipline. External specialist agents are invoked only when escalation criteria are met (ambiguity, high-risk changes, or operator request).
+### Autopilot (default) — Light loop
+The `autopilot` agent uses a slimmed-down loop for capable models. It assumes the model can internalise much of the research/review/test discipline. External specialist agents are invoked only when escalation criteria are met (ambiguity, high-risk changes, or operator request). A small local model can use autopilot to create the task list, then use `@rigour` to complete it with verified, tested code.
 
-### /rigour — Full multi-stage quality pipeline
-The `/rigour` command activates the rigorous orchestration path for local models or high-stakes work where token usage is acceptable and code quality/integrity is paramount. Every task goes through all 9 stages: research → decomposition → adversarial review → planning → implementation → review → test → sign-off. External specialist agents (`research`, `review`, `test`) are invoked explicitly at each stage.
+### @rigour — Full multi-stage quality pipeline
+Invoke `@rigour` when a small local model must complete `TASKS.md` with verified, tested code and no manual debugging. The operator can create the task list with autopilot, then prompt "do the tasks with @rigour". Every task goes through research → decomposition → adversarial review → planning → implementation → review → test → sign-off. `@rigour` delegates to the specialist agents (`research`, `coder`, `review`, `test`); this requires `subagent_depth: 2` in `opencode.json`. `@rigour` is the only rigour entry point.
 
 ### Model routing
 `opencode.json` declares an endpoint via `provider` plus a single `model`; all agents inherit that one configured `model`. The orchestrator runs specialists sequentially against the one endpoint — deliberate: no inference-session contention on bandwidth-limited hardware. Agents can override with their own `model:` frontmatter if needed.
@@ -129,7 +129,8 @@ Standardized prompt templates for invoking subagents. Use the corresponding temp
 | `review.md` | Code review tasks |
 | `test.md` | QA testing tasks (runs test suite, PASS/FAIL with evidence) |
 | `coder.md` | Code generation tasks |
-| `autopilot.md` | Engineering orchestrator (Mode A resume existing TASKS.md / Mode B merge new goal as milestone); repo lookup → research → coder → review → test → fix loop → docs update, until all root tasks are done |
+| `autopilot.md` | Light loop for capable models: bootstrap, light discovery, direct implementation or one coder call, optional review/test, acceptance, tick |
+| `rigour.md` | High-integrity pipeline for `@rigour`: research → decomposition → adversarial review → planning → coder → review → test → sign-off; delegates to specialists |
 
 If no template exists for the task type, create one via the self-help process (§7.5) before invoking. Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
 
@@ -155,7 +156,7 @@ When a subagent returns a report, the planner must verify key claims before usin
 - [ ] `memory/PROJECT_INDEX.md` verified against repo; paths exist, not invented.
 - [ ] `.opencode/skills/` exists with `.gitkeep`; first skill draft placed when loop triggers.
 - [ ] `memory/learning/briefs/` + `metrics.jsonl` + `tasks/` present (zero-byte sink ready).
-- [ ] `templates/subagent-calls/` contains invocation templates (research.md, review, test, coder, autopilot).
+- [ ] `templates/subagent-calls/` contains invocation templates (research.md, review, test, coder, autopilot, rigour).
 - [ ] Evidence for any skill creation: source URLs, cross-checks, counterexample, reproduction, Learning Gate checks.
 
 

@@ -12,7 +12,7 @@ This repo is an OpenCode setup aimed at improving agentic code generation:
 
 - **`AGENTS.md`** — the global base document. Every project loads it. It contains the engineering standards: workflow, verification, principles, behaviour rules, the skill hierarchy, testing protocol, documentation style (ASD-STE100-inspired).
 - **`skills/`** — on-demand skills.
-- **`agents/` + `commands/`** — specialist agents (`coder`, `research`, `review`, `test`, `architect`, `autopilot-light`, `rigour`) and slash commands.
+- **`agents/` + `commands/`** — specialist agents (`autopilot`, `rigour`, `coder`, `research`, `review`, `test`, `architect`) and slash commands.
 - **`templates/AGENTS_TEMPLATES/`** — a copy/paste project scaffold. Customize only its header and `MISSION.md`; everything else stays aligned with the global config.
 - **`templates/subagent-calls/`** — completion templates for invoking the specialist agents deterministically.
 
@@ -35,28 +35,38 @@ This is a **starter + personal configuration**, not a finished product. See "Hon
 
 ## Two operating modes
 
-### Autopilot (default) — Light loop for frontier models
+### Autopilot (default) — Light loop
 
-The `autopilot` agent uses a slimmed-down loop suitable for frontier models that can handle most work themselves:
+The `autopilot` agent uses a slimmed-down loop. It is the quickest way to create or resume a `TASKS.md` list and to make routine changes:
 
 - Bootstrap → light repository discovery → direct implementation or single coder call → optional targeted review/test if needed → acceptance.
-- Frontier models internalise much of the research/review/test discipline; forcing the full pipeline on them wastes tokens and time.
+- The model handles routine work internally; forcing the full pipeline on every change wastes tokens and time.
 - External specialist agents are invoked only when escalation criteria are met (ambiguity, high-risk changes, or operator request).
 
-Use when: You want fast iteration with a frontier model that can handle most work internally.
+Use when: You want fast iteration, or you want to create the task list before a high-integrity run with `@rigour`.
 
-### @rigour — Subagent Notation (full quality pipeline)
+### @rigour — High-integrity task completion
 
-The `@rigour` subagent notation activates the rigorous quality pipeline for every task. Invoke with `@rigour <task goal>` to enforce the 9-stage pipeline: research → decomposition → adversarial review → planning → implementation → review → test → sign-off.
+`@rigour` is the full-pipeline entry point for work that must be finished correctly, with tests, without manual debugging. It is designed for small local models and high-stakes changes.
 
-- **Full pipeline mandatory:** Every task goes through all 9 stages — research, decomposition, adversarial review, planning, implementation, review, test, sign-off. No shortcuts.
-- **Research first:** Never implement without documented research findings.
-- **Adversarial review required:** Every change gets independent critique before acceptance.
-- **Test evidence mandatory:** Full verification sequence with observed PASS/FAIL output.
-- **Specialist agents invoked explicitly:** `coder`, `research`, `review`, `test` at each stage.
-- **Shared state files:** `TASKS.md`, `tasks/`, `CURRENT_STATE.md` shared with autopilot mode.
+**Intended workflow**
+1. Create or resume `TASKS.md` with the `autopilot` agent (Mode A resume, or Mode B new milestone).
+2. Invoke `@rigour` — for example, "do the tasks with @rigour".
+3. `@rigour` works each unchecked task through research → decomposition → adversarial review → planning → implementation → review → test → sign-off.
+4. A task is ticked only after independent review, executed tests, the quality gate, and recorded evidence in `tasks/<id>.md`.
 
-Use when: You're using a local model, working on production code, security-sensitive changes, or need maximum integrity and evidence. Choose `@rigour` subagent notation for the full quality pipeline.
+**What it enforces**
+- **Research first:** no implementation without documented findings.
+- **Independent review:** `review` checks the actual diff and is read-only; the author never self-approves.
+- **Executed tests:** `test` runs static analysis, build, targeted, regression, integration, security, and the broader suite; PASS/FAIL evidence is captured.
+- **Failure budget:** root-cause first, bounded retries, `BLOCKED` instead of silent failure. A `LEARNING_BRIEF` is emitted when a knowledge gap survives two corrections.
+- **Delegation:** `@rigour` invokes `research`, `coder`, `review`, and `test`. This requires `subagent_depth: 2` in `opencode.json`; specialists do not delegate further.
+- **Single path:** `@rigour` is the only rigour entry point. There is no `/rigour` slash command.
+- **Shared state:** `TASKS.md`, `tasks/`, and `memory/CURRENT_STATE.md` are shared with autopilot.
+
+**Use when:** a small local model must complete a task list with verified, tested code; the work is production or security-sensitive; or the operator wants maximum integrity and evidence.
+
+**Configuration:** set `"subagent_depth": 2` (or higher) in `opencode.json`. At depth 1, `@rigour` cannot call the specialist subagents and the pipeline is not enforceable.
 
 ### Model Routing
 
@@ -82,7 +92,7 @@ Use when: You're using a local model, working on production code, security-sensi
     cd my-project && cp MISSION.md MISSION.md   # fill in the mission brief
     ```
 
-    `MISSION.md` + `TASKS.md` (thin index; add one line per task) is all you edit by hand. Then open the project in OpenCode and switch to the **`autopilot`** agent, or use `@rigour <new goal>` for maximum integrity. Autopilot uses a light loop suitable for frontier models that can handle most work themselves. The `@rigour` subagent notation activates the full multi-stage quality pipeline (research → decomposition → adversarial review → planning → implementation → review → test → sign-off) for every task — use when token usage is acceptable and code quality/integrity is paramount.
+    `MISSION.md` + `TASKS.md` (thin index; add one line per task) is all you edit by hand. Open the project in OpenCode and use the **`autopilot`** agent to create or resume the task list with a light loop. When the work must be completed with verified, tested code and no manual debugging, invoke **`@rigour`** ("do the tasks with @rigour"). `@rigour` enforces research → decomposition → adversarial review → planning → implementation → review → test → sign-off, delegating to `research`, `coder`, `review`, and `test`. Set `"subagent_depth": 2` in `opencode.json` so that delegation is allowed.
 
 ## How the two-layer model works
 
@@ -107,9 +117,9 @@ Use when: You're using a local model, working on production code, security-sensi
 
 **Language & domain:** `python-code`, `go-code`, `typescript-code`, `bash-skill`, `powershell-skill`, `ansible-code`, `security`, `penetration-tester`, `networking`, `ot-networking`, `packet-analysis`.
 
-**Agents:** `autopilot` (lightweight orchestrator for frontier models), `rigour` (full multi-stage quality pipeline for local models/high-stakes), `coder`, `research`, `review`, `test`, `architect`.
+**Agents:** `autopilot` (lightweight orchestrator for capable models), `rigour` (high-integrity task completion, invoked as `@rigour`), `coder`, `research`, `review`, `test`, `architect`.
 
-**Commands:** `@rigour` (rigour subagent), `/research`, `/review`, `/improve`, `/investigate`.
+**Commands:** `/research`, `/review`, `/improve`, `/investigate`, `/overnight`.
 
 **Static checks:** `node scripts/verify.js` (config + path references), `node scripts/validate_skills.js` (skill frontmatter/structure). No other CI exists in this repo.
 

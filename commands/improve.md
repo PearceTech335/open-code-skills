@@ -1,6 +1,6 @@
 ---
 description: Research a missing domain/skill, generate a validated SKILL.md draft, and hold it for the review gate before activation
-agent: build
+agent: autopilot
 ---
 
 Research the following missing skill/domain: $ARGUMENTS

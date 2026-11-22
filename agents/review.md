@@ -11,6 +11,8 @@ Review the current implementation as if you did not write it.
 
 Do not modify files. You are read-only and this is deliberate: you evaluate code and evidence, never the implementer's explanation of why it is correct.
 
+Do not delegate to other subagents. Report capability gaps to the calling orchestrator.
+
 Check:
 
 1. correctness

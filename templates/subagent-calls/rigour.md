@@ -1,64 +1,44 @@
-# Rigour Invocation Template (Rigorous Orchestrator)
+# Rigour Invocation Template (High-Integrity Orchestrator)
 
-Use when activating the `/rigour` command or switching to the `rigour` agent. It runs the full multi-stage quality pipeline for every task: research → decomposition → adversarial review → planning → implement → review → test → sign-off. Fill in bracketed sections.
+Use when invoking `@rigour` to complete `TASKS.md` with verified, tested code. Fill in the bracketed sections.
 
 ## MISSION
-[The operator's goal: work existing TASKS.md list to completion with full rigour, or merge request into TASKS.md as new milestone with full pipeline.]
+
+[Work the existing `TASKS.md` to completion with full rigour, or merge this request into `TASKS.md` as a new milestone and work it: <goal>.]
 
 ## ENTRY MODE — decide first
-- **Mode A (resume)** — request refers to existing list ("continue", "resume", "finish"). Start at first unchecked item.
-- **Mode B (new goal)** — merge into TASKS.md as new milestone (3–12 items); append only.
+
+- **Mode A (resume):** the request refers to the existing list ("continue", "resume", "finish"). Start at the first unchecked eligible item.
+- **Mode B (new goal):** merge into `TASKS.md` as a new milestone (3–12 independently verifiable items, append only) and create `tasks/<id>.md` files.
 
 ## RIGOUR PIPELINE (mandatory for every task)
 
-### 0. Bootstrap & Task Selection
-Read AGENTS.md, memory/CURRENT_STATE.md, TASKS.md. Select next eligible unchecked root task.
+0. **Bootstrap:** read `AGENTS.md`, `memory/PROJECT_INDEX.md`, `memory/CURRENT_STATE.md`, `TASKS.md`. Rebuild a missing/stale index before proceeding.
+1. **Research:** invoke `research` with `templates/subagent-calls/research.md`. It writes `tasks/<id>.md` `## Research` (implementation, architecture fit, blockers, alternatives).
+2. **Decomposition:** break the task into researched subtasks; create `tasks/<subtask-id>.md` as needed.
+3. **Adversarial review of research:** invoke `review`; require PASS/FAIL with evidence before planning.
+4. **Planning:** record files (≤5), doc updates, security notes, and test strategy in `tasks/<id>.md`.
+5. **Implementation:** invoke `coder` with `templates/subagent-calls/coder.md`; smallest coherent change; tests where required.
+6. **Review:** invoke `review` on the actual diff; 10-axis + Power-of-10 + security; read-only; fresh review after every fix.
+7. **Test:** invoke `test` with `templates/subagent-calls/test.md`; static → build → targeted → regression → integration → security → broader suite; capture commands, exit codes, PASS/FAIL.
+8. **Sign-off:** load `quality-gate`; for multi-subtask/overnight runs load `supervisor` and tick only on CONTINUE/STOP-SUCCESS. Verify acceptance criteria, update docs, set `Status: DONE`, tick `TASKS.md`, update `memory/CURRENT_STATE.md`, commit only after review/test/quality-gate PASS.
+9. **Next task:** select the next unchecked eligible task and repeat from step 1.
 
-### 1. Task + Project Research
-- Research the specific task implementation details.
-- Research architectural fit: read PROJECT_INDEX, architecture docs, mission, related tasks.
-- Document findings + evidence in tasks/<id>.md (## Research section).
-- Identify blockers and alternatives.
+## CONSTRAINTS
 
-### 2. Decomposition
-- Break task into researched subtasks based on research findings.
-- Create detail files for each subtask if needed (tasks/subtask-id.md).
-- Document decomposition rationale in task file.
+- Do not self-approve. `review` and `test` are independent and read-only.
+- Do not weaken acceptance criteria to make a test pass.
+- Evidence only: observed command output; `file:line` copied from tools.
+- Failure budget: investigate/correct → deeper research → reconsider approach → BLOCKED. Track `memory/learning/tasks/<id>-attempts.jsonl`; summarize to `memory/learning/metrics.jsonl` on resolution.
+- Hard blockers: destructive migrations, credential changes, production deployments, security-boundary changes. Stop and report.
 
-### 3. Adversarial Review of Research
-- Independent critique of research findings and proposed approach.
-- Identify gaps, risks, assumptions.
-- Document review verdict (PASS/FAIL) with evidence.
+## REQUIRED OUTPUT (all sections non-empty)
 
-### 4. Implementation Planning
-- Detailed plan: files to change (≤5; split bigger work into subtasks), required updates to PROJECT_INDEX.md/README/architecture notes, security considerations, test requirements.
-- Document in tasks/<id>.md planning section.
-
-### 5. Coder (Implementation)
-- Implement according to approved plan and research.
-- Single coder call per change unless complexity demands escalation.
-- Add/update tests if required by acceptance criteria.
-- Report files changed + commands run.
-
-### 6. Review (Adversarial)
-- Adversarial review of actual diff (10-axis + Power-of-10 + security).
-- Verdict: PASS/FAIL per criterion with file:line evidence, reproduction if FAIL, recommended fix.
-
-### 7. Test (Full Verification)
-- Full verification sequence: static analysis → build → targeted tests → regression → integration → security checks → broader suite.
-- Capture exact commands, exit codes, output, pass/fail counts.
-- On failure: root cause first; follow failure budget (investigate → deeper research → reconsider approach).
-
-### 8. Sign-off / Quality Gate
-- Final acceptance criteria check + documentation updates.
-- If any fails, task remains incomplete — do not tick.
-
-### 9. Proceed to Next Task (or Subtask)
-- Update state, select next eligible unchecked root task OR subtask.
-- Repeat from Step 1 for next item.
-
-## NOTES
-- This template enforces full pipeline for every task — no shortcuts.
-- Specialist agents (coder, research, review, test) are invoked explicitly at each stage.
-- State files (TASKS.md, tasks/, CURRENT_STATE.md) are shared with autopilot mode.
-- Can be invoked as `@rigour` subagent for full pipeline enforcement.
+1. **Mode** — A or B and how it was determined.
+2. **Tasks completed** — IDs, verification commands, observed results.
+3. **Tasks blocked** — ID, blocker, evidence, what would unblock.
+4. **Fix cycles** — failure type, root cause, fix, outcome.
+5. **Docs updated** — files and why.
+6. **Files changed** — list.
+7. **`PROGRESS.md`** — written; one-line summary.
+8. **Remaining work** — next eligible task or "complete".

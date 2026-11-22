@@ -18,7 +18,7 @@ Before writing code, verify which skills apply:
 4. Load **one** language/domain skill matching the primary file (`python-code`, `go-code`, `typescript-code`, `powershell-skill`, `bash-skill`, or a domain skill).
 5. Load **at most one** workflow/meta skill when its trigger applies: `readable-code` (new code), `designer` (component/interface design), `quality-gate` (final review), `long-running-task-research` (multi-stage/overnight work). Total additional skills beyond `agent-core`: **2**.
 6. Load `self-help` **only** when a failure survives a second correction attempt on a knowledge gap (see the global `## Learning Loop` section; project template §5). If the 2-skill cap is already used, split the task instead of loading more. Never invent a missing skill; never load `self-help` for a trivial `IMPLEMENTATION_DEFECT`.
-7. Load subagent specs (`review.md`, `research.md`, `coder.md`) only when the planner invokes them. Subagents inherit the configured model unless their frontmatter sets `model:`. **Subagents cannot delegate further** (`subagent_depth: 1`); a subagent that needs another capability must report the gap to the planner.
+7. Load subagent specs (`review.md`, `research.md`, `coder.md`) only when the planner invokes them. Subagents inherit the configured model unless their frontmatter sets `model:`. **Delegation depth is configured by `subagent_depth`** (currently `2` in `opencode.json`). An orchestration subagent such as `rigour` may invoke specialist subagents; specialists (`coder`, `research`, `review`, `test`) must not delegate further. A subagent that needs a capability beyond the configured depth reports the gap to its caller.
 8. Report which skills were loaded in your response or the task detail file. If none matched and you needed a new capability, document the gap; do not invent APIs or skills.
 
 Do not load unrelated skills (e.g., `bash-skill` for a Python module, `security` for a simple UI edit) — unnecessary context bloat degrades reasoning.
@@ -84,7 +84,7 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 
 ## Guardrails
 
-- **Skill-count cap**: `agent-core` is mandatory and is **not counted** toward the skill cap. Load at most **2 additional skills** per task beyond `agent-core` (typically 1 language/domain + 1 workflow skill). If more capabilities are needed, split the task into sub-tasks or delegate to subagents/templates/checklists rather than loading extra skills. Subagents cannot delegate further; they report the gap instead.
+- **Skill-count cap**: `agent-core` is mandatory and is **not counted** toward the skill cap. Load at most **2 additional skills** per task beyond `agent-core` (typically 1 language/domain + 1 workflow skill). If more capabilities are needed, split the task into sub-tasks or delegate to subagents/templates/checklists rather than loading extra skills. Specialists report capability gaps to the orchestrator instead of delegating further.
 - **Evidence discipline**: every file path and line number you report must be copied from a tool result in this session. Label claims `VERIFIED` (tool output/file read), `INFERRED` (one source or indirect), or `UNKNOWN` (not established). Never present an inferred or guessed path as verified.
 - **Stop-and-ask threshold**: If you cannot verify an assumption with a single file read or command, label it PRELIMINARY and stop. Do not proceed on unverified assumptions.
 - **Deep research**: Read the project index (`memory/PROJECT_INDEX.md`) first. Break task into sub-tasks in TASKS.md using IDs (mN-tN-stN-ssN). Each sub-task gets its own attempt file and its own `tasks/<id>.md` detail file (research/scope/references/testing/pass-fail all live there).
@@ -103,8 +103,8 @@ When invoking a subagent, use the corresponding template from templates/subagent
 - research.md -- investigation/discovery/decision research (unified template: evidence-first, adversarial review, references)
 - review.md -- code review tasks
 - coder.md -- code generation tasks
-- autopilot.md -- lightweight orchestrator for frontier models (bootstrap, light discovery, direct implementation, optional review/test, acceptance, tick)
-- rigour.md -- rigorous multi-stage quality pipeline (research -> decomposition -> adversarial review -> planning -> implementation -> review -> test -> sign-off)
+- autopilot.md -- lightweight orchestrator for capable models (bootstrap, light discovery, direct implementation, optional review/test, acceptance, tick)
+- rigour.md -- high-integrity orchestrator for completing TASKS.md with verified, tested code (research -> decomposition -> adversarial review -> planning -> implementation -> review -> test -> sign-off); delegates to coder/research/review/test
 
 Fill in the bracketed sections. If no template exists, create one via self-help (section 7.5) before invoking.
 Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
@@ -132,6 +132,7 @@ This ensures each researcher call is focused and verifiable, rather than one mas
 - --agent research: loads agents/research.md (fast file parser, discovery)
 - --agent review: loads agents/review.md (adversarial review, LEARNING_BRIEF emitter)
 - --agent coder: loads agents/coder.md (code generation subagent)
-- --agent autopilot: loads agents/autopilot.md (lightweight orchestrator for frontier models: bootstrap, light discovery, direct implementation, optional review/test, acceptance, tick - used as a primary agent via the agent switch, not a subagent)
+- --agent autopilot: loads agents/autopilot.md (lightweight orchestrator for capable models: bootstrap, light discovery, direct implementation, optional review/test, acceptance, tick - used as a primary agent via the agent switch, not a subagent)
+- --agent rigour: loads agents/rigour.md (high-integrity orchestrator: research, decomposition, adversarial review, planning, coder, review, test, sign-off; invoked as `@rigour` and may delegate to specialists at depth 2)
 - network-engineer: load skill `skills/network-engineer/SKILL.md` (OT/network troubleshooting). Prefer subagents only when escalation needs investigation orchestration; otherwise use the skill to conserve slots.
 The template file (templates/subagent-calls/) provides the structured prompt; the agent spec (agents/) provides the role definition. Both must match.

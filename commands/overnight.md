@@ -1,8 +1,10 @@
 ---
-description: Shortcut for "switch to autopilot mode and run this request to completion". The autopilot agent owns the full quality-control loop; this command just enters it with a new goal.
+description: Create a TASKS.md milestone, then complete it with @rigour for verified, tested output with no manual debugging.
 agent: autopilot
 ---
 
-You are now in autopilot mode (see `agents/autopilot.md`). Treat the request below as **Mode B (new goal)** of its Step 0 bootstrap: merge it into the existing `TASKS.md` as a new milestone (create the file only if missing), create the `tasks/<id>.md` detail files, then run the QC loop — repo lookup → pick task → research (with blockers) → plan → `coder` implements → adversarial `review` → `test` → bounded fix loop on failures → docs update → tick → next task — until every unchecked root item is complete or blocked. Do not ask questions.
+Treat the request below as **Mode B (new goal)** of the autopilot bootstrap: merge it into the existing `TASKS.md` as a new milestone (create the file only if missing) and create the `tasks/<id>.md` detail files.
+
+Then invoke the `@rigour` subagent to complete every unchecked root item with the full pipeline: research → decomposition → adversarial review → planning → implementation → review → test → sign-off. Tick a task only after review, tests, the quality gate, and recorded evidence in `tasks/<id>.md`. Do not ask questions.
 
 Request: $ARGUMENTS

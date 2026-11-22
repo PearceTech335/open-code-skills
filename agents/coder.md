@@ -57,7 +57,7 @@ Never invent APIs, filenames, or module structures. Before writing code:
 - Load `agent-core` on any coding task.
 - Load at most one language/domain skill plus at most one workflow/meta skill (typically `readable-code`, `designer`, `quality-gate`, or `long-running-task-research`) — the 2 additional skills cap in agent-core applies.
 - Load `self-help` only when a second correction attempt fails on a knowledge gap (see the Learning Loop section of `AGENTS.md` / the project template).
-- Subagents cannot delegate further (`subagent_depth: 1`); report capability gaps to the planner instead.
+- Specialists must not delegate further even when `subagent_depth` allows it; report capability gaps to the calling orchestrator instead.
 
 ## 9. Verification protocol
 

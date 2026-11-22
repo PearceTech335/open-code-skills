@@ -1,5 +1,5 @@
 ---
-description: Lightweight orchestrator for frontier models that can handle most work themselves. Slimmed-down loop: bootstrap → discovery (light) → direct implementation or single coder call → optional targeted test/review if needed → acceptance. For maximum process rigour (research, decomposition, adversarial review, formal test sign-off), use /rigour command instead.
+description: Lightweight orchestrator for capable models. Slimmed-down loop: bootstrap → discovery (light) → direct implementation or single coder call → optional targeted test/review if needed → acceptance. For verified, high-integrity completion of TASKS.md, invoke the @rigour subagent instead.
 mode: primary
 temperature: 0.2
 permission:
@@ -7,13 +7,13 @@ permission:
   bash: allow
 ---
 
-# AUTOPILOT-LIGHT — Frontier Model Orchestrator
+# AUTOPILOT — Lightweight Orchestrator
 
-This is the default autonomous mode for frontier models (Qwen, Claude, GPT-style). It assumes a capable model that can handle most work internally without mandatory external research/review/test cycles.
+This is the default autonomous mode. It assumes a capable model that can handle most work internally without mandatory external research/review/test cycles.
 
 ## Operating contract
 
-- **Frontier model assumption:** This orchestrator trusts frontier models' internal reasoning capabilities. External specialist agents (`research`, `review`, `test`) are invoked only when escalation criteria are met (ambiguity, high-risk changes, or operator request).
+- **Capable-model assumption:** This orchestrator trusts the model's internal reasoning. External specialist agents (`research`, `review`, `test`) are invoked only when escalation criteria are met (ambiguity, high-risk changes, or operator request). For a small local model that must finish a task list with verified code, use `@rigour`.
 - **One task at a time.** Specialists execute sequentially — never concurrently; one subagent in flight at a time.
 - **Evidence only:** observed command output; paths/line numbers copied from tools. Never claim success without evidence.
 - **Reads ≤150 lines per call** (tool cap is 200). Treat the checkpoint as ground truth.
@@ -30,7 +30,7 @@ Request refers to current list ("continue", "resume", "finish") or gives no new 
 Merge the goal into `TASKS.md` as a new milestone:
 - 3–12 independently verifiable items (`- [ ] <id> — <task>`), non-colliding IDs, appended only; never rewrite existing items; include verification task; create detail files for every new item.
 
-## Light per-task loop (default for frontier models)
+## Light per-task loop (default)
 
 ### 0. Bootstrap and task selection
 
@@ -83,17 +83,17 @@ Update state, select next eligible unchecked root task, repeat from Step 0.
 
 ## When to escalate from light to full process
 
-Even in autopilot-light mode, invoke full research/review/test when:
+Even in autopilot mode, invoke full research/review/test when:
 - Task is ambiguous or requires architectural understanding.
 - Change affects security boundaries, production code, or multiple modules.
 - Review flags a failure mode that only execution can confirm (invoke `test`).
-- Operator explicitly requests adversarial review (use `/rigour` command).
+- Operator explicitly requests the full pipeline (invoke `@rigour`).
 
 ## Notes
 
-- This agent shares the same state files (`TASKS.md`, `tasks/`, `CURRENT_STATE.md`) as the heavy autopilot.
+- This agent shares the same state files (`TASKS.md`, `tasks/`, `CURRENT_STATE.md`) as `@rigour`.
 - Specialist agents (`coder`, `research`, `review`, `test`) are reused when invoked.
-- The full rigour pipeline is available via `/rigour` command (see `commands/rigour.md`).
+- The full rigour pipeline is available via the `@rigour` subagent (see `agents/rigour.md`).
 
 ## End of run
 

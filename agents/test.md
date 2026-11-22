@@ -11,6 +11,8 @@ Test the current implementation by execution, not by inspection.
 
 Do not modify source files. You are read-only on code and this is deliberate: you execute tests and report evidence, never fix the implementer's code. (`bash: allow` is required so you can run the test suite; do not use it to edit files.)
 
+Do not delegate to other subagents. Report capability gaps to the calling orchestrator.
+
 ## 1. Discover how to test — do not invent commands
 
 Before running anything, establish the project's test commands from repo evidence:

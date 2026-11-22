@@ -45,6 +45,14 @@ Mode B — new goal assigned → merge into the existing TASKS.md as a new miles
 (never rewrite the list); create the detail files; run the full loop. Backlog items
 are untouched unless explicitly asked. Full loop lives in the global autopilot spec
 (~/.config/opencode/agents/autopilot.md) (§0).
+
+Rigour completion (when the operator invokes `@rigour`, e.g. "do the tasks with
+@rigour"): run the full pipeline — research, decomposition, adversarial review,
+planning, implementation, review, test, sign-off — delegating to the research,
+coder, review and test subagents. `@rigour` is the only rigour entry point. It
+requires `subagent_depth: 2` in `opencode.json`; specialists must not delegate
+further. The spec lives in ~/.config/opencode/agents/rigour.md.
+
 If index missing/stale: load project-index (and repo-discovery if needed), inspect,
 update/create index first.
 
@@ -200,10 +208,12 @@ templates/subagent-calls/:
 - templates/subagent-calls/review.md — for code review tasks (invoke: --agent review)
 - templates/subagent-calls/test.md — for QA testing tasks (invoke: --agent test)
 - templates/subagent-calls/coder.md — for code generation tasks (invoke: --agent coder)
-- templates/subagent-calls/autopilot.md — quality-control loop: bootstrap (Mode A
-  resume existing TASKS.md / Mode B merge new goal as new milestone), research ? coder
-  ? review ? test ? fix loop ? docs update, until all root tasks complete (invoke:
-  --agent autopilot)
+- templates/subagent-calls/autopilot.md — light loop for capable models: bootstrap,
+  light discovery, direct implementation or one coder call, optional review/test,
+  acceptance, tick (invoke: --agent autopilot)
+- templates/subagent-calls/rigour.md — high-integrity pipeline: research,
+  decomposition, adversarial review, planning, coder, review, test, sign-off;
+  delegates to specialists (invoke: @rigour)
 
 Fill in the bracketed sections. If no template exists for the task type, create one
 via the self-help process (§7.5) before invoking the subagent. Templates ensure a
@@ -218,8 +228,10 @@ structured, complete prompt rather than an ad-hoc one.
   explicitly in opencode.json and state it in the project mission/README; do not rely
   on undocumented keys.
 - execution_model is not a supported agent field; do not use it.
-- Subagents cannot delegate further (subagent_depth: 1); they report capability gaps
-  to the planner.
+- Delegation depth is set by `subagent_depth` in `opencode.json` (currently 2). An
+  orchestration subagent such as `@rigour` may invoke specialist subagents;
+  specialists (coder, research, review, test) must not delegate further and report
+  capability gaps to the orchestrator.
 
 ## 3.8 Planner Verification of Subagent Output
 
