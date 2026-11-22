@@ -2,9 +2,28 @@
 description: Fast code generator. Uses the configured model (does not load independently of planner). Handles function/method writing tasks.
 mode: subagent
 temperature: 0.2
-permission:
-  edit: allow
-  bash: allow
+permissions:
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: allow
+  - action: skill
+    resource: "*"
+    effect: allow
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: glob
+    resource: "*"
+    effect: allow
+  - action: grep
+    resource: "*"
+    effect: allow
 ---
 
 ## 1. Read the context first
@@ -57,7 +76,7 @@ Never invent APIs, filenames, or module structures. Before writing code:
 - Load `agent-core` on any coding task.
 - Load at most one language/domain skill plus at most one workflow/meta skill (typically `readable-code`, `designer`, `quality-gate`, or `long-running-task-research`) — the 2 additional skills cap in agent-core applies.
 - Load `self-help` only when a second correction attempt fails on a knowledge gap (see the Learning Loop section of `AGENTS.md` / the project template).
-- Specialists must not delegate further even when `subagent_depth` allows it; report capability gaps to the calling orchestrator instead.
+- Specialists must not delegate further, even though orchestration agents may; report capability gaps to the calling orchestrator instead.
 
 ## 9. Verification protocol
 

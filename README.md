@@ -60,13 +60,13 @@ Use when: You want fast iteration, or you want to create the task list before a 
 - **Independent review:** `review` checks the actual diff and is read-only; the author never self-approves.
 - **Executed tests:** `test` runs static analysis, build, targeted, regression, integration, security, and the broader suite; PASS/FAIL evidence is captured.
 - **Failure budget:** root-cause first, bounded retries, `BLOCKED` instead of silent failure. A `LEARNING_BRIEF` is emitted when a knowledge gap survives two corrections.
-- **Delegation:** `@rigour` invokes `research`, `coder`, `review`, and `test`. This requires `subagent_depth: 2` in `opencode.json`; specialists do not delegate further.
+- **Delegation:** `@rigour` invokes `research`, `coder`, `review`, and `test`. This is granted by its `subagent` permissions; specialists do not delegate further.
 - **Single path:** `@rigour` is the only rigour entry point. There is no `/rigour` slash command.
 - **Shared state:** `TASKS.md`, `tasks/`, and `memory/CURRENT_STATE.md` are shared with autopilot.
 
 **Use when:** a small local model must complete a task list with verified, tested code; the work is production or security-sensitive; or the operator wants maximum integrity and evidence.
 
-**Configuration:** set `"subagent_depth": 2` (or higher) in `opencode.json`. At depth 1, `@rigour` cannot call the specialist subagents and the pipeline is not enforceable.
+**Configuration:** `@rigour` must be allowed to launch the specialist subagents. In OpenCode V2 this is controlled by the agent's `permissions` frontmatter (`action: subagent, allow`), not by `subagent_depth` (a deprecated legacy field). The `rigour` agent already declares those permissions; if they are removed, the pipeline is not enforceable.
 
 ### Model Routing
 
@@ -92,7 +92,7 @@ Use when: You want fast iteration, or you want to create the task list before a 
     cd my-project && cp MISSION.md MISSION.md   # fill in the mission brief
     ```
 
-    `MISSION.md` + `TASKS.md` (thin index; add one line per task) is all you edit by hand. Open the project in OpenCode and use the **`autopilot`** agent to create or resume the task list with a light loop. When the work must be completed with verified, tested code and no manual debugging, invoke **`@rigour`** ("do the tasks with @rigour"). `@rigour` enforces research → decomposition → adversarial review → planning → implementation → review → test → sign-off, delegating to `research`, `coder`, `review`, and `test`. Set `"subagent_depth": 2` in `opencode.json` so that delegation is allowed.
+    `MISSION.md` + `TASKS.md` (thin index; add one line per task) is all you edit by hand. Open the project in OpenCode and use the **`autopilot`** agent to create or resume the task list with a light loop. When the work must be completed with verified, tested code and no manual debugging, invoke **`@rigour`** ("do the tasks with @rigour"). `@rigour` enforces research → decomposition → adversarial review → planning → implementation → review → test → sign-off, delegating to `research`, `coder`, `review`, and `test`. Delegation is granted by `@rigour`'s `subagent` permissions in its frontmatter; do not remove them.
 
 ## How the two-layer model works
 

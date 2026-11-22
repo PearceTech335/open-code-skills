@@ -50,8 +50,8 @@ Rigour completion (when the operator invokes `@rigour`, e.g. "do the tasks with
 @rigour"): run the full pipeline — research, decomposition, adversarial review,
 planning, implementation, review, test, sign-off — delegating to the research,
 coder, review and test subagents. `@rigour` is the only rigour entry point. It
-requires `subagent_depth: 2` in `opencode.json`; specialists must not delegate
-further. The spec lives in ~/.config/opencode/agents/rigour.md.
+requires `@rigour` to carry `subagent` permissions in its frontmatter;
+specialists must not delegate further. The spec lives in ~/.config/opencode/agents/rigour.md.
 
 If index missing/stale: load project-index (and repo-discovery if needed), inspect,
 update/create index first.
@@ -228,10 +228,10 @@ structured, complete prompt rather than an ad-hoc one.
   explicitly in opencode.json and state it in the project mission/README; do not rely
   on undocumented keys.
 - execution_model is not a supported agent field; do not use it.
-- Delegation depth is set by `subagent_depth` in `opencode.json` (currently 2). An
-  orchestration subagent such as `@rigour` may invoke specialist subagents;
-  specialists (coder, research, review, test) must not delegate further and report
-  capability gaps to the orchestrator.
+- Delegation is controlled by each agent's `permissions` frontmatter
+  (`action: subagent`). `@rigour` carries `allow` for research, coder, review,
+  and test; specialists carry `deny` and report capability gaps to the
+  orchestrator. `subagent_depth` is a deprecated legacy setting and is ignored.
 
 ## 3.8 Planner Verification of Subagent Output
 

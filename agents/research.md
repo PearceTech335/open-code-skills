@@ -2,9 +2,28 @@
 description: Fast file parser. Uses the configured model (same as planner; no independent model load). Delegated by planner for discovery tasks.
 mode: all
 temperature: 0.4
-permission:
-  edit: allow
-  bash: deny
+permissions:
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: deny
+  - action: skill
+    resource: "*"
+    effect: allow
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: glob
+    resource: "*"
+    effect: allow
+  - action: grep
+    resource: "*"
+    effect: allow
 ---
 
 ## 1. Discovery only — inspect, and write ONLY to the task detail file

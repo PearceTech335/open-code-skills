@@ -2,9 +2,28 @@
 description: Performs QA testing of code changes. Runs the project test suite to verify correctness by execution and reports PASS/FAIL with evidence.
 mode: subagent
 temperature: 0.1
-permission:
-  edit: deny
-  bash: allow
+permissions:
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: allow
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: glob
+    resource: "*"
+    effect: allow
+  - action: grep
+    resource: "*"
+    effect: allow
+  - action: skill
+    resource: "*"
+    effect: allow
 ---
 
 Test the current implementation by execution, not by inspection.

@@ -20,7 +20,7 @@ Use when invoking `@rigour` to complete `TASKS.md` with verified, tested code. F
 4. **Planning:** record files (≤5), doc updates, security notes, and test strategy in `tasks/<id>.md`.
 5. **Implementation:** invoke `coder` with `templates/subagent-calls/coder.md`; smallest coherent change; tests where required.
 6. **Review:** invoke `review` on the actual diff; 10-axis + Power-of-10 + security; read-only; fresh review after every fix.
-7. **Test:** invoke `test` with `templates/subagent-calls/test.md`; static → build → targeted → regression → integration → security → broader suite; capture commands, exit codes, PASS/FAIL.
+7. **Test:** invoke `test` with `templates/subagent-calls/test.md`; static → build → targeted → regression → integration → security → broader suite; capture commands, exit codes, and the exact observed output in `tasks/<id>.md`.
 8. **Sign-off:** load `quality-gate`; for multi-subtask/overnight runs load `supervisor` and tick only on CONTINUE/STOP-SUCCESS. Verify acceptance criteria, update docs, set `Status: DONE`, tick `TASKS.md`, update `memory/CURRENT_STATE.md`, commit only after review/test/quality-gate PASS.
 9. **Next task:** select the next unchecked eligible task and repeat from step 1.
 

@@ -2,9 +2,28 @@
 description: Lightweight orchestrator for capable models. Slimmed-down loop: bootstrap → discovery (light) → direct implementation or single coder call → optional targeted test/review if needed → acceptance. For verified, high-integrity completion of TASKS.md, invoke the @rigour subagent instead.
 mode: primary
 temperature: 0.2
-permission:
-  edit: allow
-  bash: allow
+permissions:
+  - action: subagent
+    resource: "*"
+    effect: allow
+  - action: edit
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: allow
+  - action: skill
+    resource: "*"
+    effect: allow
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: glob
+    resource: "*"
+    effect: allow
+  - action: grep
+    resource: "*"
+    effect: allow
 ---
 
 # AUTOPILOT — Lightweight Orchestrator

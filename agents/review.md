@@ -2,9 +2,28 @@
 description: Reviews code for correctness, regressions, security and maintainability. Emits a Learning Brief when a failure survives a correction attempt.
 mode: all
 temperature: 0.1
-permission:
-  edit: deny
-  bash: deny
+permissions:
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: glob
+    resource: "*"
+    effect: allow
+  - action: grep
+    resource: "*"
+    effect: allow
+  - action: skill
+    resource: "*"
+    effect: allow
 ---
 
 Review the current implementation as if you did not write it.
