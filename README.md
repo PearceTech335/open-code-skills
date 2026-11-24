@@ -89,27 +89,24 @@ These lines come from a live autopilot session on a long-running design task. Th
 An operator starts with a rough idea and prompts OpenCode. OpenCode reads the current codebase and gives initial feedback. The operator refines the brief and asks `rigour` to design the architecture and implementation around the real source. Rigour writes a revision. An independent review subagent then audits that revision against the code, not against the proposal. Each audit returns a source-cited verdict. The planner saves the verdict, classifies the defect, corrects the design, and writes the next revision. The run produced ten revisions and eight audits. R9 passed with fixes. R10 resolved the last four contract fixes and became the working design.
 
 ```mermaid
-flowchart TB
-    subgraph row1["Idea and first reviews"]
-        direction LR
-        A["Idea + prompt"] --> B["Repo read + initial feedback"] --> C["Refined brief + rigour"] --> R2["R2 FAIL<br/>11 findings, 1 refuted"] --> R3["R3 FAIL<br/>6 fixes, 1 refuted"] --> R4["R4 FAIL<br/>7 fixes, 2 refuted"]
-    end
-    subgraph row2["Convergence"]
-        direction LR
-        R5["R5 FAIL<br/>1 blocker"] --> R6["R6 FAIL<br/>still open"] --> R7["R7 FAIL<br/>3 blockers"] --> R8["R8 FAIL<br/>3 blockers"] --> R9["R9 PASS-WITH-FIXES<br/>7 fixes verified"] --> R10["R10 RESOLVED<br/>4 contract fixes"]
-    end
-    R4 --> R5
+flowchart LR
+    A["Idea + prompt"] --> B["Initial feedback on the codebase"] --> C["Refined brief + rigour"]
+    C --> R2["R2 FAIL<br/>11 findings, 1 refuted"] --> R3["R3 FAIL<br/>6 fixes, 1 refuted"]
+    R3 --> R4["R4 FAIL<br/>7 fixes, 2 refuted"]
+    R3 -.-> LL["Learning Loop<br/>gap classified, self-help loaded"]
+    LL -.-> R4
+    R4 --> R5["R5 FAIL<br/>1 blocker"] --> R6["R6 FAIL<br/>still open"] --> R7["R7 FAIL<br/>3 blockers"]
+    R7 --> R8["R8 FAIL<br/>3 blockers"] --> R9["R9 PASS-WITH-FIXES<br/>7 fixes verified"]
+    R9 --> R10["R10 RESOLVED<br/>working architecture"]
 ```
 
-R10 is a complete architecture, not a patch. It keeps one Predictor with many models. It separates regression state structurally, so legacy readers cannot see it. It uses independent training and trading flags. It places one confidence override at the single seam after all writers. Two acceptance criteria remain before implementation: the versioned helper must exist, and measured cost must be in place. No production code, configuration, champion or gate changed during the design run. The operator gives direction once. OpenCode carries the design forward and never approves its own proposal.
+R10 is a complete architecture, not a patch. One model-agnostic core supports many models. Regression state stays structurally separate, so legacy readers cannot see it. Training and trading use independent flags. One confidence override sits at the single seam after all writers. Two acceptance criteria remain before implementation: the versioned helper must exist, and measured cost must be in place. No production code, configuration, champion or gate changed during the design run.
 
-These lines are a short excerpt from the run. The identifiers belong to the example project. The pattern is the point.
+When the same root cause survived two attempts, the planner classified the knowledge gap and loaded `self-help`. The operator gives direction once. OpenCode carries the design forward and never approves its own proposal.
 
-> R7 is committed (`fa0f3b8`). Now the audit.
+The log repeats a simple pattern. The planner commits a revision, an audit runs, the verdict is saved, and the next revision starts. While the auditor works, the planner runs its own checks on the part most likely to fail. One line captures the decision rule:
 
-> The R7 audit found three blocking defects. The core issue: confidence is overwritten at **four** sites after `:2348` [...] This is an implementation defect, no learning brief needed. Let me persist the audit and produce R8.
-
-> R8 is committed (`8ffc468`). Now the audit — I'll ask it to specifically validate the single-late-override point at `:2788`, since that's the crux of the fix.
+> This is an implementation defect, no learning brief needed. Let me persist the audit and produce R8.
 
 The run shows four framework behaviours:
 
