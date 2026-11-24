@@ -31,14 +31,6 @@ It is designed to be **dropped into** `~/.config/opencode/` and the contents of 
 
 The result, at the cost of per-step subagent latency: long runs stay on-goal, every step's evidence is inspectable, and behaviour is consistent regardless of the executing model.
 
-## Learning Loop in action
-
-An independent audit can fail twice on the same defect. The agent then classifies the knowledge gap itself. It loads `self-help` and drafts a project-scoped skill. No operator prompt is needed.
-
-![OpenCode detects a skills gap and loads self-help](learning-loop-skill-gap.png)
-
-The image shows a repeat failure on a byte-identity defect. The agent classifies it as `DATA_OR_SCHEMA_CONVENTION_GAP`, loads `self-help`, and continues to the next attempt with a structural fix.
-
 This is a **starter + personal configuration**, not a finished product. See "Honest status".
 
 ## Two operating modes
@@ -89,6 +81,14 @@ The planner passes that `model:` on the `subagent` tool call. Unlisted agents
 inherit the session model. Operators edit that section, not the global config.
 Verify tool support first — a model without `tool_use` cannot run a subagent even
 when `tool_call: true` is declared. `opencode.json` is local-only (gitignored). Whatever you declare is what runs — the framework is deliberately agnostic to model choice, size, and vendor, as long as the declared `model` supports tool calls.
+
+## Learning Loop in action
+
+An independent audit can fail twice on the same defect. The agent then classifies the knowledge gap itself. It loads `self-help` and drafts a project-scoped skill. No operator prompt is needed.
+
+![OpenCode detects a skills gap and loads self-help](learning-loop-skill-gap.png)
+
+The image shows a repeat failure on a byte-identity defect. The agent classifies it as `DATA_OR_SCHEMA_CONVENTION_GAP`, loads `self-help`, and continues to the next attempt with a structural fix.
 
 ## Quick start
 
