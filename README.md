@@ -90,17 +90,25 @@ An operator starts with a rough idea and prompts OpenCode. OpenCode reads the cu
 
 ```mermaid
 flowchart LR
-    A["Idea + prompt"] --> B["Initial feedback on the codebase"] --> C["Refined brief + rigour"]
-    C --> R2["R2 FAIL<br/>11 findings, 1 refuted"] --> R3["R3 FAIL<br/>6 fixes, 1 refuted"]
-    R3 --> R4["R4 FAIL<br/>7 fixes, 2 refuted"]
+    A["Idea + prompt"] --> B["Initial feedback"] --> C["Refined brief + rigour"] --> R2["R2 FAIL<br/>11 findings, 1 refuted"] --> R3["R3 FAIL<br/>6 fixes, 1 refuted"]
     R3 -.-> LL["Learning Loop<br/>gap classified, self-help loaded"]
-    LL -.-> R4
-    R4 --> R5["R5 FAIL<br/>1 blocker"] --> R6["R6 FAIL<br/>still open"] --> R7["R7 FAIL<br/>3 blockers"]
-    R7 --> R8["R8 FAIL<br/>3 blockers"] --> R9["R9 PASS-WITH-FIXES<br/>7 fixes verified"]
-    R9 --> R10["R10 RESOLVED<br/>working architecture"]
 ```
 
-R10 is a complete architecture, not a patch. One model-agnostic core supports many models. Regression state stays structurally separate, so legacy readers cannot see it. Training and trading use independent flags. One confidence override sits at the single seam after all writers. Two acceptance criteria remain before implementation: the versioned helper must exist, and measured cost must be in place. No production code, configuration, champion or gate changed during the design run.
+*continues below*
+
+```mermaid
+flowchart LR
+    R4["R4 FAIL<br/>7 fixes, 2 refuted"] --> R5["R5 FAIL<br/>1 blocker"] --> R6["R6 FAIL<br/>still open"] --> R7["R7 FAIL<br/>3 blockers"] --> R8["R8 FAIL<br/>3 blockers"]
+```
+
+*continues below*
+
+```mermaid
+flowchart LR
+    R9["R9 PASS-WITH-FIXES<br/>7 fixes verified"] --> R10["R10 RESOLVED<br/>working architecture"]
+```
+
+Each line continues from the last cell of the line above. The Learning Loop branch from R3 rejoins at R4.
 
 When the same root cause survived two attempts, the planner classified the knowledge gap and loaded `self-help`. The operator gives direction once. OpenCode carries the design forward and never approves its own proposal.
 
