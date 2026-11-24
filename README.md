@@ -86,6 +86,33 @@ when `tool_call: true` is declared. `opencode.json` is local-only (gitignored). 
 
 These lines come from a live autopilot session on a long-running design task. The planner writes each revision to a design document, commits it, then asks an independent `review` subagent to audit it.
 
+An operator starts with a rough idea and prompts OpenCode. OpenCode reads the current codebase and gives initial feedback. The operator refines the brief and asks `rigour` to design the architecture and implementation around the real source. Rigour writes a revision. An independent review subagent then audits that revision against the code, not against the proposal. Each audit in this run returned FAIL with a source-cited defect. The planner saved the audit, classified the defect, corrected the design, and wrote the next revision. The loop ran from R2 through R8, and had reached R9 when this was written.
+
+```mermaid
+flowchart TD
+    A["Operator has an idea and prompts OpenCode with the goal"] --> B["OpenCode reads the existing codebase and gives initial feedback about live paths and safety claims"]
+    B --> C["Operator refines the brief and launches rigour to design the architecture against the real code"]
+    C --> R2["R2: shadow legs marked status active plus a new serving_state field"]
+    R2 --> V2["Independent review FAIL: no live code reads serving_state, so all 13 call sites can serve the regression leg and byte identity fails"]
+    V2 --> R3["R3: makes a dedicated regression namespace mandatory"]
+    R3 --> V3["Independent review FAIL: byte identity holds in two functions only; scheduler, whitelist and tracker filter on status, role, pair and timeframe"]
+    V3 --> R4["R4: adds namespace isolation and corrects the return sign convention"]
+    R4 --> V4["Independent review FAIL: the sign rule contradicts itself for shorts and the portfolio-sort claim is refuted"]
+    V4 --> R5["R5: resolves the sign convention and the earlier namespace findings"]
+    R5 --> V5["Independent review FAIL: confidence at prediction.py:1508 is always 100, so the conformal fixture and worked example are unreachable"]
+    V5 --> R6["R6: patches confidence at the secondary re-evaluation path :1508"]
+    R6 --> V6["Independent review FAIL: wrong function, because the main path generate_prediction:2348 still publishes confidence 100"]
+    V6 --> R7["R7: introduces a shared confidence helper at both sites plus five related fixes"]
+    R7 --> V7["Independent review FAIL: three later writers overwrite confidence and the guard references an undefined leg inside a bare except"]
+    V7 --> R8["R8: moves to one late override seam after all writers"]
+    R8 --> V8["Independent review FAIL: model_mode is undefined, :2788 is an else keyword, and three more names do not exist"]
+    V8 --> R9["R9: next revision and audit, still in progress"]
+    V8 -.->|Same root cause twice| LL["Learning Loop: planner classifies the knowledge gap and loads self-help"]
+    LL -.-> R9
+```
+
+The diagram shows the point of the framework. The operator gives direction once. OpenCode then carries the design forward on its own. It does not accept its own proposal. Every revision faces an independent audit with file and line evidence. A failed audit becomes a specific correction, not a restart.
+
 > The auditor confirmed the finding: RF-7 patched the wrong function — `:1508` is the secondary re-eval path, while the main path is `generate_prediction:2348`. I'll persist the audit and produce R7 with RF-7b and the five related fixes.
 
 > R7 is committed (`fa0f3b8`). Now the audit.
