@@ -30,7 +30,11 @@ The `autopilot` agent uses a slimmed-down loop for capable models. It assumes th
 Invoke `@rigour` when a small local model must complete `TASKS.md` with verified, tested code and no manual debugging. The operator can create the task list with autopilot, then prompt "do the tasks with @rigour". Every task goes through research → decomposition → adversarial review → planning → implementation → review → test → sign-off. `@rigour` delegates to the specialist agents (`research`, `coder`, `review`, `test`); this requires `@rigour` to carry `subagent` permissions in its frontmatter. `@rigour` is the only rigour entry point.
 
 ### Model routing
-`opencode.json` declares an endpoint via `provider` plus a single `model`; all agents inherit that one configured `model`. The orchestrator runs specialists sequentially against the one endpoint — deliberate: no inference-session contention on bandwidth-limited hardware. Agents can override with their own `model:` frontmatter if needed.
+`opencode.json` declares an endpoint via `provider` plus a single `model`; all agents inherit that one configured `model`. The orchestrator runs specialists sequentially against the one endpoint — deliberate: no inference-session contention on bandwidth-limited hardware. Agents can override with their own `model:` frontmatter if needed. To opt in for one
+project only, state `model: <provider/model>` in this project's `AGENTS.md` as a
+`subagent` tool instruction, or place a project-local `.opencode/agents/<name>.md`.
+Verify the model reports `tool_use` and emits structured `tool_calls` before using it
+for a subagent.
 
 ## Process enforcement for small local models
 

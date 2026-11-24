@@ -222,8 +222,17 @@ structured, complete prompt rather than an ad-hoc one.
 ## 3.7 Model Routing
 
 - opencode.json declares a single model; all agents inherit it. An agent that needs
-  a different model sets model: <provider/model> in its own frontmatter — that is the
-  only supported per-agent mechanism.
+  a different model sets model: <provider/model> in its own frontmatter.
+- A project can opt into a different model for one specialist without editing the
+  global config. Add this instruction to the project's `AGENTS.md`:
+  "When delegating to `coder`, pass `model: <provider/model>` on the `subagent`
+  tool call." The override applies to that call only; other projects are unchanged.
+  For a persistent per-project override, place `.opencode/agents/<name>.md` in the
+  project with the global agent's frontmatter plus `model: <provider/model>`.
+- Verify tool support before opting in. `GET /api/v0/models` on LM Studio must report
+  `tool_use` in `capabilities`, and a direct `/v1/chat/completions` probe with a tool
+  definition must return structured `tool_calls`, not plain-text JSON. A model that
+  fails this check cannot run a subagent, even with `tool_call: true` in opencode.json.
 - If the deployment does split planner and execution endpoints, declare the split
   explicitly in opencode.json and state it in the project mission/README; do not rely
   on undocumented keys.
