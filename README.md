@@ -90,40 +90,38 @@ An operator starts with a rough idea and prompts OpenCode. OpenCode reads the cu
 
 ```mermaid
 flowchart TD
-    A["Operator has an idea and prompts OpenCode with the goal"] --> B["OpenCode reads the existing codebase and gives initial feedback about live paths and safety claims"]
-    B --> C["Operator refines the brief and launches rigour to design the architecture against the real code"]
-    C --> R2["R2: shadow legs marked status active plus a new serving_state field"]
-    R2 --> V2["Independent review FAIL: no live code reads serving_state, so all 13 call sites can serve the regression leg and byte identity fails"]
-    V2 --> R3["R3: makes a dedicated regression namespace mandatory"]
-    R3 --> V3["Independent review FAIL: byte identity holds in two functions only; scheduler, whitelist and tracker filter on status, role, pair and timeframe"]
-    V3 --> R4["R4: adds namespace isolation and corrects the return sign convention"]
-    R4 --> V4["Independent review FAIL: the sign rule contradicts itself for shorts and the portfolio-sort claim is refuted"]
-    V4 --> R5["R5: resolves the sign convention and the earlier namespace findings"]
-    R5 --> V5["Independent review FAIL: confidence at prediction.py:1508 is always 100, so the conformal fixture and worked example are unreachable"]
-    V5 --> R6["R6: patches confidence at the secondary re-evaluation path :1508"]
-    R6 --> V6["Independent review FAIL: wrong function, because the main path generate_prediction:2348 still publishes confidence 100"]
-    V6 --> R7["R7: introduces a shared confidence helper at both sites plus five related fixes"]
-    R7 --> V7["Independent review FAIL: three later writers overwrite confidence and the guard references an undefined leg inside a bare except"]
-    V7 --> R8["R8: moves to one late override seam after all writers"]
-    R8 --> V8["Independent review FAIL: model_mode is undefined, :2788 is an else keyword, and three more names do not exist"]
+    A["Operator has an idea and prompts OpenCode with the goal"] --> B["OpenCode reads the current codebase and gives initial feedback about what the change must preserve"]
+    B --> C["Operator refines the brief and launches rigour to design the architecture against the real source"]
+    C --> P0["Initial proposal written from the brief and the current code"]
+    P0 --> V0["Independent review FAILS: the proposal conflicts with live behaviour"]
+    V0 --> R2["R2 rewrites the proposal with the first round of fixes"]
+    R2 --> V2["Independent review FAILS: 11 findings and 1 refuted claim"]
+    V2 --> R3["R3 rewrites the proposal with the R2 fixes"]
+    R3 --> V3["Independent review FAILS: 6 required fixes and 1 refuted claim"]
+    V3 --> R4["R4 rewrites the proposal with the R3 fixes"]
+    R4 --> V4["Independent review FAILS: 7 required fixes and 2 refuted claims"]
+    V4 --> R5["R5 rewrites the proposal with the R4 fixes"]
+    R5 --> V5["Independent review FAILS: 1 blocking defect and 1 refuted claim"]
+    V5 --> R6["R6 rewrites the proposal with the R5 fix"]
+    R6 --> V6["Independent review FAILS: the blocking defect is still open and 1 claim is refuted"]
+    V6 --> R7["R7 rewrites the proposal with the R6 fix"]
+    R7 --> V7["Independent review FAILS: 3 blocking findings and 1 refuted claim"]
+    V7 --> R8["R8 rewrites the proposal with the R7 fixes"]
+    R8 --> V8["Independent review FAILS: 3 blocking findings and 1 refuted claim"]
     V8 --> R9["R9: next revision and audit, still in progress"]
-    V8 -.->|Same root cause twice| LL["Learning Loop: planner classifies the knowledge gap and loads self-help"]
-    LL -.-> R9
+    V3 -.->|Same root cause twice| LL["Learning Loop: planner classifies the knowledge gap and loads self-help"]
+    LL -.-> R4
 ```
 
 The diagram shows the point of the framework. The operator gives direction once. OpenCode then carries the design forward on its own. It does not accept its own proposal. Every revision faces an independent audit with file and line evidence. A failed audit becomes a specific correction, not a restart.
 
-> The auditor confirmed the finding: RF-7 patched the wrong function — `:1508` is the secondary re-eval path, while the main path is `generate_prediction:2348`. I'll persist the audit and produce R7 with RF-7b and the five related fixes.
+These lines are a short excerpt from the run. The identifiers belong to the example project. The pattern is the point.
 
 > R7 is committed (`fa0f3b8`). Now the audit.
-
-> R7 is committed and its audit is running. While it works, let me do the comprehensive confidence-writer sweep the auditor will do — checking every confidence assignment in `prediction.py` for any regression context I might have missed.
 
 > The R7 audit found three blocking defects. The core issue: confidence is overwritten at **four** sites after `:2348` [...] This is an implementation defect, no learning brief needed. Let me persist the audit and produce R8.
 
 > R8 is committed (`8ffc468`). Now the audit — I'll ask it to specifically validate the single-late-override point at `:2788`, since that's the crux of the fix.
-
-> Confirmed: `model_mode` is **not** in scope in `generate_prediction` — R8's override condition uses it, which would raise `NameError`. Also, `:2788` sits inside the HTF block's `else` branch, not at a clean point after all writers.
 
 The run shows four framework behaviours:
 
