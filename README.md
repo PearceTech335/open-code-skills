@@ -86,34 +86,22 @@ when `tool_call: true` is declared. `opencode.json` is local-only (gitignored). 
 
 These lines come from a live autopilot session on a long-running design task. The planner writes each revision to a design document, commits it, then asks an independent `review` subagent to audit it.
 
-An operator starts with a rough idea and prompts OpenCode. OpenCode reads the current codebase and gives initial feedback. The operator refines the brief and asks `rigour` to design the architecture and implementation around the real source. Rigour writes a revision. An independent review subagent then audits that revision against the code, not against the proposal. Each audit in this run returned FAIL with a source-cited defect. The planner saved the audit, classified the defect, corrected the design, and wrote the next revision. The loop ran from R2 through R8, and had reached R9 when this was written.
+An operator starts with a rough idea and prompts OpenCode. OpenCode reads the current codebase and gives initial feedback. The operator refines the brief and asks `rigour` to design the architecture and implementation around the real source. Rigour writes a revision. An independent review subagent then audits that revision against the code, not against the proposal. Each audit returns a source-cited verdict. The planner saves the verdict, classifies the defect, corrects the design, and writes the next revision. The run produced ten revisions and eight audits. R9 passed with fixes. R10 resolved the last four contract fixes and became the working design.
 
 ```mermaid
-flowchart TD
-    A["Operator has an idea and prompts OpenCode with the goal"] --> B["OpenCode reads the current codebase and gives initial feedback about what the change must preserve"]
-    B --> C["Operator refines the brief and launches rigour to design the architecture against the real source"]
-    C --> P0["Initial proposal written from the brief and the current code"]
-    P0 --> V0["Independent review FAILS: the proposal conflicts with live behaviour"]
-    V0 --> R2["R2 rewrites the proposal with the first round of fixes"]
-    R2 --> V2["Independent review FAILS: 11 findings and 1 refuted claim"]
-    V2 --> R3["R3 rewrites the proposal with the R2 fixes"]
-    R3 --> V3["Independent review FAILS: 6 required fixes and 1 refuted claim"]
-    V3 --> R4["R4 rewrites the proposal with the R3 fixes"]
-    R4 --> V4["Independent review FAILS: 7 required fixes and 2 refuted claims"]
-    V4 --> R5["R5 rewrites the proposal with the R4 fixes"]
-    R5 --> V5["Independent review FAILS: 1 blocking defect and 1 refuted claim"]
-    V5 --> R6["R6 rewrites the proposal with the R5 fix"]
-    R6 --> V6["Independent review FAILS: the blocking defect is still open and 1 claim is refuted"]
-    V6 --> R7["R7 rewrites the proposal with the R6 fix"]
-    R7 --> V7["Independent review FAILS: 3 blocking findings and 1 refuted claim"]
-    V7 --> R8["R8 rewrites the proposal with the R7 fixes"]
-    R8 --> V8["Independent review FAILS: 3 blocking findings and 1 refuted claim"]
-    V8 --> R9["R9: next revision and audit, still in progress"]
-    V3 -.->|Same root cause twice| LL["Learning Loop: planner classifies the knowledge gap and loads self-help"]
-    LL -.-> R4
+flowchart TB
+    subgraph row1["Idea and first reviews"]
+        direction LR
+        A["Idea + prompt"] --> B["Repo read + initial feedback"] --> C["Refined brief + rigour"] --> R2["R2 FAIL<br/>11 findings, 1 refuted"] --> R3["R3 FAIL<br/>6 fixes, 1 refuted"] --> R4["R4 FAIL<br/>7 fixes, 2 refuted"]
+    end
+    subgraph row2["Convergence"]
+        direction LR
+        R5["R5 FAIL<br/>1 blocker"] --> R6["R6 FAIL<br/>still open"] --> R7["R7 FAIL<br/>3 blockers"] --> R8["R8 FAIL<br/>3 blockers"] --> R9["R9 PASS-WITH-FIXES<br/>7 fixes verified"] --> R10["R10 RESOLVED<br/>4 contract fixes"]
+    end
+    R4 --> R5
 ```
 
-The diagram shows the point of the framework. The operator gives direction once. OpenCode then carries the design forward on its own. It does not accept its own proposal. Every revision faces an independent audit with file and line evidence. A failed audit becomes a specific correction, not a restart.
+R10 is a complete architecture, not a patch. It keeps one Predictor with many models. It separates regression state structurally, so legacy readers cannot see it. It uses independent training and trading flags. It places one confidence override at the single seam after all writers. Two acceptance criteria remain before implementation: the versioned helper must exist, and measured cost must be in place. No production code, configuration, champion or gate changed during the design run. The operator gives direction once. OpenCode carries the design forward and never approves its own proposal.
 
 These lines are a short excerpt from the run. The identifiers belong to the example project. The pattern is the point.
 
