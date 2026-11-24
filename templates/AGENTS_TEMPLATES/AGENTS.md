@@ -32,9 +32,10 @@ are untouched unless explicitly asked. Full loop lives in the global autopilot s
 Rigour completion (when the operator invokes `@rigour`, e.g. "do the tasks with
 @rigour"): run the full pipeline — research, decomposition, adversarial review,
 planning, implementation, review, test, sign-off — delegating to the research,
-coder, review and test subagents. `@rigour` is the only rigour entry point. It
-requires `@rigour` to carry `subagent` permissions in its frontmatter;
-specialists must not delegate further. The spec lives in ~/.config/opencode/agents/rigour.md.
+coder, review and test subagents via the `subagent` tool (§3.6). `rigour` is the
+only rigour entry point; pass `agent: rigour`, not `@rigour`. It requires the
+`rigour` agent to carry `subagent` permissions in its frontmatter; specialists must
+not delegate further. The spec lives in ~/.config/opencode/agents/rigour.md.
 
 If index missing/stale: load project-index (and repo-discovery if needed), inspect,
 update/create index first.
@@ -45,17 +46,20 @@ For non-trivial tasks (consolidated flow):
 3. Identify affected modules + tests.
 4. Load language/domain skill; plan smallest coherent change.
 5. If the task touches >1 file, changes behaviour/API, or the planner is uncertain:
-   invoke --agent research with templates/subagent-calls/research.md (structured
-   prompt only). The research agent fills the task's tasks/<id>.md detail file
+   delegate to `research` via the `subagent` tool (§3.6) using
+   templates/subagent-calls/research.md (structured prompt only). The research agent
+   fills the task's tasks/<id>.md detail file
    (findings, references, testing criteria). Exempt: comment/format-only and
    single-line trivial changes.
 6. Implement (coder subagent or direct edit).
-7. Load review subagent (templates/subagent-calls/review.md) — adversarial
-   PASS/FAIL (§7.7). The review agent is read-only; the planner appends its verdict
+7. Delegate to `review` via the `subagent` tool (§3.6) using
+   templates/subagent-calls/review.md — adversarial PASS/FAIL (§7.7). The review
+   agent is read-only; the planner appends its verdict
    to tasks/<id>.md. Only proceed when all 10 axes PASS.
 8a. Verify (planner): syntax → static analysis → diff review (with observed output).
-8b. Invoke --agent test (templates/subagent-calls/test.md) — targeted → regression
-   → broader suite, explicit timeouts, PASS/FAIL with evidence. Only proceed past
+8b. Delegate to `test` via the `subagent` tool (§3.6) using
+   templates/subagent-calls/test.md — targeted → regression → broader suite, explicit
+   timeouts, PASS/FAIL with evidence. Only proceed past
    this step on test PASS; failures return to implementer/review for classification.
    The test agent is read-only; the planner appends results to tasks/<id>.md.
 8c. Load quality-gate as the final pass — fix or record any issues. Only the
@@ -147,8 +151,13 @@ Never retry the same action unchanged after a failure.
 
 ## 3.6 Subagent Invocation Templates
 
-When invoking a subagent, use the corresponding template from
-templates/subagent-calls/:
+To delegate, call the top-level `subagent` tool directly, never inside `execute`:
+- `agent`: bare ID (`coder`, `research`, `review`, `test`, `rigour`). Never `@name`.
+- `description`: short task label.
+- `prompt`: fill the matching template from templates/subagent-calls/ below.
+- `model`: the value for that agent in §3.7. Omit only if the agent is not listed.
+
+`--agent` and `@name` are CLI or prose notation, not valid `agent` values.
 - templates/subagent-calls/research.md — for investigation/discovery/decision-research
   tasks (invoke: --agent research)
 - templates/subagent-calls/review.md — for code review tasks (invoke: --agent review)
@@ -167,11 +176,11 @@ structured, complete prompt rather than an ad-hoc one.
 
 ## 3.7 Model Routing
 
-Pass the following `model:` on the `subagent` tool call.
+Set `model:` on every `subagent` call for a listed agent.
 Agents not listed inherit the session model.
 
-coder: <provider/model>
-research: <provider/model>
+coder: <provider>/<model>
+research: <provider>/<model>
 
 ## 3.8 Planner Verification of Subagent Output
 

@@ -32,7 +32,7 @@ Invoke `@rigour` when a small local model must complete `TASKS.md` with verified
 ### Model routing
 `opencode.json` declares one model; agents inherit it unless routed per project.
 Edit §3.7 of this project's `AGENTS.md`: add one line per agent
-(`<agent>: <provider/model>`); remove a line to let that agent inherit the session
+(`<agent>: <provider>/<model>`); remove a line to let that agent inherit the session
 model. The planner passes the listed `model:` on the `subagent` tool call. Verify
 tool support before adding a route: LM Studio `capabilities` must include
 `tool_use`, and a tool probe must return structured `tool_calls`, not plain text.

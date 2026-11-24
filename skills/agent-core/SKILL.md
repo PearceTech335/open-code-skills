@@ -86,8 +86,9 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 
 ## Model Routing
 
-- `opencode.json` declares a single `model`; all agents inherit it unless the agent frontmatter sets `model: <provider/model>`.
+- `opencode.json` declares a single `model`; all agents inherit it unless the agent frontmatter sets `model: <provider>/<model>`.
 - Do not assume a cloud/local split or an `execution_model` key. Neither exists in this configuration. If a different model is needed for a subagent, set the documented `model:` field.
+- Project `AGENTS.md` may list per-agent models. Pass that `model:` on every `subagent` call for a listed agent; unlisted agents inherit the session model.
 - If the deployment does split planner and execution endpoints, document that in `opencode.json` and the project's `AGENTS.md` — do not rely on undocumented keys.
 
 ## Subagent Invocation Templates
