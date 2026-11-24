@@ -114,10 +114,11 @@ This ensures each researcher call is focused and verifiable, rather than one mas
 
 ## Subagent Invocation Reference
 
+Pass bare agent IDs to the `subagent` tool: `coder`, `research`, `review`, `test`, `rigour`. `@name` is prose notation only. Never put `@` in the `agent` field — `@rigour` returns "Unknown agent"; use `rigour`.
 - --agent research: loads agents/research.md (fast file parser, discovery)
 - --agent review: loads agents/review.md (adversarial review, LEARNING_BRIEF emitter)
 - --agent coder: loads agents/coder.md (code generation subagent)
 - --agent autopilot: loads agents/autopilot.md (lightweight orchestrator for capable models: bootstrap, light discovery, direct implementation, optional review/test, acceptance, tick - used as a primary agent via the agent switch, not a subagent)
-- --agent rigour: loads agents/rigour.md (high-integrity orchestrator: research, decomposition, adversarial review, planning, coder, review, test, sign-off; invoked as `@rigour`; delegates to specialists via its `subagent` permissions)
+- --agent rigour: loads agents/rigour.md (high-integrity orchestrator: research, decomposition, adversarial review, planning, coder, review, test, sign-off; `@rigour` in prose; delegates to specialists via its `subagent` permissions)
 - network-engineer: load skill `skills/network-engineer/SKILL.md` (OT/network troubleshooting). Prefer subagents only when escalation needs investigation orchestration; otherwise use the skill to conserve slots.
 The template file (templates/subagent-calls/) provides the structured prompt; the agent spec (agents/) provides the role definition. Both must match.

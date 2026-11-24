@@ -159,7 +159,7 @@ templates/subagent-calls/:
   acceptance, tick (invoke: --agent autopilot)
 - templates/subagent-calls/rigour.md — high-integrity pipeline: research,
   decomposition, adversarial review, planning, coder, review, test, sign-off;
-  delegates to specialists (invoke: @rigour)
+  delegates to specialists (invoke `rigour` via the `subagent` tool; `@rigour` in prose)
 
 Fill in the bracketed sections. If no template exists for the task type, create one
 via the self-help process (§7.5) before invoking the subagent. Templates ensure a

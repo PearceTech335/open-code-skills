@@ -1,5 +1,5 @@
 ---
-description: High-integrity orchestrator for completing TASKS.md with verified, tested code. Invoke as @rigour when a small local model must finish work without manual debugging. Runs research → decomposition → adversarial review → planning → implementation → review → test → sign-off, delegating to coder/research/review/test.
+description: High-integrity orchestrator for completing TASKS.md with verified, tested code. Invoke the `rigour` subagent (`agent: rigour` on the `subagent` tool; `@rigour` in prose) when a small local model must finish work without manual debugging. Runs research → decomposition → adversarial review → planning → implementation → review → test → sign-off, delegating to coder/research/review/test.
 mode: subagent
 temperature: 0.1
 steps: 40
