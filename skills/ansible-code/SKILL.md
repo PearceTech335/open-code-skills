@@ -31,7 +31,7 @@ Strong defaults, not rigid rules. Use engineering judgement where context warran
 
 9. **Use the standard role layout** — `tasks/`, `handlers/`, `templates/`, `files/`, `vars/`, `defaults/`, `meta/`. Templates end in `.j2`.
 
-10. **Run `ansible-playbook --syntax-check` and `ansible-lint` before reporting done.** Fix genuine problems; document justified exceptions where necessary. For tasks that change production or OT systems, make the expected impact and rollback procedure explicit.
+10. **Fix genuine problems; document justified exceptions.** For tasks that change production or OT systems, make the expected impact and rollback procedure explicit.
 
 ## Verification Order
 

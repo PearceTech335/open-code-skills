@@ -74,10 +74,11 @@ Set `"experimental.subagent_depth": 2` in `opencode.json` to allow an orchestrat
 
 ### Model Routing
 
-`opencode.json` declares an endpoint via `provider` plus a single `model`; **all agents inherit that one configured `model`**. There is no required cloud endpoint and no cloud/local split. The orchestrator runs specialists **sequentially** against the one endpoint — deliberate: no inference-session contention on bandwidth-limited hardware, and the workflow does not depend on any external model. The one persistent override is an agent's own `model: <provider/model[#variant]>`
-frontmatter; there is no `execution_model` key. A project can also opt in per
-delegation: state `model: <provider/model>` in the project's `AGENTS.md` as a
-`subagent` tool instruction, or add a project-local `.opencode/agents/<name>.md`.
+`opencode.json` declares an endpoint via `provider` plus a single `model`; **all agents inherit that one configured `model`**. There is no required cloud endpoint and no cloud/local split. The orchestrator runs specialists **sequentially** against the one endpoint — deliberate: no inference-session contention on bandwidth-limited hardware, and the workflow does not depend on any external model. The one persistent global override is an agent's own `model: <provider/model[#variant]>`
+frontmatter; there is no `execution_model` key. Per-project routing lives in
+§3.7 of the project's `AGENTS.md`: one line per agent (`coder: provider/model`).
+The planner passes that `model:` on the `subagent` tool call. Unlisted agents
+inherit the session model. Operators edit that section, not the global config.
 Verify tool support first — a model without `tool_use` cannot run a subagent even
 when `tool_call: true` is declared. `opencode.json` is local-only (gitignored). Whatever you declare is what runs — the framework is deliberately agnostic to model choice, size, and vendor, as long as the declared `model` supports tool calls.
 

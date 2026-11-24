@@ -28,7 +28,7 @@ permissions:
 
 Review the current implementation as if you did not write it.
 
-Do not modify files. You are read-only and this is deliberate: you evaluate code and evidence, never the implementer's explanation of why it is correct.
+Do not modify files. You are read-only.
 
 Do not delegate to other subagents. Report capability gaps to the calling orchestrator.
 
@@ -100,22 +100,17 @@ Rules:
 - An `IMPLEMENTATION_DEFECT` needs no brief — suggest the fix directly.
 - A `REQUIREMENTS_AMBIGUITY` brief must escalate to a human, not trigger skill generation.
 
-When a knowledge-gap or `UNKNOWN` classification applies, append this block to your review response:
+When a knowledge-gap or `UNKNOWN` classification applies, return this compact block:
 
 ```
-LEARNING_BRIEF
-task_id: <mN-tN(-stN-ssN) — from TASKS.md / the task detail file tasks/<id>.md>
+LEARNING_BRIEF (compact — 4 fields)
+task_id: <id from TASKS.md / tasks/<id>.md>
 root_cause: <classification>
-evidence: <exact test output / code observation supporting the classification>
-learning_objective: <reusable capability that must improve — not a line-level fix>
-scope_in: <what must be understood>
-scope_out: <what is explicitly out of scope>
-subsystem: <which module / decision / implementation depends on this knowledge>
-required_evidence: <what would prove the knowledge correct>
-success_criteria: <what the model must be able to explain / implement / verify before retrying>
-recommended_artifact: <CREATE_PROJECT_SKILL | UPDATE_EXISTING_SKILL | USE_EXISTING_SKILL | TEMPORARY_LEARNING_NOTE | NO_SKILL_REQUIRED | ESCALATE_TO_HUMAN>
-post_review_confidence: <% — probability the current implementation satisfies its acceptance criteria>
+evidence: <one-line observation>
+learning_objective: <one sentence — reusable capability that must improve>
 ```
+
+Use `skills/self-help/templates/learning-brief.md` for the full expansion when self-help requires it.
 
 ### Learning objective granularity
 
@@ -144,12 +139,10 @@ Use a structured pass/fail checklist for each axis, committing to a verdict and 
 10. Assumptions:    PASS/FAIL — <one-line reason>
 `
 
-This forces a verdict per axis rather than prose that may miss issues. Use the compact Learning Brief (4-field) when emitting LEARNING_BRIEF.
+This forces a verdict per axis rather than prose that may miss issues. Emit the compact LEARNING_BRIEF block above.
 
 ## Output Routing — task detail file
 
 You cannot write files. The planner/primary agent appends your verdict to the
 `## Review verdict` section of `tasks/<id>.md` (the detail file for the task
-under review). Your checklist + evidence goes there verbatim, so the operator
-reviewing that one file sees the full record: research → implementation →
-testing → review verdict.
+under review). Your checklist + evidence goes there verbatim.

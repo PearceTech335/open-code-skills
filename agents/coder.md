@@ -73,7 +73,6 @@ Never invent APIs, filenames, or module structures. Before writing code:
 
 ## 8. Subagent delegation rules
 
-- Load `agent-core` on any coding task.
 - Load at most one language/domain skill plus at most one workflow/meta skill (typically `readable-code`, `designer`, `quality-gate`, or `long-running-task-research`) — the 2 additional skills cap in agent-core applies.
 - Load `self-help` only when a second correction attempt fails on a knowledge gap (see the Learning Loop section of `AGENTS.md` / the project template).
 - Specialists must not delegate further, even though orchestration agents may; report capability gaps to the calling orchestrator instead.
@@ -88,7 +87,6 @@ Never invent APIs, filenames, or module structures. Before writing code:
 
 - Use concise instructions; break tasks into smaller sub-tasks when complexity warrants.
 - Stop and ask on unverified assumptions (label PRELIMINARY).
-- Load at most 2 additional skills per task beyond `agent-core` (see `agent-core` Skill-count cap). If more are needed, split the task or delegate to subagents/templates/checklists.
 - Use the compact Learning Brief (4-field) as the standard format.
 - Use structured PASS/FAIL checklist format for reviews when appropriate.
 - Deep research: read `memory/PROJECT_INDEX.md` first; break task into sub-tasks in TASKS.md; each sub-task gets its own attempt file and its own `tasks/<id>.md` detail file.

@@ -113,26 +113,4 @@ To confirm output complies with this skill:
 6. Confirm no operational-state content has crept into the index (it belongs in `memory/CURRENT_STATE.md` or `memory/KNOWN_ISSUES.md`).
 7. Run a targeted search (e.g., using `grep` or `glob`) to confirm a component described in the index can be located in the source tree.
 
-## Provenance
-
-- Sources:
-  - `claudate/project-multilevel-index` (GitHub) — Established patterns for multi-level project indexing and self-referential documentation.
-  - `pccly/project-indexer` (GitHub) — Harness-agnostic skill for generating `PROJECT_INDEX.md` with one-line descriptions and integration into agent context files.
-  - `superclaude_framework` (GitHub) — Comprehensive example of a standardized `PROJECT_INDEX.md` structure.
-  - Frontier-model review of a generated index (2026-11-05, scored 6/10) — Source of the Minimum Discovery, Architecture Mapping, and Discovery Completeness requirements; identified missing repository tree, shallow component relationships, absent entry-point/testing/config documentation, no change-impact emphasis, and operational-state contamination.
-- Verified claims:
-  - `PROJECT_INDEX.md` under `memory/` is the canonical location in projects scaffolded from this repo (starter ships it there). (Verified: this repo)
-  - Standardized sections improve consistency across projects. (Probable: Based on observed examples)
-  - Incremental updates are more sustainable than full regeneration. (Probable: Common practice in documentation systems)
-  - Discovery requirements catch omissions that template sections alone do not. (Probable: Based on the 6/10 review findings)
-- Repro example:
-  - Command: `ls memory/PROJECT_INDEX.md`
-  - Observed result: File exists at repository root.
-- Known limitations:
-  - This skill focuses on `memory/PROJECT_INDEX.md`. For very large monorepos, a multi-level approach (e.g., folder-level indexes) may be more appropriate, but that is outside the scope of this skill.
-  - The "Change Impact Map" requires manual maintenance and may become stale if not updated during architectural changes.
-  - Minimum Discovery adds inspection cost on large repositories; scale depth of module inspection to repository size but never skip manifests, entry points, and testing infrastructure.
-- Status: human-approved
-- Created from: proactive gap (standardizing project indexing across repositories)
-- Updated: 2026-11-05 (frontier-model feedback incorporation)
-- Date: 2026-11-04
+Scale module inspection to repository size; never skip manifests, entry points, and testing infrastructure.

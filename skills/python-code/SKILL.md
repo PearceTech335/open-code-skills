@@ -31,8 +31,6 @@ Strong defaults, not rigid rules. Use engineering judgement where context warran
 
 9. **Keep functions cohesive.** One clear responsibility with manageable control flow. A 60-line linear procedure is fine if it reads clearly; split when a reader would struggle.
 
-10. **Run `python -m py_compile` and `pytest` before reporting done.** Report what was actually verified.
-
 ## Verification Order
 
 1. Syntax: `python -m py_compile changed_file.py`

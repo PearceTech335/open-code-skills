@@ -31,7 +31,7 @@ Strong defaults, not rigid rules. Use engineering judgement where context warran
 
 9. **Provide a `-WhatIf` path for scripts that make significant changes**, where supported. Guard destructive operations with confirmation checks.
 
-10. **Parse-check with `[Parser]::ParseInput()` and run Pester tests before reporting done.** Target Windows PowerShell 5.1 unless the user asks for 7+ features.
+10. **Target Windows PowerShell 5.1** unless the user asks for 7+ features.
 
 ## Verification Order
 

@@ -87,11 +87,6 @@ and stylistic novelty.
   features over custom implementations.
 - Add dependencies only when their benefits justify their
   maintenance, security, and deployment costs.
-- Never initiate webfetch or external network requests without
-  explicit user authorization. WebFetch (`permission.webfetch: allow`)
-  is permitted ONLY for verified external research when explicitly asked
-  (e.g., "check docs for X"). It is NEVER permitted for agent/skill/config
-  files from repositories (e.g., `github.com/anomalyco/opencode/` paths).
 - Prefer standard-library solutions when they remain clear
   and appropriate.
 - Avoid unnecessary generic frameworks, compatibility layers,

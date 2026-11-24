@@ -27,9 +27,3 @@ metadata:
 - Fail fast with actionable errors
 - Make failures observable
 - Design for recovery
-
-## Guardrails
-- Respect existing patterns
-- Don't add heavy deps unnecessarily
-- Keep proportional to change
-- Respect skill cap

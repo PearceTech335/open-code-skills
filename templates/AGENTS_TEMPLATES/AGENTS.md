@@ -1,29 +1,12 @@
 # <PROJECT_NAME> — Agent Instructions
 
 This file layers project-specific rules on top of the global agent config
-(~/.config/opencode/AGENTS.md + global skills). It is a scaffold: customize only
-the header block, the <PROJECT_NAME> line, and ## 1. Mission. Global rules still
-apply and are NOT replaced here.
+(~/.config/opencode/AGENTS.md + global skills). Global rules still apply.
 
 ## 1. Mission
 
 Read MISSION.md in this directory for the project mission brief (what this project
-is, and its priorities in order). It is kept separate so this file can be re-aligned
-with the global template without losing project context. Edit MISSION.md when the
-mission changes; edit this file when the workflow/rules change.
-
-Customization surface (the only project-specific parts):
-- This header block and the <PROJECT_NAME> line.
-- The prose in ## 1. Mission and any project-specific additions below it.
-- The STE opt-in declaration, if this project needs full ASD-STE100 conformance.
-
-Everything else stays aligned with the global config — do not fork global rules
-into this file.
-
-Documentation style: the global config applies ASD-STE100-inspired principles
-to human-facing docs. A project that needs full ASD-STE100 conformance must
-declare it here or in MISSION.md, obtain the official standard (Issue 9, free at
-asd-ste100.org), and review against it — the global config never claims conformance.
+is, and its priorities in order).
 
 ## 2. Mandatory Task Startup (Checklist)
 
@@ -85,39 +68,9 @@ Never claim a test passed without observed output.
 
 ## 2.1 Architectural Escalation — Architect Sub-Agent
 
-agent-core invokes the architect sub-agent when a task introduces or exposes
-significant architectural complexity.
-
-Invocation triggers:
-- New projects or projects without architecture documentation.
-- Unclear component responsibilities or module dependencies.
-- Introduction of major components.
-- Database schema redesigns or significant API changes.
-- Refactoring across multiple modules.
-
-Do not invoke for:
-- Simple bug fixes or isolated function updates.
-- Small utilities.
-- Comment or formatting changes.
-
-Responsibilities:
-- Initial architecture design and discovery.
-- Component responsibilities and dependency mapping.
-- Architecture documentation and change management.
-- Architectural governance and integrity.
-
-Boundaries:
-- Do not implement routine features.
-- Do not modify production code without explicit delegation.
-- Do not invent undocumented functionality.
-- Do not override approved design decisions.
-- Evaluate dependencies before introducing them.
-- Avoid unnecessary documentation regeneration.
-
+Triggers and boundaries: see global `AGENTS.md` → Architectural Governance.
 Architecture decisions must be reflected in ARCHITECTURE.md and significant
 design decisions recorded in DECISIONS.md.
-
-Manual invocation is unnecessary when agent-core identifies a defined trigger.
 
 ## 3. Task Execution
 
@@ -190,13 +143,6 @@ Rules:
   its own memory/learning/tasks/<id>-attempts.jsonl; never share a budget across
   unrelated subtasks.
 
-Example (your evaluation.py failure): attempt 1 failed due to context mismatch;
-attempt 2 should read the exact block from the file, confirm indentation; attempt
-3 triggers review → RCA = "edit tool requires exact match" → workaround = construct
-exact string from read output, edit once; if that also fails, split into
-sub-subtask (read verification → edit application → test) rather than repeating
-the same edit attempt.
-
 Never retry the same action unchanged after a failure.
 
 ## 3.6 Subagent Invocation Templates
@@ -221,27 +167,11 @@ structured, complete prompt rather than an ad-hoc one.
 
 ## 3.7 Model Routing
 
-- opencode.json declares a single model; all agents inherit it. An agent that needs
-  a different model sets model: <provider/model> in its own frontmatter.
-- A project can opt into a different model for one specialist without editing the
-  global config. Add this instruction to the project's `AGENTS.md`:
-  "When delegating to `coder`, pass `model: <provider/model>` on the `subagent`
-  tool call." The override applies to that call only; other projects are unchanged.
-  For a persistent per-project override, place `.opencode/agents/<name>.md` in the
-  project with the global agent's frontmatter plus `model: <provider/model>`.
-- Verify tool support before opting in. `GET /api/v0/models` on LM Studio must report
-  `tool_use` in `capabilities`, and a direct `/v1/chat/completions` probe with a tool
-  definition must return structured `tool_calls`, not plain-text JSON. A model that
-  fails this check cannot run a subagent, even with `tool_call: true` in opencode.json.
-- If the deployment does split planner and execution endpoints, declare the split
-  explicitly in opencode.json and state it in the project mission/README; do not rely
-  on undocumented keys.
-- execution_model is not a supported agent field; do not use it.
-- Delegation is controlled by each agent's `permissions` frontmatter
-  (`action: subagent`). `@rigour` carries `allow` for research, coder, review,
-  and test; specialists carry `deny` and report capability gaps to the
-  orchestrator. Set `experimental.subagent_depth` in `opencode.json` so the
-  orchestrator may launch them (e.g., 2). Specialists must not delegate further.
+Pass the following `model:` on the `subagent` tool call.
+Agents not listed inherit the session model.
+
+coder: <provider/model>
+research: <provider/model>
 
 ## 3.8 Planner Verification of Subagent Output
 
@@ -322,16 +252,13 @@ Controls whether new project skills need human approval before activating.
 auto-approve: off
 max-new-skills-per-run: 3
 
-- auto-approve: off — all new skills pause for human approval (the Learning Gate
-  still runs on every skill). Set to project-skills to skip the human pause for
-  PROJECT-scoped skills only (global promotion always requires review). The Learning
-  Gate still runs on every skill. The starter ships fail-closed; enabling auto-approve
-  is an explicit, reviewable decision.
+- auto-approve: off — all new skills pause for human approval; the Learning Gate
+  runs on every skill.
 - max-new-skills-per-run — cap per autonomous run; when exceeded, stop and escalate
   rather than generating more.
 - Every auto-approved skill is PROVISIONAL (Status: auto-approved-provisional)
   until reviewed. Audit them in .opencode/skills/ and metrics.jsonl.
-  auto-apply applies to project skills only; global promotion always requires review,
+  auto-approve applies to project skills only; global promotion always requires review,
   and unattended runs still require a post-run audit of provisional skills.
 
 ## 7. Skill Management
@@ -421,9 +348,6 @@ Research each task in depth before implementing:
    it further into sub-sub-tasks.
 5. Never implement a task that hasn't been decomposed. If you can't decompose it,
    load repo-discovery first.
-
-This is already partially implemented via TASKS.md IDs and §3.5 failure budget. The
-rule above makes it explicit.
 
 ## 7.9 Compact Learning Brief (Mandatory Format)
 

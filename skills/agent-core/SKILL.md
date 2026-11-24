@@ -32,15 +32,7 @@ Call tools directly in `<tool_use>` blocks. Never describe them as text. Keep us
 1. **Explore** (read-only) — grep/glob for the relevant path, trace data flow, identify conventions. List files that will and will not change. **Requirements micro-checklist (always):** (1) Goal/acceptance criteria explicit? If not, clarify or label `PRELIMINARY`. (2) Verify existing behavior by reading target file + relevant tests/call sites. (3) Check API/contracts/schema impact. (4) Check alignment with `PROJECT_INDEX.md`/`ARCHITECTURE.md`. (5) Escalation triggers (cross-module/boundaries/deps/schema/unclear ownership/ambiguous requirements)? If yes, escalate to `architect` subagent or `research` subagent per escalation rules. Pay a little upfront to avoid future refactors.
 2. **Plan** — 2–5 bullets naming every file that will change. Split >5-file changes into sub-tasks.
 3. **Execute** — smallest coherent change. Preserve APIs. No new dependencies without approval.
-4. **Verify** — syntax → lint → targeted tests → full build → adversarial self-review. Show evidence, never assert.
-
-## Execution and Verification
-
-1. Explore the relevant code and understand existing conventions.
-2. Make the smallest coherent change that meets the requirements.
-3. Run the relevant syntax checks, tests, and other project checks.
-4. Review the diff for correctness, readability, security, and scope.
-5. Report what changed, what was verified, and any remaining risks.
+4. **Verify** — syntax → lint → targeted tests → full build → adversarial self-review. Show evidence, never assert. Report what changed, what was verified, and remaining risks.
 
 Do not stop immediately after writing code. Complete the verification steps that are practical in the current environment.
 
@@ -63,7 +55,6 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 
 ## Course-Correction
 
-- If a verification step fails, diagnose the cause before deciding whether to retry, fix, use an alternative, or report a blocker.
 - If corrected for the same mistake more than twice, restart with a clearer prompt.
 - If requirements conflict with existing code, surface the conflict immediately.
 
@@ -99,15 +90,9 @@ If a check fails, diagnose the cause before deciding whether to retry, fix the i
 
 ## Subagent Invocation Templates
 
-When invoking a subagent, use the corresponding template from templates/subagent-calls/:
-- research.md -- investigation/discovery/decision research (unified template: evidence-first, adversarial review, references)
-- review.md -- code review tasks
-- coder.md -- code generation tasks
-- autopilot.md -- lightweight orchestrator for capable models (bootstrap, light discovery, direct implementation, optional review/test, acceptance, tick)
-- rigour.md -- high-integrity orchestrator for completing TASKS.md with verified, tested code (research -> decomposition -> adversarial review -> planning -> implementation -> review -> test -> sign-off); delegates to coder/research/review/test
-
-Fill in the bracketed sections. If no template exists, create one via self-help (section 7.5) before invoking.
-Templates ensure the model receives a structured, complete prompt rather than an ad-hoc one.
+When invoking a subagent, use the matching template in `templates/subagent-calls/`.
+Fill in the bracketed sections; if none exists, create one via self-help (§7.5) first.
+Templates give the subagent a structured, complete prompt instead of an ad-hoc one.
 
 ## Subagent Output Verification
 

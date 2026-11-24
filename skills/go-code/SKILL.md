@@ -31,8 +31,6 @@ Strong defaults, not rigid rules. Use engineering judgement where context warran
 
 9. **Leave the build clean.** No unused imports, variables, or dead code.
 
-10. **Run `go vet ./...`, `go build ./...`, and `go test ./...` before reporting done.** Add `-race` for concurrent code.
-
 ## Verification Order
 
 1. Vet: `go vet ./...`

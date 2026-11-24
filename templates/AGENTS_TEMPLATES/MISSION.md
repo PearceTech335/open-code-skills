@@ -1,9 +1,5 @@
 # <PROJECT_NAME> — Mission Brief
 
-Project mission brief for AGENTS.md §1. Kept separate so AGENTS.md can be
-re-aligned with the global template without losing project context. Edit this
-file when the mission changes; edit AGENTS.md when the workflow/rules change.
-
 Fill in the placeholders below from the real repo before first use.
 
 One or two sentences: what this project is, and its priorities in order.

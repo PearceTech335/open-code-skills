@@ -10,7 +10,7 @@ metadata:
 
 # Git Practices & Project Maintenance
 
-Load when making commits, structuring branches, releasing versions, or maintaining a repository. Covers workflow rules with cited sources and observed behavior.
+Load when making commits, structuring branches, releasing versions, or maintaining a repository.
 
 ## Rules
 
@@ -38,14 +38,3 @@ Load when making commits, structuring branches, releasing versions, or maintaini
 2. Pre-delete: `git branch --merged main` shows the topic branch before removing it; PR checks are green.
 3. Pre-release: `git log <last-tag>..HEAD --oneline` matches the SemVer bump, and CHANGELOG has a dated section for the new version.
 4. Repo settings: default branch requires PR reviews + status checks; force-push and deletion blocked.
-
-## Provenance
-
-- Sources: git-scm.com Pro Git 2e §5.3 "Maintaining a Project" and §3.6 "Rebasing"; guides.github.com "GitHub flow"; docs.github.com "About protected branches"; semver.org 2.0.0; keepachangelog.com 1.1.0; conventionalcommits.org 1.0.0 (all fetched 2026-11-02)
-- Verified claims: golden-rule mechanism (rebase SHA rewrite, observed); merged-branch deletion retains history (observed); annotated vs lightweight tag metadata (observed); topic-branch + PR flow (2 independent sources); branch protection defaults (primary docs); SemVer/Conventional Commits/Changelog structures (primary specs)
-- Probable claims: commit-isolation revertability rationale (single source); rebase-for-linear-history preference (single source)
-- Repro example: git 2.55.0 — E1 SHA f7babec→a6cf99e after rebase; E3 topic commits survive `git branch -d`; E2 `objecttype=tag` vs `commit`, `git describe --tags` → v1.0.0 (observed 2026-11-02)
-- Known limitations: CI design, issue triage, dependency automation, fork/sync workflows, non-GitHub hosting, and signing-key setup are not covered
-- Status: human-approved
-- Created from: proactive gap (user request)
-- Date: 2026-11-02

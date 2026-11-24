@@ -22,5 +22,4 @@ Use this skill for autonomous, unattended, multi-stage, or long-running tasks sp
 6. **Reproducibility**: Record exact commands, configs, and versions. Preserve successful and failed trials. Never claim an unverified test ran.
 7. **Safe Refactoring**: Make the smallest reversible change. Preserve public interfaces. Inspect diffs and run verification checks.
 8. **Self-Critique**: Every observation requires: Observation (file/line/snippet), Assumption, Limitation, and References. Label findings: `VERIFIED`, `INFERRED`, or `UNKNOWN`.
-9. **WebFetch Policy**: Allowed ONLY for verified external docs/research when explicitly asked. NEVER permitted for agent/skill/config files or external repos (`github.com/anomalyco/`, etc.). Report failures once; never loop.
-10. **Final Review**: Verify separation of concerns, dependency direction, explicit error handling, and test outcomes before declaring complete. Report what changed and where notes were saved.
+9. **Final Review**: Verify separation of concerns, dependency direction, explicit error handling, and test outcomes before declaring complete. Report what changed and where notes were saved.

@@ -1,11 +1,7 @@
 # Engineering Standards
 
-The global base layer every project loads. A project adds a complementary AGENTS.md
-scaffolded from templates/AGENTS_TEMPLATES/AGENTS.md — customize only its header block
-and ## 1. Mission; it adds the project's task workflow (TASKS.md index + tasks/<id>.md
-detail files, the failure budget, the Learning Loop, the Skill Policy) without repeating
-these global rules. Do not duplicate global content into project files; do not fork
-global rules there either. Global rules that a project cannot override: the Checkpoint
+The global base layer every project loads. Project setup and the two-layer model:
+see README.md. Global rules that a project cannot override: the Checkpoint
 Discipline, the Documentation Style (STE-inspired) section, this Workflow, Security/WebFetch
 policy, and the language tool mapping.
 
@@ -115,9 +111,7 @@ dictionary, applied with professional review. Say "STE-inspired" instead.
 
 Do NOT inline the standard's dictionary or rule text (copyright; CC BY-NC-ND 4.0).
 
-Full ASD-STE100 conformance is opt-in per project: a project that needs it must declare
-it in its own AGENTS.md/MISSION.md and obtain the official standard. The global config
-never claims conformance.
+Full ASD-STE100 conformance is opt-in per project. The global config never claims conformance.
 
 Detail + checklist: skills/ste-writing/SKILL.md (load on doc tasks; counts toward the
 2-additional-skill cap).
@@ -201,10 +195,6 @@ research-method, self-help, supervisor, test-engineering, root-cause-analysis,
 interface-design, production-readiness, network-engineer, ste-writing. Skills load on
 demand via the skill tool. Topic memory is wired via opencode.json: instructions[]. For
 heavy analysis, prefer subagents (research, review, architect) over loading extra skills.
-
-Static checks (this repo): node scripts/validate_skills.js (skill frontmatter and structure)
-and node scripts/verify.js (config parses; path references in AGENTS.md/MISSION.md resolve).
-These are the available framework-level checks; there is no separate packaged validator.
 
 ## Learning Loop
 

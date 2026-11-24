@@ -54,12 +54,3 @@ Covers 2D Canvas, WebGL, and Three.js for rendering interactive graphics and 3D 
 3. Test on target devices/browsers
 4. Verify memory usage (no unbounded growth)
 5. Test with reduced motion preferences
-
-## Provenance
-- Sources: MDN WebGL Best Practices, MDN Canvas API, Three.js docs/community, WebGL vs Three.js comparisons (2026)
-- Verified claims: Canvas/WebGL/Three.js distinctions, requestAnimationFrame, OffscreenCanvas, instancing, disposal (Verified - multiple sources)
-- Repro example: Basic Three.js scene renders with requestAnimationFrame loop
-- Known limitations: WebGPU support varies; mobile performance constraints
-- Status: human-approved
-- Created from: proactive gap
-- Date: 2026-11-13

@@ -37,14 +37,3 @@ Load when creating or revising a README.md (repository root, `.github`, `docs/`,
 2. Read the first screen cold: it must answer what/why/how without scrolling past detail sections.
 3. Grep for staleness: no `TODO`, no feature claims absent from the code, every example command copy-paste runnable.
 4. Check the GitHub preview: Outline lists every section, relative links resolve, images render with alt text.
-
-## Provenance
-
-- Sources: docs.github.com "About the repository README file"; tom.preston-werner.com "Readme Driven Development" (2010); opensource.guide "Starting an Open Source Project"; docs.github.com "Setting up your project for healthy contributions"; github.blog "5 tips for making your GitHub profile page accessible" (2023-10-26)
-- Verified claims: five-question structure (2 sources); keep-short/deeper-docs-elsewhere (2 sources); companion files (3 sources); platform facts — 500 KiB truncation, location precedence, auto Outline, section anchors, relative/single-line links, profile README (primary official docs)
-- Probable claims: README-first workflow (single primary source); accessibility rules — headings/alt text/lists/emoji/plain language (single official source)
-- Repro example: `check-readme.ps1 sample-bad.md` → 3 FAILs, exit 1; `check-readme.ps1 sample-good.md` → PASS, exit 0 (observed 2026-11-02)
-- Known limitations: repo metadata (description/topics/social preview), badge policy, non-GitHub platforms, and localization are not covered
-- Status: human-approved
-- Created from: proactive gap (user request)
-- Date: 2026-11-02

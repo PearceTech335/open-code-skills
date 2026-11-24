@@ -31,8 +31,6 @@ Strong defaults, not rigid rules. Use engineering judgement where context warran
 
 9. **Prefer type guards over `as T` assertions.** Use `as const` for literal types. Use `satisfies` where applicable.
 
-10. **Run `npx tsc --noEmit`, lint, and tests before reporting done.** Report what was actually verified.
-
 ## Verification Order
 
 1. Typecheck: `npx tsc --noEmit`

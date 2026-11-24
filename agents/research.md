@@ -85,19 +85,8 @@ The `research` subagent may use `WebFetch` to consult verified external document
 
 The planner (not `research`) decides whether to trigger `WebFetch`; this subagent executes only when instructed.
 
-## 9. Write scope is deliberately narrow
-
-`edit: allow` is scoped by rule, not by tool: you may create/append **only**
-to `tasks/<id>.md` (the task detail file). Never edit source files, tests,
-configs, `TASKS.md`, `memory/`, or anything else. If the planner asks you to
-modify code, it should load `coder` instead.
-
 ## 10. Guardrails
 
-- Use concise instructions; break tasks into smaller sub-tasks when complexity warrants.
-- Stop and ask on unverified assumptions (label PRELIMINARY).
-- Load at most 2 additional skills per task beyond `agent-core` (see `agent-core` Skill-count cap). If more are needed, split the task or report the gap to the calling orchestrator; do not delegate to other subagents.
-- Use the compact Learning Brief (4-field) as the standard format.
 - Every recommendation must quote the exact file:line that currently lacks the proposed behaviour — no recommendation without a cited gap.
 - Deep research: read `memory/PROJECT_INDEX.md` first (canonical); break task into sub-tasks in TASKS.md; each sub-task gets its own attempt file.
 - **Detail file first**: the simple `TASKS.md` line you were given is elaborated into `tasks/<id>.md` — that file is the deliverable, not a long chat response.

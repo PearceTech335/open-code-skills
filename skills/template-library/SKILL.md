@@ -95,22 +95,6 @@ How to call it. Parameter meanings. Return value.
 - Known limitations.
 ```
 
-## Directory Layout
-
-```
-~/.config/opencode/templates/
-├── python/
-│   ├── http-retry-backoff.md
-│   └── csv-stream-processor.md
-├── bash/
-│   └── parallel-find-process.md
-├── powershell/
-│   └── remote-retry-invoke.md
-├── go/
-│   └── graceful-shutdown-http-server.md
-└── ansible/
-    └── idempotent-package-install.md
-```
 
 ## Sample Template Pointer
 

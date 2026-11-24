@@ -31,8 +31,6 @@ Strong defaults, not rigid rules. Use engineering judgement where context warran
 
 9. **Loops need termination strategies.** Bounded loops, explicit exits, or signal handling — whichever fits. Use `timeout` for commands that can hang, not for every command.
 
-10. **Run `bash -n` and `shellcheck` before reporting done.** Report what was actually verified.
-
 ## Verification Order
 
 1. Syntax: `bash -n script.sh`
