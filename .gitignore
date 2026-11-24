@@ -3,8 +3,7 @@
 !/agents/**
 !/commands/
 !/commands/**
-!/docs/
-!/docs/**
+!/*.png
 !/README.md
 !/skills/
 !/skills/**
