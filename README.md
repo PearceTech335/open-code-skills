@@ -88,29 +88,57 @@ These lines come from a live autopilot session on a long-running design task. Th
 
 An operator starts with a rough idea and prompts OpenCode. OpenCode reads the current codebase and gives initial feedback. The operator refines the brief and asks `rigour` to design the architecture and implementation around the real source. Rigour writes a revision. An independent review subagent then audits that revision against the code, not against the proposal. Each audit returns a source-cited verdict. The planner saves the verdict, classifies the defect, corrects the design, and writes the next revision. The run produced ten revisions and eight audits. R9 passed with fixes. R10 resolved the last four contract fixes and became the working design.
 
-```mermaid
-flowchart LR
-    A["Idea + prompt"] --> B["Initial feedback"] --> C["Refined brief + rigour"] --> R2["R2 FAIL<br/>11 findings, 1 refuted"] --> R3["R3 FAIL<br/>6 fixes, 1 refuted"]
-    R3 -.-> LL["Learning Loop<br/>gap classified, self-help loaded"]
-```
+**Idea and prompt.** The operator describes the goal in a few sentences. No architecture is supplied.
 
-*continues below*
+↓
 
-```mermaid
-flowchart LR
-    R4["R4 FAIL<br/>7 fixes, 2 refuted"] --> R5["R5 FAIL<br/>1 blocker"] --> R6["R6 FAIL<br/>still open"] --> R7["R7 FAIL<br/>3 blockers"] --> R8["R8 FAIL<br/>3 blockers"]
-```
+**Initial feedback.** OpenCode reads the current codebase. It reports the live paths, gates, and safety properties the change must preserve.
 
-*continues below*
+↓
 
-```mermaid
-flowchart LR
-    R9["R9 PASS-WITH-FIXES<br/>7 fixes verified"] --> R10["R10 RESOLVED<br/>working architecture"]
-```
+**Refined brief.** The operator clarifies the requirement and launches `rigour`. Rigour writes the first design proposal against the real source.
 
-Each line continues from the last cell of the line above. The Learning Loop branch from R3 rejoins at R4.
+↓
 
-When the same root cause survived two attempts, the planner classified the knowledge gap and loaded `self-help`. The operator gives direction once. OpenCode carries the design forward and never approves its own proposal.
+**R2 — first proposal rejected.** An independent `review` subagent audits the design against the code. It returns 11 findings and 1 refuted claim. The planner saves the verdict and rewrites.
+
+↓
+
+**R3 — second proposal rejected.** The rewrite fixes the R2 findings. The audit finds 6 required fixes and 1 refuted claim.
+
+↓
+
+**Learning Loop.** The same root cause survived two attempts. The planner classifies the knowledge gap, loads `self-help`, and drafts a project-scoped skill.
+
+↓
+
+**R4 — third proposal rejected.** The rewrite applies the R3 fixes. The audit finds 7 required fixes and 2 refuted claims.
+
+↓
+
+**R5 — fourth proposal rejected.** The rewrite closes those items. One blocking defect remains, with 1 refuted claim.
+
+↓
+
+**R6 — defect still open.** The patch targets a secondary path. The audit refutes the claim that the fix is complete.
+
+↓
+
+**R7 — shared fix proposed.** The rewrite applies one shared fix across the sites named by the audit. The audit finds 3 blocking findings and 1 refuted claim.
+
+↓
+
+**R8 — single insertion point.** The rewrite moves the correction to one seam after all writers. The audit finds 3 blocking findings and 1 refuted claim.
+
+↓
+
+**R9 — audited PASS-WITH-FIXES.** All seven earlier fixes are verified. Four contract and documentation fixes remain.
+
+↓
+
+**R10 — resolved.** The final four fixes are applied. The design is complete. Ten revisions and eight audits are on disk, and no production code changed.
+
+The operator gives direction once. OpenCode carries the design forward and never approves its own proposal.
 
 The log repeats a simple pattern. The planner commits a revision, an audit runs, the verdict is saved, and the next revision starts. While the auditor works, the planner runs its own checks on the part most likely to fail. One line captures the decision rule:
 
