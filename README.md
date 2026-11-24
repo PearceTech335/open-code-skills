@@ -82,6 +82,29 @@ inherit the session model. Operators edit that section, not the global config.
 Verify tool support first — a model without `tool_use` cannot run a subagent even
 when `tool_call: true` is declared. `opencode.json` is local-only (gitignored). Whatever you declare is what runs — the framework is deliberately agnostic to model choice, size, and vendor, as long as the declared `model` supports tool calls.
 
+## Autopilot in action — a real design run
+
+These lines come from a live autopilot session on a long-running design task. The planner writes each revision to a design document, commits it, then asks an independent `review` subagent to audit it.
+
+> The auditor confirmed the finding: RF-7 patched the wrong function — `:1508` is the secondary re-eval path, while the main path is `generate_prediction:2348`. I'll persist the audit and produce R7 with RF-7b and the five related fixes.
+
+> R7 is committed (`fa0f3b8`). Now the audit.
+
+> R7 is committed and its audit is running. While it works, let me do the comprehensive confidence-writer sweep the auditor will do — checking every confidence assignment in `prediction.py` for any regression context I might have missed.
+
+> The R7 audit found three blocking defects. The core issue: confidence is overwritten at **four** sites after `:2348` [...] This is an implementation defect, no learning brief needed. Let me persist the audit and produce R8.
+
+> R8 is committed (`8ffc468`). Now the audit — I'll ask it to specifically validate the single-late-override point at `:2788`, since that's the crux of the fix.
+
+> Confirmed: `model_mode` is **not** in scope in `generate_prediction` — R8's override condition uses it, which would raise `NameError`. Also, `:2788` sits inside the HTF block's `else` branch, not at a clean point after all writers.
+
+The run shows four framework behaviours:
+
+- The planner saves each audit before it writes the next revision.
+- An independent subagent audits the design. The planner does not approve its own work.
+- The planner runs non-overlapping checks while the auditor works.
+- The planner classifies each failure. An implementation defect stays local. A knowledge gap triggers §5.
+
 ## Learning Loop in action
 
 An independent audit can fail twice on the same defect. The agent then classifies the knowledge gap itself. It loads `self-help` and drafts a project-scoped skill. No operator prompt is needed.
