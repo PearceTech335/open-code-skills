@@ -27,6 +27,8 @@ Do not load unrelated skills (e.g., `bash-skill` for a Python module, `security`
 
 Call tools directly in `<tool_use>` blocks. Never describe them as text. Keep user-facing explanations proportional to the task — enough detail to explain important design choices, verification results, and limitations.
 
+Call tools as top-level tool calls. Code Mode (`execute`) exposes only `browser` and `opencode`; `subagent` is not available there. Calling `tools.subagent(...)` returns "Unknown tool". Use the direct `subagent` tool for delegation.
+
 ## Four-Phase Protocol
 
 1. **Explore** (read-only) — grep/glob for the relevant path, trace data flow, identify conventions. List files that will and will not change. **Requirements micro-checklist (always):** (1) Goal/acceptance criteria explicit? If not, clarify or label `PRELIMINARY`. (2) Verify existing behavior by reading target file + relevant tests/call sites. (3) Check API/contracts/schema impact. (4) Check alignment with `PROJECT_INDEX.md`/`ARCHITECTURE.md`. (5) Escalation triggers (cross-module/boundaries/deps/schema/unclear ownership/ambiguous requirements)? If yes, escalate to `architect` subagent or `research` subagent per escalation rules. Pay a little upfront to avoid future refactors.

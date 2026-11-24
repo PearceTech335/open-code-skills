@@ -47,6 +47,7 @@ Use `@rigour` when the operator has a `TASKS.md` and wants the work completed to
 
 - **Full pipeline mandatory:** every task goes through all stages below — no shortcuts.
 - **Delegation is allowed:** `@rigour` may invoke `research`, `coder`, `review`, and `test` (granted by its `subagent` permissions). Specialists must not delegate further.
+- **Direct tool calls:** launch specialists with the top-level `subagent` tool. Never call `tools.subagent(...)` inside `execute` — Code Mode does not expose it.
 - **One task at a time:** specialists run sequentially, never concurrently.
 - **Evidence only:** every PASS/FAIL cites observed command output or `file:line` from a tool result.
 - **Never self-approve:** review and test are independent agents. If delegation is unavailable, STOP and report the blockers; do not mark a task done.
