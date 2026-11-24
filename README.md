@@ -31,6 +31,14 @@ It is designed to be **dropped into** `~/.config/opencode/` and the contents of 
 
 The result, at the cost of per-step subagent latency: long runs stay on-goal, every step's evidence is inspectable, and behaviour is consistent regardless of the executing model.
 
+## Learning Loop in action
+
+An independent audit can fail twice on the same defect. The agent then classifies the knowledge gap itself. It loads `self-help` and drafts a project-scoped skill. No operator prompt is needed.
+
+![OpenCode detects a skills gap and loads self-help](docs/images/learning-loop-skill-gap.png)
+
+The image shows a repeat failure on a byte-identity defect. The agent classifies it as `DATA_OR_SCHEMA_CONVENTION_GAP`, loads `self-help`, and continues to the next attempt with a structural fix.
+
 This is a **starter + personal configuration**, not a finished product. See "Honest status".
 
 ## Two operating modes
