@@ -90,51 +90,51 @@ An operator starts with a rough idea and prompts OpenCode. OpenCode reads the cu
 
 **Idea and prompt.** The operator describes the goal in a few sentences. No architecture is supplied.
 
-↓
+<p align="center">↓</p>
 
 **Initial feedback.** OpenCode reads the current codebase. It reports the live paths, gates, and safety properties the change must preserve.
 
-↓
+<p align="center">↓</p>
 
 **Refined brief.** The operator clarifies the requirement and launches `rigour`. Rigour writes the first design proposal against the real source.
 
-↓
+<p align="center">↓</p>
 
 **R2 — first proposal rejected.** An independent `review` subagent audits the design against the code. It returns 11 findings and 1 refuted claim. The planner saves the verdict and rewrites.
 
-↓
+<p align="center">↓</p>
 
 **R3 — second proposal rejected.** The rewrite fixes the R2 findings. The audit finds 6 required fixes and 1 refuted claim.
 
-↓
+<p align="center">↓</p>
 
 **Learning Loop.** The same root cause survived two attempts. The planner classifies the knowledge gap, loads `self-help`, and drafts a project-scoped skill.
 
-↓
+<p align="center">↓</p>
 
 **R4 — third proposal rejected.** The rewrite applies the R3 fixes. The audit finds 7 required fixes and 2 refuted claims.
 
-↓
+<p align="center">↓</p>
 
 **R5 — fourth proposal rejected.** The rewrite closes those items. One blocking defect remains, with 1 refuted claim.
 
-↓
+<p align="center">↓</p>
 
 **R6 — defect still open.** The patch targets a secondary path. The audit refutes the claim that the fix is complete.
 
-↓
+<p align="center">↓</p>
 
 **R7 — shared fix proposed.** The rewrite applies one shared fix across the sites named by the audit. The audit finds 3 blocking findings and 1 refuted claim.
 
-↓
+<p align="center">↓</p>
 
 **R8 — single insertion point.** The rewrite moves the correction to one seam after all writers. The audit finds 3 blocking findings and 1 refuted claim.
 
-↓
+<p align="center">↓</p>
 
 **R9 — audited PASS-WITH-FIXES.** All seven earlier fixes are verified. Four contract and documentation fixes remain.
 
-↓
+<p align="center">↓</p>
 
 **R10 — resolved.** The final four fixes are applied. The design is complete. Ten revisions and eight audits are on disk, and no production code changed.
 
