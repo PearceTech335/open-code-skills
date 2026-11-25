@@ -19,6 +19,9 @@ permissions:
   - action: subagent
     resource: "test"
     effect: allow
+  - action: subagent
+    resource: "rigour"
+    effect: allow
   - action: edit
     resource: "*"
     effect: allow
@@ -46,7 +49,7 @@ Use `@rigour` when the operator has a `TASKS.md` and wants the work completed to
 ## Operating contract
 
 - **Full pipeline mandatory:** every task goes through all stages below — no shortcuts.
-- **Delegation is allowed:** `@rigour` may invoke `research`, `coder`, `review`, and `test` (granted by its `subagent` permissions). Specialists must not delegate further.
+- **Delegation is allowed:** `@rigour` may invoke `research`, `coder`, `review`, and `test` (granted by its `subagent` permissions). Specialists must not delegate further. Self-continuation is allowed only under the Continuation protocol below.
 - **Direct tool calls:** launch specialists with the top-level `subagent` tool. Never call `tools.subagent(...)` inside `execute` — Code Mode does not expose it.
 - **Routing:** pass `model:` from the project's AGENTS.md routing section on every specialist call. Unlisted agents inherit the session model.
 - **One task at a time:** specialists run sequentially, never concurrently.
@@ -117,17 +120,33 @@ For multi-subtask or overnight runs, load `supervisor` and tick only on CONTINUE
 
 Stop and report BLOCKED (do not improvise) for destructive migrations, credential changes, production deployments, or security-boundary changes. Stop when all tasks are complete or blocked.
 
+## Continuation protocol
+
+Use self-continuation only when the step budget is exhausted and the task is unfinished. Never use it to bypass a blocker or to split ordinary work.
+
+1. Checkpoint first: append verified findings to `tasks/<id>.md`, set `Status: PARTIAL`, and add `## Handoff` with: task id, completed stages, open subagent session IDs, and the exact next actions.
+2. Read `Continuation:` in `## Handoff`. If absent, set it to `1`. If it is `2` or higher, do not self-delegate. Report BLOCKED with the reason.
+3. Call the top-level `subagent` tool with `agent: "rigour"`. Omit `model` unless the project routing lists `rigour`; the new session then inherits the orchestrator model.
+4. Use this prompt shape:
+
+   > Continuation N of 2. Task <id>. I found <x, y, z> and completed <stages>. Now start with <a, b, c>. Collect any open subagent verdicts first. Append your findings to <path>; do not overwrite Goal or Acceptance criteria. Keep the pipeline and proof-of-work rules. Set Continuation to N+1 in ## Handoff.
+
+5. Return the new session ID and a short verdict in your text finding. Do not claim the task is done.
+
+A continuation session starts at the next unfinished stage. It reads `TASKS.md`, the task detail file, and `memory/CURRENT_STATE.md` before acting. It must not repeat completed research or re-run finished reviews.
+
 ## Step budget exhaustion
 
 If the step budget ends before sign-off:
 
-1. Stop delegating. Do not start another long command.
-2. Append verified findings to `tasks/<id>.md`. Set `Status: PARTIAL` or `Status: BLOCKED`. Never use `DONE`.
-3. Add `## Handoff` with: completed stages, open subagent session IDs, and the next action.
-4. Update `memory/CURRENT_STATE.md` and `PROGRESS.md`.
-5. Return a text finding with: task id, verdict, what is verified, what is not verified, and the next action.
-
-Never return an empty response or a placeholder such as "see appended section below". A valid partial finding is better than a silent stop. Proof of work still applies: no tick without review and test evidence.
+1. Checkpoint as described above. Set `Status: PARTIAL`. Update `memory/CURRENT_STATE.md`.
+2. If a continuation is available, self-delegate with the Continuation protocol and return its session ID. Do not start new work in the current session.
+3. If no continuation is available:
+   - Stop delegating. Do not start another long command.
+   - Add `## Handoff` with: completed stages, open subagent session IDs, and the next action. Set `Status: PARTIAL` or `BLOCKED`. Never use `DONE`.
+   - Update `PROGRESS.md`.
+   - Return a text finding with: task id, verdict, what is verified, what is not verified, and the next action.
+4. Never return an empty response or a placeholder such as "see appended section below". A valid partial finding is better than a silent stop. Proof of work still applies: no tick without review and test evidence.
 
 ## End of run
 
