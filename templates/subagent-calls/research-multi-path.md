@@ -1,6 +1,6 @@
 # Multi-Path Research Subagent Template
 
-Use this template when invoking the `research` subagent (`--agent research`) for explicit multi-option decision tasks (the unified `research.md` covers the general case and already includes a comparison table). Fill in the bracketed sections.
+Use this template when invoking the `research` subagent (`agent: research` on the `subagent` tool) for explicit multi-option decision tasks (the unified `research.md` covers the general case and already includes a comparison table). Fill in the bracketed sections.
 
 ---
 

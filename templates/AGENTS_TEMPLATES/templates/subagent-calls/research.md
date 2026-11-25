@@ -1,6 +1,6 @@
 # Research Subagent Invocation Template (Unified)
 
-Use this template when invoking the `research` subagent (`--agent research`) because you **don't know enough to make a good decision**. The task is: investigate, research (including online if explicitly allowed per policy), document references, adversarially review findings, and present the **most robust, critiqued implementation/finding** aligned with this framework.
+Use this template when invoking the `research` subagent (`agent: research` on the `subagent` tool) because you **don't know enough to make a good decision**. The task is: investigate, research (including online if explicitly allowed per policy), document references, adversarially review findings, and present the **most robust, critiqued implementation/finding** aligned with this framework.
 
 This template covers both focused investigation and broader/ambiguous problems. If the question is vague, decompose into sub-questions first (see below).
 

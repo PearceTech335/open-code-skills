@@ -91,7 +91,7 @@ criteria; do not weaken.
 ## 3.5 Failure Budget & Root-Cause Gate
 
 Before ticking any sub-subtask complete:
-1. Load review subagent (--agent review) with templates/subagent-calls/review.md.
+1. Delegate to `review` via the `subagent` tool (§3.6) using templates/subagent-calls/review.md.
 2. The review agent performs adversarial review using the structured PASS/FAIL
    checklist (§7.7) — 10 axes with one-line verdicts per axis.
 3. If any axis fails: do NOT tick. The review agent returns the analysis; the
@@ -101,8 +101,8 @@ Before ticking any sub-subtask complete:
 4. Only tick when all 10 axes pass AND verification commands ran with observed output.
 5. This applies to ALL sub-subtasks, not just the final milestone — overnight runs
    must not silently accumulate errors.
-6. After review PASS (steps 1–3) and verification evidence (step 4): invoke --agent
-   test (targeted → regression) — require test PASS. Then load quality-gate as the
+6. After review PASS (steps 1–3) and verification evidence (step 4): delegate to
+   `test` via the `subagent` tool (§3.6) — targeted → regression — require test PASS. Then load quality-gate as the
    final pass before any tick.
 7. Load supervisor skill (multi-subtask/overnight runs only, per skills/supervisor/SKILL.md):
    tick only on CONTINUE/STOP-SUCCESS. REPLAN → planner edits the affected
@@ -230,7 +230,7 @@ sub-questions only — no full report.
 Step B (Decompose): Break findings into max 3 specific, answerable questions. Each
 must map to one file read or command.
 
-Only proceed after Step B. For each sub-question: invoke --agent research with
+Only proceed after Step B. For each sub-question: delegate to `research` via the `subagent` tool (§3.6) with
 templates/subagent-calls/research.md. Planner synthesizes all results (not
 sub-researchers). The research agent elaborates the matching tasks/<id>.md detail
 file, not a chat response.
