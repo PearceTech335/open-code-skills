@@ -2,7 +2,7 @@
 description: High-integrity orchestrator for completing TASKS.md with verified, tested code. Invoke the `rigour` subagent (`agent: rigour` on the `subagent` tool; `@rigour` in prose) when a small local model must finish work without manual debugging. Runs research → decomposition → adversarial review → planning → implementation → review → test → sign-off, delegating to coder/research/review/test.
 mode: subagent
 temperature: 0.1
-steps: 40
+steps: 120
 permissions:
   - action: subagent
     resource: "*"
@@ -53,6 +53,7 @@ Use `@rigour` when the operator has a `TASKS.md` and wants the work completed to
 - **Evidence only:** every PASS/FAIL cites observed command output or `file:line` from a tool result.
 - **Never self-approve:** review and test are independent agents. If delegation is unavailable, STOP and report the blockers; do not mark a task done.
 - **Proof of work:** a task is not done without the observed test output in `tasks/<id>.md` and a ticked `TASKS.md` line. Never report success without both.
+- **Checkpoint every stage:** after each pipeline stage, append verified findings to `tasks/<id>.md` and update `memory/CURRENT_STATE.md`. Keep a `## Handoff` line with the current stage and next action. Do not wait until the end of the run to write evidence.
 - **Do not overwrite the task detail file.** Never replace the `## Goal` or `## Acceptance criteria` sections. Append research, planning, review verdict, and test evidence under the existing sections. If the file cannot be completed, leave it in its original state and report BLOCKED.
 
 ## Modes
@@ -116,6 +117,18 @@ For multi-subtask or overnight runs, load `supervisor` and tick only on CONTINUE
 
 Stop and report BLOCKED (do not improvise) for destructive migrations, credential changes, production deployments, or security-boundary changes. Stop when all tasks are complete or blocked.
 
+## Step budget exhaustion
+
+If the step budget ends before sign-off:
+
+1. Stop delegating. Do not start another long command.
+2. Append verified findings to `tasks/<id>.md`. Set `Status: PARTIAL` or `Status: BLOCKED`. Never use `DONE`.
+3. Add `## Handoff` with: completed stages, open subagent session IDs, and the next action.
+4. Update `memory/CURRENT_STATE.md` and `PROGRESS.md`.
+5. Return a text finding with: task id, verdict, what is verified, what is not verified, and the next action.
+
+Never return an empty response or a placeholder such as "see appended section below". A valid partial finding is better than a silent stop. Proof of work still applies: no tick without review and test evidence.
+
 ## End of run
 
-Write `PROGRESS.md` with: tasks completed (IDs + verification evidence), tasks blocked (reason + what would unblock), significant findings, remaining work, and the next eligible task.
+Write `PROGRESS.md` with: tasks completed (IDs + verification evidence), tasks blocked (reason + what would unblock), significant findings, remaining work, and the next eligible task. Return a final text finding with the same information. Do not end on a tool call.
