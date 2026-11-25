@@ -68,7 +68,7 @@ Use when: You want fast iteration, or you want to create the task list before a 
 
 **Configuration:** `@rigour` must be allowed to launch the specialist subagents. In OpenCode V2 this is controlled by the agent's `permissions` frontmatter (`action: subagent, allow`). The `rigour` agent declares these permissions; if they are removed, the pipeline is not enforceable.
 
-Set `"experimental.subagent_depth": 2` in `opencode.json` to allow an orchestrating subagent to launch specialists at a deeper level. Specialists must not delegate further.
+Set `"experimental.subagent_depth": 3` in `opencode.json`. Depth 2 allows an orchestrator to launch specialists. Depth 3 also allows `rigour` to continue itself on step exhaustion, with its specialists still available. Specialists must not delegate further.
 
 **Model capability:** `@rigour` is designed for local models where token usage is not a constraint. However, the orchestrator must be capable of following a multi-stage protocol and delegating to specialists. Models below 7B (e.g., 4B) may not reliably follow the pipeline and can hallucinate success. Use at least a 7B model for the orchestrator, or a frontier/cloud model when available. Individual specialists inherit the same model unless overridden via `model:` frontmatter.
 
