@@ -159,13 +159,13 @@ To delegate, call the top-level `subagent` tool directly, never inside `execute`
 
 `--agent` and `@name` are CLI or prose notation, not valid `agent` values.
 - templates/subagent-calls/research.md — for investigation/discovery/decision-research
-  tasks (invoke: --agent research)
-- templates/subagent-calls/review.md — for code review tasks (invoke: --agent review)
-- templates/subagent-calls/test.md — for QA testing tasks (invoke: --agent test)
-- templates/subagent-calls/coder.md — for code generation tasks (invoke: --agent coder)
+  tasks (agent: research)
+- templates/subagent-calls/review.md — for code review tasks (agent: review)
+- templates/subagent-calls/test.md — for QA testing tasks (agent: test)
+- templates/subagent-calls/coder.md — for code generation tasks (agent: coder)
 - templates/subagent-calls/autopilot.md — light loop for capable models: bootstrap,
   light discovery, direct implementation or one coder call, optional review/test,
-  acceptance, tick (invoke: --agent autopilot)
+  acceptance, tick (agent: autopilot)
 - templates/subagent-calls/rigour.md — high-integrity pipeline: research,
   decomposition, adversarial review, planning, coder, review, test, sign-off;
   delegates to specialists (invoke `rigour` via the `subagent` tool; `@rigour` in prose)
@@ -181,6 +181,8 @@ Agents not listed inherit the session model.
 
 coder: <provider>/<model>
 research: <provider>/<model>
+
+Example: `subagent({ agent: "coder", description: "<label>", prompt: "<filled template>", model: "<provider>/<model>" })`.
 
 ## 3.8 Planner Verification of Subagent Output
 
